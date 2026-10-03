@@ -15,7 +15,7 @@ const STATUS_LABEL: Record<DisplayStatus, string> = {
   expired: 'Expired',
 };
 
-const DEMO_TOP_UP = 50;
+const DEMO_TOP_UP = 100;
 
 function formatDate(ms: number): string {
   return new Date(ms).toLocaleDateString('en-PH', { day: 'numeric', month: 'short', year: 'numeric' });

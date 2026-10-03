@@ -3,28 +3,28 @@
     "id": "offer-bp-sugar",
     "partnerId": "qc-puso-konsulta",
     "title": "Free blood pressure and blood sugar check",
-    "cost": 30,
+    "cost": 120,
     "validDays": 30
   },
   {
     "id": "offer-ecg-20",
     "partnerId": "qc-tibok-heart",
-    "title": "20% off an ECG screening",
-    "cost": 50,
+    "title": "15% off an ECG screening",
+    "cost": 200,
     "validDays": 30
   },
   {
     "id": "offer-lipid-25",
     "partnerId": "mnl-ugat-diagnostics",
-    "title": "25% off a lipid profile",
-    "cost": 50,
+    "title": "15% off a lipid profile",
+    "cost": 200,
     "validDays": 30
   },
   {
     "id": "offer-cardio-consult",
     "partnerId": "ceb-kasingkasing-clinic",
-    "title": "30% off a cardiology consult",
-    "cost": 80,
+    "title": "10% off a cardiology consult",
+    "cost": 250,
     "validDays": 45
   }
 ]
