@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: First-run onboarding
-The system SHALL show onboarding on first launch with a short explanation, consent to store data on the device, and the disclaimer "Screening awareness, not a diagnosis".
+The system SHALL show onboarding on first launch with a short explanation, consent to store data on the device, and the disclaimer "Screening awareness, not a diagnosis", and SHALL persist the accepted flag in `inlababu.babu.v1`.
 
 #### Scenario: First launch
 - **GIVEN** a fresh install
@@ -15,13 +15,13 @@ The system SHALL show onboarding on first launch with a short explanation, conse
 
 #### Scenario: Consent is required
 - **GIVEN** onboarding is showing
-- **WHEN** the player has not accepted
-- **THEN** the player SHALL NOT be able to enter the Home screen
+- **WHEN** the player has not ticked the consent box
+- **THEN** the start button SHALL be disabled and the player SHALL NOT be able to enter the Home screen
 
 ### Requirement: Home screen
-The system SHALL present Babu, today's snapshot, the check-in button and the streak on the Home screen.
+The system SHALL present Babu, today's snapshot, the health input, the check-in button, the streak and the "Screening awareness, not a diagnosis" disclaimer on the Home screen.
 
 #### Scenario: Home content
 - **GIVEN** onboarding is complete
 - **WHEN** the Home tab opens
-- **THEN** Babu, the health snapshot, the check-in button and the streak SHALL be visible
+- **THEN** Babu, the health snapshot, the check-in button, the streak and the disclaimer SHALL be visible
