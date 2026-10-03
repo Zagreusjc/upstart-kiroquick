@@ -17,6 +17,7 @@ const SHARE_STATUS_TEXT: Record<ShareStatus, string> = {
   shared: 'Shared!',
   cancelled: 'Share cancelled',
   downloaded: 'Image downloaded',
+  unavailable: 'Brag card image unavailable. Nothing was shared.',
 };
 
 export function GameOver({ score, coinsEarned, makeCard, shareStatus, onShare, onPlayAgain }: GameOverProps) {

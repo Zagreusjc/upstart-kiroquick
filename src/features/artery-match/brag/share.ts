@@ -2,7 +2,8 @@
 import { challengeText } from './bragCard';
 
 export type ShareChannel = 'web_share_file' | 'web_share_text';
-export type ShareOutcome = 'shared-file' | 'shared-text' | 'downloaded' | 'cancelled';
+/** 'unavailable': no PNG was generated and nothing could be shared or downloaded. */
+export type ShareOutcome = 'shared-file' | 'shared-text' | 'downloaded' | 'cancelled' | 'unavailable';
 
 /** The parts of `navigator` used for sharing (injectable for tests). */
 export interface ShareNavigator {
@@ -46,7 +47,8 @@ export interface ShareBragCardOptions {
 /**
  * Shares the PNG as a file when supported; otherwise downloads it and shares text and URL
  * if Web Share exists. A cancelled share (AbortError) or a download-only fallback never
- * calls onShared, so no reward can be farmed.
+ * calls onShared, so no reward can be farmed. Without a PNG and without a successful text
+ * share the result is 'unavailable', never a claimed download.
  */
 export async function shareBragCard({
   blob,
@@ -81,10 +83,10 @@ export async function shareBragCard({
       onShared('web_share_text');
       return 'shared-text';
     }
-    return 'downloaded';
+    return blob ? 'downloaded' : 'unavailable';
   } catch (error) {
     if (isAbortError(error)) return 'cancelled';
     downloadOnce();
-    return 'downloaded';
+    return blob ? 'downloaded' : 'unavailable';
   }
 }
