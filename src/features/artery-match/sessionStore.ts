@@ -32,13 +32,12 @@ export interface GameDeps {
 
 /**
  * Free play for testing: starting a game costs no life.
- * On in the dev server (`npm run dev`), or on any build with `?freeplay=1` in the URL.
- * Off in unit tests (Vitest runs with MODE 'test') and in normal production visits.
+ * Off by default, so lives work normally everywhere (dev server, tests, production).
+ * Opt in for testing by adding `?freeplay=1` to the URL.
  * TODO(demo): remove the `?freeplay=1` escape hatch before the final merge to main.
  */
 export const FREE_PLAY: boolean =
-  (import.meta.env.DEV && import.meta.env.MODE !== 'test') ||
-  (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('freeplay'));
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('freeplay');
 
 export type Phase = 'idle' | 'blocked' | 'playing' | 'over';
 export type ShareStatus =
