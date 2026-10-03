@@ -52,10 +52,24 @@ describe('main menu', () => {
     expect(href(/Milestones/)).toBe('/library/milestones');
     expect(href(/^Baboo/)).toBe('/home/baboo');
     expect(href(/Refer a Buddy/)).toBe('/library/milestones');
-    expect(href(/Get screened/)).toBe('/care');
-    expect(href(/Partner organizations/)).toBe('/care/initiatives');
-    expect(href(/Nearest hospital or clinic/)).toBe('/care/clinics');
+    expect(href(/^Get screened!$/)).toBe('/care');
     expect(href(/^Library$/)).toBe('/library');
+  });
+
+  it('uses one Get screened button, a text-only Baboo button and a bigger Play button', () => {
+    renderMenu();
+    expect(menu().queryByRole('link', { name: /Partner organizations|Nearest hospital/ })).not.toBeInTheDocument();
+    expect(menu().getAllByRole('link')).toHaveLength(7);
+
+    // Only the main Baboo above the buttons is drawn; the Baboo button is text only.
+    expect(screen.getAllByRole('img', { name: /^Baboo is/ })).toHaveLength(1);
+    const babooButton = menu().getByRole('link', { name: /^Baboo/ });
+    expect(babooButton.querySelector('svg')).toBeNull();
+
+    expect(menu().getByRole('link', { name: /^Play!$/ })).toHaveAttribute('data-size', 'big');
+    for (const name of [/Pulse/, /Milestones/, /^Baboo/]) {
+      expect(menu().getByRole('link', { name })).toHaveAttribute('data-size', 'regular');
+    }
   });
 
   it('shows the same live mood as the Baboo screen', () => {

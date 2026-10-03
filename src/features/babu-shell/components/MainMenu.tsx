@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { MOOD_LABELS } from '../constants';
 import { MENU_LINKS, PULSE_STATE } from '../menuLinks';
@@ -49,13 +49,13 @@ const VARIANT: Record<Variant, { className: string; shadow: string }> = {
   },
 };
 
+/** A text-only menu button. `big` is the Play button: much taller, with larger lettering. */
 function MenuButton({
   to,
   title,
   subtitle,
   variant,
   big = false,
-  icon,
   state,
 }: {
   to: string;
@@ -63,7 +63,6 @@ function MenuButton({
   subtitle?: string;
   variant: Variant;
   big?: boolean;
-  icon?: ReactNode;
   state?: unknown;
 }) {
   const v = VARIANT[variant];
@@ -71,16 +70,14 @@ function MenuButton({
     <Link
       to={to}
       state={state}
-      className={`flex w-full items-center justify-center gap-3 rounded-3xl px-4 text-center ${
-        big ? 'min-h-24' : 'min-h-[4.5rem]'
+      data-size={big ? 'big' : 'regular'}
+      className={`flex w-full flex-col items-center justify-center rounded-3xl px-4 text-center ${
+        big ? 'min-h-32' : 'min-h-16'
       } ${v.className} ${press} ${focusRing}`}
       style={{ boxShadow: v.shadow }}
     >
-      {icon}
-      <span className="flex flex-col">
-        <span className={`font-black tracking-wide uppercase ${big ? 'text-3xl' : 'text-xl'}`}>{title}</span>
-        {subtitle && <span className="text-sm font-bold">{subtitle}</span>}
-      </span>
+      <span className={`font-black tracking-wide uppercase ${big ? 'text-5xl' : 'text-lg'}`}>{title}</span>
+      {subtitle && <span className="text-sm font-bold">{subtitle}</span>}
     </Link>
   );
 }
@@ -186,43 +183,18 @@ export function MainMenu() {
           variant="teal"
         />
         <MenuButton to={MENU_LINKS.milestones} title="Milestones" subtitle="Build a habit!" variant="teal" />
-        <MenuButton
-          to={MENU_LINKS.baboo}
-          title="Baboo"
-          subtitle="Your heart buddy!"
-          variant="soft"
-          icon={
-            <span aria-hidden="true" className="pointer-events-none">
-              <BabuHeart mood={mood} className="h-11 w-11" />
-            </span>
-          }
-        />
+        <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="soft" />
 
-        <div className="flex items-center gap-1.5 pt-2">
+        <div className="flex items-center gap-2 pt-2">
           <RoundButton to={MENU_LINKS.refer} label="Refer a Buddy" icon="💞" tone="teal" />
 
-          <div className="min-w-0 flex-1 rounded-3xl border-4 border-rose-400 bg-white px-1.5 py-0.5 text-center shadow-sm">
-            <Link
-              to={MENU_LINKS.screened}
-              className={`flex min-h-11 items-center justify-center rounded-xl text-sm font-black tracking-wide whitespace-nowrap text-rose-600 uppercase ${focusRing}`}
-            >
-              Get screened!
-            </Link>
-            <div className="divide-y divide-rose-100 border-t border-rose-100 text-[11px] leading-tight font-bold text-rose-800">
-              <Link
-                to={MENU_LINKS.partners}
-                className={`flex min-h-11 items-center justify-center rounded-lg px-1 underline underline-offset-2 ${focusRing}`}
-              >
-                Partner organizations
-              </Link>
-              <Link
-                to={MENU_LINKS.clinics}
-                className={`flex min-h-11 items-center justify-center rounded-lg px-1 underline underline-offset-2 ${focusRing}`}
-              >
-                Nearest hospital or clinic
-              </Link>
-            </div>
-          </div>
+          <Link
+            to={MENU_LINKS.screened}
+            className={`flex h-[4.75rem] min-w-0 flex-1 items-center justify-center rounded-3xl border-4 border-rose-400 bg-white px-2 text-center text-lg leading-tight font-black tracking-wide text-rose-600 uppercase ${press} ${focusRing}`}
+            style={{ boxShadow: '0 5px 0 #fb7185' }}
+          >
+            Get screened!
+          </Link>
 
           <RoundButton to={MENU_LINKS.library} label="Library" icon="📖" tone="rose" />
         </div>

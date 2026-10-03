@@ -12,8 +12,6 @@ export const MENU_LINKS = {
   refer: '/library/milestones',
   library: '/library',
   screened: '/care',
-  partners: '/care/initiatives',
-  clinics: '/care/clinics',
 } as const;
 
 /** Router state that asks the Baboo screen to open at today's tasks. */

@@ -19,7 +19,7 @@ The system SHALL show onboarding on first launch with a short explanation, conse
 - **THEN** the start button SHALL be disabled and the player SHALL NOT be able to enter the Home screen
 
 ### Requirement: Main menu
-After onboarding, the Home tab (`/home`) SHALL open on a main menu with the INLABABOO title, Baboo in its current mood (the same mood as the Baboo screen) with a text label, and buttons to every part of the app: Play (`/play`), Pulse (today's tasks on the Baboo screen), Milestones (`/library/milestones`), Baboo (`/home/baboo`), Refer a Buddy (sharing on `/library/milestones`), Get screened (`/care`, with links to partner organizations `/care/initiatives` and the nearest hospital or clinic `/care/clinics`) and Library (`/library`). The menu SHALL link by route path only and SHALL NOT import other features' code.
+After onboarding, the Home tab (`/home`) SHALL open on a main menu with the INLABABOO title, Baboo in its current mood (the same mood as the Baboo screen) with a text label, and buttons to every part of the app: Play (`/play`), Pulse (today's tasks on the Baboo screen), Milestones (`/library/milestones`), Baboo (`/home/baboo`), Refer a Buddy (sharing on `/library/milestones`), a single Get screened button (`/care`) and Library (`/library`). Play SHALL be the largest button. Menu buttons other than Baboo's portrait SHALL be text only. The menu SHALL link by route path only and SHALL NOT import other features' code.
 
 #### Scenario: Menu after onboarding
 - **GIVEN** onboarding is complete
