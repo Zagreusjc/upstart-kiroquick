@@ -32,24 +32,18 @@ const TITLE: CSSProperties = {
   textShadow: '0 3px 0 #ffffff, 0 6px 0 rgba(190,18,60,0.22)',
 };
 
-type Variant = 'play' | 'teal' | 'soft';
+type Variant = 'play' | 'teal';
 
-const VARIANT: Record<Variant, { className: string; shadow: string }> = {
-  play: {
-    className: 'bg-linear-to-b from-rose-400 to-rose-600 text-white',
-    shadow: '0 6px 0 #9f1239, 0 10px 18px rgba(159,18,57,0.25)',
-  },
-  teal: {
-    className: 'bg-linear-to-b from-teal-500 to-teal-700 text-white',
-    shadow: '0 6px 0 #115e59, 0 10px 18px rgba(17,94,89,0.22)',
-  },
-  soft: {
-    className: 'border-2 border-white bg-linear-to-b from-rose-50 to-rose-200 text-rose-800',
-    shadow: '0 6px 0 #fda4af, 0 10px 18px rgba(190,18,60,0.15)',
-  },
+/** Flat, solid fills (no gradients, no drop shadows). White text passes contrast on both. */
+const VARIANT: Record<Variant, string> = {
+  play: 'bg-rose-600 text-white hover:bg-rose-700',
+  teal: 'bg-teal-700 text-white hover:bg-teal-800',
 };
 
-/** A text-only menu button. `big` is the Play button: much taller, with larger lettering. */
+/**
+ * A text-only menu button that hugs its text: the padding is just a little
+ * wider than the words. `big` is the Play button, with larger lettering.
+ */
 function MenuButton({
   to,
   title,
@@ -65,19 +59,19 @@ function MenuButton({
   big?: boolean;
   state?: unknown;
 }) {
-  const v = VARIANT[variant];
   return (
     <Link
       to={to}
       state={state}
       data-size={big ? 'big' : 'regular'}
-      className={`flex w-full flex-col items-center justify-center rounded-3xl px-4 text-center ${
-        big ? 'min-h-32' : 'min-h-16'
-      } ${v.className} ${press} ${focusRing}`}
-      style={{ boxShadow: v.shadow }}
+      className={`inline-flex min-h-11 flex-col items-center justify-center rounded-2xl text-center ${
+        big ? 'px-8 py-3' : 'px-5 py-2'
+      } ${VARIANT[variant]} ${press} ${focusRing}`}
     >
-      <span className={`font-black tracking-wide uppercase ${big ? 'text-5xl' : 'text-lg'}`}>{title}</span>
-      {subtitle && <span className="text-sm font-bold">{subtitle}</span>}
+      <span className={`leading-tight font-black tracking-wide uppercase ${big ? 'text-5xl' : 'text-lg'}`}>
+        {title}
+      </span>
+      {subtitle && <span className="text-sm leading-tight font-bold">{subtitle}</span>}
     </Link>
   );
 }
@@ -93,15 +87,11 @@ function RoundButton({
   icon: string;
   tone: 'teal' | 'rose';
 }) {
-  const style =
-    tone === 'teal'
-      ? { className: 'from-teal-500 to-teal-700', shadow: '0 5px 0 #115e59' }
-      : { className: 'from-rose-400 to-rose-600', shadow: '0 5px 0 #9f1239' };
+  const fill = tone === 'teal' ? 'bg-teal-700 hover:bg-teal-800' : 'bg-rose-600 hover:bg-rose-700';
   return (
     <Link
       to={to}
-      className={`flex h-[4.75rem] w-[4.75rem] shrink-0 flex-col items-center justify-center rounded-full bg-linear-to-b text-center text-white ${style.className} ${press} ${focusRing}`}
-      style={{ boxShadow: style.shadow }}
+      className={`flex h-[4.25rem] w-[4.25rem] shrink-0 flex-col items-center justify-center rounded-full text-center text-white ${fill} ${press} ${focusRing}`}
     >
       <span aria-hidden="true" className="text-2xl leading-none">
         {icon}
@@ -173,7 +163,7 @@ export function MainMenu() {
         </p>
       </div>
 
-      <nav aria-label="Main menu" className="relative mt-6 space-y-4">
+      <nav aria-label="Main menu" className="relative mt-6 flex flex-col items-center gap-4">
         <MenuButton to={MENU_LINKS.play} title="Play!" variant="play" big />
         <MenuButton
           to={MENU_LINKS.baboo}
@@ -183,15 +173,14 @@ export function MainMenu() {
           variant="teal"
         />
         <MenuButton to={MENU_LINKS.milestones} title="Milestones" subtitle="Build a habit!" variant="teal" />
-        <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="soft" />
+        <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="teal" />
 
-        <div className="flex items-center gap-2 pt-2">
+        <div className="flex max-w-full items-center justify-center gap-2 pt-2">
           <RoundButton to={MENU_LINKS.refer} label="Refer a Buddy" icon="💞" tone="teal" />
 
           <Link
             to={MENU_LINKS.screened}
-            className={`flex h-[4.75rem] min-w-0 flex-1 items-center justify-center rounded-3xl border-4 border-rose-400 bg-white px-2 text-center text-lg leading-tight font-black tracking-wide text-rose-600 uppercase ${press} ${focusRing}`}
-            style={{ boxShadow: '0 5px 0 #fb7185' }}
+            className={`inline-flex min-h-11 items-center justify-center rounded-2xl border-4 border-rose-500 bg-white px-3 py-2 text-center text-sm leading-tight font-black tracking-wide whitespace-nowrap text-rose-700 uppercase hover:bg-rose-50 ${press} ${focusRing}`}
           >
             Get screened!
           </Link>

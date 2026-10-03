@@ -66,6 +66,15 @@ describe('main menu', () => {
     const babooButton = menu().getByRole('link', { name: /^Baboo/ });
     expect(babooButton.querySelector('svg')).toBeNull();
 
+    // Flat buttons: no drop shadows, no gradients; Baboo matches Pulse and Milestones.
+    for (const link of menu().getAllByRole('link')) {
+      expect(link.style.boxShadow).toBe('');
+      expect(link.className).not.toMatch(/bg-linear|shadow/);
+    }
+    for (const name of [/Pulse/, /Milestones/, /^Baboo/]) {
+      expect(menu().getByRole('link', { name }).className).toMatch(/\bbg-teal-700\b/);
+    }
+
     expect(menu().getByRole('link', { name: /^Play!$/ })).toHaveAttribute('data-size', 'big');
     for (const name of [/Pulse/, /Milestones/, /^Baboo/]) {
       expect(menu().getByRole('link', { name })).toHaveAttribute('data-size', 'regular');
