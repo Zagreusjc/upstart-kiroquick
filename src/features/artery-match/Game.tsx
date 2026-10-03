@@ -49,10 +49,16 @@ export function ArteriaMatchGame(props: GameDeps) {
         )}
         {showBoard && (
           <div className="mt-2 flex items-center justify-between text-sm font-semibold">
-            <p aria-live="polite">Score: {session.score.toLocaleString('en-US')}</p>
+            <p>Score: {session.score.toLocaleString('en-US')}</p>
             <p>Moves: {session.moves}</p>
           </div>
         )}
+        {/* Announced once per finished move; the visible score above updates every playback frame. */}
+        <p aria-live="polite" aria-atomic="true" className="sr-only">
+          {showBoard && session.settledScore !== null
+            ? `Score after move ${session.moves}: ${session.settledScore.toLocaleString('en-US')}`
+            : ''}
+        </p>
       </div>
 
       {phase === 'over' && (

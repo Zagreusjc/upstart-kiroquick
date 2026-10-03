@@ -1,4 +1,4 @@
-import { useRef, type PointerEvent } from 'react';
+import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import type { Board as BoardGrid, Cell } from './engine';
 import { dragTarget } from './swapInput';
 import { TileIcon } from './TileIcon';
@@ -29,9 +29,17 @@ function cellFromTarget(target: EventTarget | null): { cell: Cell; el: HTMLEleme
   return { cell: { row: Number(el.dataset.row), col: Number(el.dataset.col) }, el };
 }
 
+const ARROW_STEPS: Record<string, Cell> = {
+  ArrowUp: { row: -1, col: 0 },
+  ArrowDown: { row: 1, col: 0 },
+  ArrowLeft: { row: 0, col: -1 },
+  ArrowRight: { row: 0, col: 1 },
+};
+
 /**
  * The Arteria Match board. Taps (and keyboard Enter/Space) go through onClick; drags are
  * detected on the container with pointer events. Input is ignored while locked.
+ * Keyboard: one tab stop (roving tabindex); arrow keys move focus between cells.
  */
 export function Board({ board, selected, clearing, locked, invalid, onCellTap, onDragSwap }: BoardProps) {
   const rows = board.length;
@@ -39,6 +47,22 @@ export function Board({ board, selected, clearing, locked, invalid, onCellTap, o
   const gridRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragState | null>(null);
   const suppressClickRef = useRef(false);
+  const [focusCell, setFocusCell] = useState<Cell>({ row: 0, col: 0 });
+  const active = {
+    row: Math.min(focusCell.row, Math.max(rows - 1, 0)),
+    col: Math.min(focusCell.col, Math.max(cols - 1, 0)),
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, cell: Cell) => {
+    // A keyboard activation is never the click left over from a drag.
+    suppressClickRef.current = false;
+    const step = ARROW_STEPS[event.key];
+    if (!step) return;
+    event.preventDefault();
+    const row = Math.min(Math.max(cell.row + step.row, 0), rows - 1);
+    const col = Math.min(Math.max(cell.col + step.col, 0), cols - 1);
+    gridRef.current?.querySelector<HTMLButtonElement>(`[data-row="${row}"][data-col="${col}"]`)?.focus();
+  };
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     suppressClickRef.current = false;
@@ -112,6 +136,9 @@ export function Board({ board, selected, clearing, locked, invalid, onCellTap, o
                   aria-label={`${TILE_LABELS[tile.type]}, row ${row + 1}, column ${col + 1}`}
                   aria-pressed={isSelected ? true : undefined}
                   aria-disabled={locked || undefined}
+                  tabIndex={active.row === row && active.col === col ? 0 : -1}
+                  onFocus={() => setFocusCell({ row, col })}
+                  onKeyDown={(event) => handleKeyDown(event, { row, col })}
                   onClick={() => handleClick({ row, col })}
                   className={`block h-full w-full rounded-lg p-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-700 focus-visible:ring-inset ${
                     isSelected ? 'scale-95 bg-amber-200 ring-4 ring-amber-700 ring-inset' : 'bg-rose-50'
