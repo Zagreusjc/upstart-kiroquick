@@ -15,6 +15,14 @@ const focusRing =
   'focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-rose-900';
 const press = 'transition-transform motion-reduce:transition-none active:translate-y-[3px]';
 
+/**
+ * Fill the whole area between the app header and bottom nav (no card). The
+ * shell (owned by Jolo) gives `main` 16px padding, cancelled with `-m-4`, a
+ * 52px header and a 55px bottom nav plus the safe area: 52 + 55 = 107.
+ * Update this if the shell changes.
+ */
+const FILL_SCREEN = 'min-h-[calc(100dvh_-_107px_-_env(safe-area-inset-bottom))]';
+
 /** Dotted pink backdrop, like the mock-up. */
 const BACKDROP: CSSProperties = {
   backgroundImage:
@@ -36,14 +44,21 @@ type Variant = 'pink' | 'teal';
 
 /**
  * Flat, solid fills (no gradients, no drop shadows).
- * - Dark pink #f0556a: white lettering, kept large (bold 20px or more) so it
- *   meets the 3:1 contrast rule for large text.
- * - Teal #3cc4b4: white would be too faint (about 2:1), so the lettering is
- *   dark teal #073b36 (about 5.8:1).
+ * - Dark pink #f0556a (Play): white lettering, kept large so it meets the
+ *   3:1 contrast rule for large text.
+ * - Teal #3cc4b4: white lettering as designed. Plain white on this teal is
+ *   only about 2:1, so the text gets a thin dark-teal outline (TEAL_OUTLINE)
+ *   to stay readable in sunlight.
  */
 const VARIANT: Record<Variant, string> = {
   pink: 'bg-[#f0556a] text-white hover:brightness-95',
-  teal: 'bg-[#3cc4b4] text-[#073b36] hover:brightness-95',
+  teal: 'bg-[#3cc4b4] text-white hover:brightness-95',
+};
+
+/** Thin dark-teal outline behind white lettering on teal buttons. */
+const TEAL_OUTLINE: CSSProperties = {
+  textShadow:
+    '1px 1px 0 #0f5f57, -1px 1px 0 #0f5f57, 1px -1px 0 #0f5f57, -1px -1px 0 #0f5f57, 0 1px 2px rgba(7,59,54,0.45)',
 };
 
 /**
@@ -73,6 +88,7 @@ function MenuButton({
       className={`inline-flex min-h-11 flex-col items-center justify-center rounded-2xl text-center ${
         big ? 'px-8 py-3' : 'px-5 py-2'
       } ${VARIANT[variant]} ${press} ${focusRing}`}
+      style={variant === 'teal' ? TEAL_OUTLINE : undefined}
     >
       <span className={`leading-tight font-black tracking-wide uppercase ${big ? 'text-5xl' : 'text-xl'}`}>
         {title}
@@ -82,12 +98,13 @@ function MenuButton({
   );
 }
 
-/** Round teal shortcut (Refer a Buddy, Settings). Small label, so dark lettering for contrast. */
+/** Round teal shortcut (Refer a Buddy, Settings). */
 function RoundButton({ to, label, icon }: { to: string; label: string; icon: string }) {
   return (
     <Link
       to={to}
       className={`flex h-[4.25rem] w-[4.25rem] shrink-0 flex-col items-center justify-center rounded-full text-center ${VARIANT.teal} ${press} ${focusRing}`}
+      style={TEAL_OUTLINE}
     >
       <span aria-hidden="true" className="text-2xl leading-none">
         {icon}
@@ -126,7 +143,7 @@ export function MainMenu() {
     <section
       aria-labelledby="menu-title"
       data-testid="main-menu"
-      className="relative overflow-hidden rounded-[2rem] px-3 pt-10 pb-6 shadow-sm"
+      className={`relative -m-4 overflow-hidden px-4 pt-10 pb-8 ${FILL_SCREEN}`}
       style={BACKDROP}
     >
       <EcgRibbon className="top-0 -left-12 -rotate-[18deg]" />
@@ -162,8 +179,7 @@ export function MainMenu() {
       <nav aria-label="Main menu" className="relative mt-6 flex flex-col items-center gap-4">
         <MenuButton to={MENU_LINKS.play} title="Play!" variant="pink" big />
         <MenuButton to={MENU_LINKS.bloodBank} title="Blood Bank" subtitle="Top up your lives!" variant="teal" />
-        {/* Pink with white lettering: title only, kept large for contrast. */}
-        <MenuButton to={MENU_LINKS.library} title="Library" variant="pink" />
+        <MenuButton to={MENU_LINKS.library} title="Library" subtitle="Play to learn!" variant="teal" />
         <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="teal" />
 
         <div className="flex max-w-full items-center justify-center gap-2 pt-2">

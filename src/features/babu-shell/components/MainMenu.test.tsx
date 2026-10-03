@@ -49,7 +49,7 @@ describe('main menu', () => {
     const href = (name: RegExp) => menu().getByRole('link', { name }).getAttribute('href');
     expect(href(/^Play!$/)).toBe('/play');
     expect(href(/Blood Bank/)).toBe('/library/milestones');
-    expect(href(/^Library$/)).toBe('/library');
+    expect(href(/^Library/)).toBe('/library');
     expect(href(/^Baboo/)).toBe('/home/baboo');
     expect(href(/Refer a Buddy/)).toBe('/library/milestones');
     expect(href(/^Get screened!$/)).toBe('/care');
@@ -72,19 +72,28 @@ describe('main menu', () => {
     }
 
     expect(menu().getByRole('link', { name: /^Play!$/ })).toHaveAttribute('data-size', 'big');
-    for (const name of [/Blood Bank/, /^Library$/, /^Baboo/]) {
+    for (const name of [/Blood Bank/, /^Library/, /^Baboo/]) {
       expect(menu().getByRole('link', { name })).toHaveAttribute('data-size', 'regular');
     }
   });
 
-  it('uses dark pink for Play and Library and teal for everything else except Get screened', () => {
+  it('uses dark pink for Play, white-lettered teal for the rest, and a white Get screened', () => {
     renderMenu();
     const cls = (name: RegExp) => menu().getByRole('link', { name }).className;
-    for (const name of [/^Play!$/, /^Library$/]) expect(cls(name)).toContain('bg-[#f0556a]');
-    for (const name of [/Blood Bank/, /^Baboo/, /Refer a Buddy/, /Settings/]) {
+    expect(cls(/^Play!$/)).toContain('bg-[#f0556a]');
+    for (const name of [/Blood Bank/, /^Library/, /^Baboo/, /Refer a Buddy/, /Settings/]) {
       expect(cls(name)).toContain('bg-[#3cc4b4]');
+      expect(cls(name)).toContain('text-white');
     }
     expect(cls(/^Get screened!$/)).toContain('bg-white');
+    expect(menu().getByRole('link', { name: /^Library/ })).toHaveTextContent('Play to learn!');
+  });
+
+  it('fills the screen instead of sitting in a card', () => {
+    renderMenu();
+    const menuEl = screen.getByTestId('main-menu');
+    expect(menuEl.className).toContain('-m-4');
+    expect(menuEl.className).not.toMatch(/rounded|shadow/);
   });
 
   it('opens settings from the menu', async () => {
