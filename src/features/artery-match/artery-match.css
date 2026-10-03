@@ -1,0 +1,60 @@
+/* Arteria Match animations. Only transform and opacity are animated (cheap on low-end phones). */
+
+@keyframes am-drop {
+  from {
+    transform: translateY(-60%);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes am-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+.am-tile {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition:
+    transform 150ms ease-out,
+    opacity 150ms ease-out;
+}
+
+/* New tiles (keyed by id) mount with a short drop-in. No fill mode, so .am-clearing wins afterwards. */
+.am-drop {
+  animation: am-drop 180ms ease-out;
+}
+
+.am-clearing {
+  animation: none;
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.am-shake {
+  animation: am-shake 240ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .am-drop,
+  .am-shake {
+    animation: none;
+  }
+
+  .am-tile {
+    transition: none;
+  }
+}
