@@ -26,7 +26,19 @@ export interface GameDeps {
   makeCard?: (score: number) => Promise<Blob>;
   nav?: ShareNavigator;
   download?: (blob: Blob, filename: string) => void;
+  /** Skip spending a life on start (testing). Defaults to FREE_PLAY. */
+  freePlay?: boolean;
 }
+
+/**
+ * Free play for testing: starting a game costs no life.
+ * On in the dev server (`npm run dev`), or on any build with `?freeplay=1` in the URL.
+ * Off in unit tests (Vitest runs with MODE 'test') and in normal production visits.
+ * TODO(demo): remove the `?freeplay=1` escape hatch before the final merge to main.
+ */
+export const FREE_PLAY: boolean =
+  (import.meta.env.DEV && import.meta.env.MODE !== 'test') ||
+  (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('freeplay'));
 
 export type Phase = 'idle' | 'blocked' | 'playing' | 'over';
 export type ShareStatus =
@@ -190,7 +202,8 @@ function prefersReducedMotion(): boolean {
 /** Spends 1 life and starts a new game, or moves to 'blocked' at 0 lives. Handler only. */
 export function startGame(ctx: SessionContext): void {
   clearTimers();
-  if (!ctx.lives.spend()) {
+  const freePlay = ctx.deps.freePlay ?? FREE_PLAY;
+  if (!freePlay && !ctx.lives.spend()) {
     set({ phase: 'blocked' });
     return;
   }
