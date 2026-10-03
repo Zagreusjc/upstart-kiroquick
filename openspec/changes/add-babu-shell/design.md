@@ -94,6 +94,17 @@ Collapsed "Demo controls" panel on Home: "Next day", "Skip 2 days" and "Reset de
 | `inlababu.babu.v1` | `{ onboardedAt, lastCheckin, streak, dayOffset }` |
 | `inlababu.babu.health.v1` | Health snapshot |
 
+### Liquid Glass styling (Home tab)
+
+Inspired by Apple's iOS 26 Liquid Glass (WWDC 2025): translucent surfaces that blur and saturate what is behind them, bright specular rims, tinted glass for prominent actions, capsule shapes and springy presses. Everything is in `glass.css` (classes prefixed `lg-`) and `components/GlassScene.tsx`.
+
+- Scene: a soft pink, teal and lilac aurora drifts slowly behind every Home tab screen, so the glass has color to pick up.
+- `lg-glass` (buttons): blur 18px + saturate 180%, white rim, inner glow, layered shadow, press scales to 95% with a spring curve. Tints: `--pink` (Play, check-in), `--teal` (Baboo, Library, Blood Bank, Refer a Buddy, Settings), `--clear` (Get screened, demo controls).
+- `lg-card` (content cards) and `lg-pill` (labels, back links): more frosted so text stays readable.
+- Web limit: true refraction needs an SVG filter inside `backdrop-filter`, which iPhone Safari does not support, so the edge is simulated with highlights. `-webkit-backdrop-filter` is included for Safari.
+- Fallbacks: solid fills when `backdrop-filter` is unsupported or `prefers-reduced-transparency` is on; no drifting or press animation with `prefers-reduced-motion`.
+- The app header and bottom tab bar belong to the shell (Jolo) and are not glass yet; a floating glass tab bar would complete the look.
+
 ### Baboo artwork
 
 One inline SVG heart (no external assets). Each state changes the face (eyes, mouth, cheeks), the fill color and the visible label. `role="img"` with an `aria-label` such as "Baboo is happy".

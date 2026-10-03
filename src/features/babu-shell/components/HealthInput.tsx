@@ -39,7 +39,7 @@ export function HealthInput({ mood, day, hint }: { mood: Mood; day: DayAssessmen
   const { snapshot, update } = useHealth();
 
   return (
-    <section aria-labelledby="snapshot-title" className="rounded-2xl bg-white p-4 shadow-sm">
+    <section aria-labelledby="snapshot-title" className="lg-card rounded-3xl p-4">
       <div className="flex items-center justify-between gap-2">
         <h2 id="snapshot-title" className="text-lg font-bold">
           Today's snapshot

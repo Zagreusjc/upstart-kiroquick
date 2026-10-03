@@ -4,7 +4,7 @@ import { MENU_LINKS } from '../menuLinks';
 import { DemoControls } from './DemoControls';
 
 const backLink =
-  'inline-flex min-h-11 items-center rounded-xl px-1 text-sm font-semibold text-rose-700 underline hover:text-rose-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800';
+  'lg-pill inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-rose-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800';
 
 /** Settings, opened from the main menu: demo controls and on-device data. */
 export function Settings({ reload = () => window.location.reload() }: { reload?: () => void }) {
@@ -28,7 +28,7 @@ export function Settings({ reload = () => window.location.reload() }: { reload?:
 
       <DemoControls />
 
-      <div className="rounded-2xl bg-white p-4 shadow-sm">
+      <div className="lg-card rounded-3xl p-4">
         <h3 className="font-semibold">Your data</h3>
         <p className="mt-1 text-sm text-slate-700">
           Everything you enter stays on this phone. Nothing is sent to a server.

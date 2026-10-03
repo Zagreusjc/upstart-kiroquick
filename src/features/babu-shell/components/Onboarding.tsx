@@ -8,7 +8,7 @@ export function Onboarding() {
   const [consent, setConsent] = useState(false);
 
   return (
-    <section aria-labelledby="onboarding-title" className="rounded-2xl bg-white p-5 shadow-sm">
+    <section aria-labelledby="onboarding-title" className="lg-card rounded-3xl p-5">
       <div className="flex justify-center">
         <BabuHeart mood="happy" className="h-28 w-28" />
       </div>

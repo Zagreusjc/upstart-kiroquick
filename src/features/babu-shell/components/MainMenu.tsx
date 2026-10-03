@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { MOOD_LABELS } from '../constants';
 import { MENU_LINKS } from '../menuLinks';
@@ -6,14 +5,14 @@ import { useBabooMood } from '../useBabu';
 import { BabuHeart } from './BabuHeart';
 
 /**
- * Main menu: the landing screen of the Home tab. Big game-style buttons to
- * every part of the app, with Baboo in the middle showing the same live mood
- * as the Baboo screen.
+ * Main menu: the landing screen of the Home tab, in a Liquid Glass style
+ * (see `glass.css`). Translucent tinted-glass capsules float over a soft,
+ * slowly drifting aurora, with Baboo in the middle showing the same live
+ * mood as the Baboo screen.
  */
 
 const focusRing =
   'focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-rose-900';
-const press = 'transition-transform motion-reduce:transition-none active:translate-y-[3px]';
 
 /**
  * Exactly fill the area between the app header and bottom nav, so the page
@@ -46,55 +45,18 @@ const SIZES = {
   regularText: 'text-[clamp(1rem,2.6dvh,1.25rem)]',
 } as const;
 
-/** Dotted pink backdrop, like the mock-up. */
-const BACKDROP: CSSProperties = {
-  backgroundImage:
-    'radial-gradient(rgba(255,255,255,0.5) 1.5px, transparent 1.7px), linear-gradient(180deg, #ffdbe1 0%, #ffb3c1 100%)',
-  backgroundSize: '18px 18px, 100% 100%',
-};
-
-/** Solid outline so white lettering stays readable on pink. */
-const OUTLINED_WHITE: CSSProperties = {
-  textShadow:
-    '1px 1px 0 #be123c, -1px 1px 0 #be123c, 1px -1px 0 #be123c, -1px -1px 0 #be123c, 0 2px 3px rgba(136,19,55,0.35)',
-};
-
-const TITLE: CSSProperties = {
-  textShadow: '0 3px 0 #ffffff, 0 6px 0 rgba(190,18,60,0.22)',
-};
-
 type Variant = 'pink' | 'teal';
 
 /**
- * Solid fills with a raised "game button" shadow underneath.
- * - Dark pink #f0556a (Play), white lettering.
- * - Teal #3cc4b4, plain white lettering (as designed).
+ * Tinted Liquid Glass: dark pink #f0556a for Play, teal #3cc4b4 for the rest,
+ * both translucent with specular rims (`glass.css`). White lettering.
  */
-const VARIANT: Record<Variant, { className: string; shadow: string }> = {
-  pink: {
-    className: 'bg-[#f0556a] text-white hover:brightness-95',
-    shadow: '0 6px 0 #c23a4f, 0 10px 18px rgba(194, 58, 79, 0.28)',
-  },
-  teal: {
-    className: 'bg-[#3cc4b4] text-white hover:brightness-95',
-    shadow: '0 6px 0 #2a8f83, 0 10px 18px rgba(42, 143, 131, 0.28)',
-  },
+const VARIANT: Record<Variant, string> = {
+  pink: 'lg-glass lg-glass--pink',
+  teal: 'lg-glass lg-glass--teal',
 };
 
-/** Get screened: white with a pink border and a pink raised shadow. */
-const SCREENED_SHADOW = '0 6px 0 #f0556a, 0 10px 18px rgba(194, 58, 79, 0.22)';
-
-/**
- * One size for every regular menu button (Blood Bank, Library, Baboo and
- * Get screened): 176px wide, 44 to 64px tall depending on the screen. The
- * width fits the widest label, "Top up your lives!", and lets Get screened
- * sit between the two round buttons on a 360px phone.
- */
-const REGULAR_SIZE = SIZES.regular;
-/** Play is the biggest button: 256px wide, 64 to 128px tall. */
-const PLAY_SIZE = SIZES.play;
-
-/** A text-only menu button. `big` is the Play button. */
+/** A text-only glass capsule. `big` is the Play button. */
 function MenuButton({
   to,
   title,
@@ -108,60 +70,64 @@ function MenuButton({
   variant: Variant;
   big?: boolean;
 }) {
-  const v = VARIANT[variant];
   return (
     <Link
       to={to}
       data-size={big ? 'big' : 'regular'}
-      className={`flex shrink-0 flex-col items-center justify-center rounded-2xl text-center ${
-        big ? PLAY_SIZE : REGULAR_SIZE
-      } ${v.className} ${press} ${focusRing}`}
-      style={{ boxShadow: v.shadow }}
+      data-variant={variant}
+      className={`flex shrink-0 flex-col items-center justify-center text-center ${
+        big ? `${SIZES.play} rounded-[2.25rem]` : `${SIZES.regular} rounded-full`
+      } ${VARIANT[variant]} ${focusRing}`}
     >
       <span
         className={`leading-tight font-black tracking-wide uppercase ${big ? SIZES.playText : SIZES.regularText}`}
       >
         {title}
       </span>
-      {subtitle && <span className="text-sm leading-tight font-bold">{subtitle}</span>}
+      {subtitle && <span className="text-sm leading-tight font-semibold opacity-95">{subtitle}</span>}
     </Link>
   );
 }
 
-/** Round teal shortcut (Refer a Buddy, Settings). */
+/** Round teal glass shortcut (Refer a Buddy, Settings). */
 function RoundButton({ to, label, icon }: { to: string; label: string; icon: string }) {
   return (
     <Link
       to={to}
-      className={`flex shrink-0 flex-col items-center justify-center rounded-full text-center ${SIZES.round} ${VARIANT.teal.className} ${press} ${focusRing}`}
-      style={{ boxShadow: VARIANT.teal.shadow }}
+      data-variant="teal"
+      className={`flex shrink-0 flex-col items-center justify-center rounded-full text-center ${SIZES.round} ${VARIANT.teal} ${focusRing}`}
     >
-      <span aria-hidden="true" className="text-2xl leading-none">
+      <span aria-hidden="true" className="text-xl leading-none">
         {icon}
       </span>
-      <span className="mt-1 px-1 text-[11px] leading-tight font-extrabold">{label}</span>
+      <span className="mt-0.5 px-0.5 text-[10px] leading-[1.05] font-extrabold">{label}</span>
     </Link>
   );
 }
 
-/** Decorative ECG ribbon. Hidden from screen readers. */
-function EcgRibbon({ className }: { className: string }) {
+/** Decorative ECG strip made of teal glass. Hidden from screen readers. */
+function EcgStrip({ className }: { className: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute flex h-11 w-40 items-center justify-center border-2 border-white bg-teal-300/90 shadow-sm ${className}`}
+      className={`lg-pill pointer-events-none absolute flex h-10 w-40 items-center justify-center rounded-full ${className}`}
+      style={{ background: 'rgba(60, 196, 180, 0.72)' }}
     >
-      <svg viewBox="0 0 120 30" className="h-7 w-28" fill="none" stroke="#ffffff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 120 30" className="h-6 w-28" fill="none" stroke="#ffffff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
         <polyline points="2,16 34,16 42,6 50,26 58,10 64,16 118,16" />
       </svg>
     </div>
   );
 }
 
-function Sparkle({ className, char = '✦' }: { className: string; char?: string }) {
+function Sparkle({ className }: { className: string }) {
   return (
-    <span aria-hidden="true" className={`pointer-events-none absolute text-white select-none ${className}`}>
-      {char}
+    <span
+      aria-hidden="true"
+      className={`pointer-events-none absolute text-white select-none ${className}`}
+      style={{ textShadow: '0 0 10px rgba(255,255,255,0.9)' }}
+    >
+      ✦
     </span>
   );
 }
@@ -174,35 +140,38 @@ export function MainMenu() {
       aria-labelledby="menu-title"
       data-testid="main-menu"
       className={`relative -m-4 flex flex-col overflow-x-hidden px-2 pt-[clamp(0.75rem,3dvh,2.5rem)] pb-[clamp(0.75rem,2dvh,1.5rem)] ${FILL_SCREEN}`}
-      style={BACKDROP}
     >
-      <EcgRibbon className="top-0 -left-12 -rotate-[18deg]" />
-      <EcgRibbon className="top-9 -right-20 rotate-[14deg]" />
-      <Sparkle className="top-[28%] left-3 text-xl" />
-      <Sparkle className="top-[34%] right-4 text-lg text-teal-200" />
-      <Sparkle className="top-[55%] left-2 text-sm text-rose-300" />
-      <Sparkle className="top-[70%] right-2 text-xl" />
+      <EcgStrip className="top-1 -left-14 -rotate-[16deg]" />
+      <EcgStrip className="top-3 -right-24 rotate-[12deg]" />
+      <Sparkle className="top-[28%] left-4 text-xl" />
+      <Sparkle className="top-[34%] right-5 text-lg" />
+      <Sparkle className="top-[55%] left-3 text-sm" />
+      <Sparkle className="top-[70%] right-3 text-xl" />
 
-      <header className="relative z-10 shrink-0 text-center">
+      <header className="relative z-10 flex shrink-0 flex-col items-center text-center">
         <h2
           id="menu-title"
-          className="text-[clamp(1.9rem,9.5vw,2.75rem)] leading-none font-black tracking-wide text-rose-500"
-          style={TITLE}
+          className="lg-title text-[clamp(1.9rem,9.5vw,2.75rem)] leading-none font-black tracking-wide"
         >
           INLABABOO.
         </h2>
-        <p className="mt-2 text-xs font-extrabold tracking-[0.2em] text-white uppercase" style={OUTLINED_WHITE}>
+        <p className="lg-pill mt-2 rounded-full px-3 py-1 text-[11px] font-extrabold tracking-[0.2em] text-rose-800 uppercase">
           Merge habits. Save hearts.
         </p>
       </header>
 
-      {/* Baboo takes the height that is left, between 64px and 176px. */}
+      {/* Baboo takes the height that is left, between 64px and 176px, on a soft glow. */}
       <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center py-1">
-        <div className="flex min-h-16 w-full flex-1 items-center justify-center">
-          <BabuHeart mood={mood} className="h-full max-h-44 w-auto max-w-44 drop-shadow-md" />
+        <div className="relative flex min-h-16 w-full flex-1 items-center justify-center">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute aspect-square h-[85%] max-h-48 rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 65%)' }}
+          />
+          <BabuHeart mood={mood} className="relative h-full max-h-44 w-auto max-w-44 drop-shadow-lg" />
         </div>
         <p
-          className="mt-1 shrink-0 rounded-full bg-white/80 px-3 py-0.5 text-sm font-bold text-rose-800"
+          className="lg-pill mt-1 shrink-0 rounded-full px-3 py-0.5 text-sm font-bold text-rose-800"
           data-testid="menu-mood"
         >
           Baboo is feeling: {MOOD_LABELS[mood]}
@@ -224,8 +193,8 @@ export function MainMenu() {
           <Link
             to={MENU_LINKS.screened}
             data-size="regular"
-            className={`flex shrink-0 items-center justify-center rounded-2xl border-4 border-[#f0556a] bg-white text-center text-lg leading-tight font-black tracking-wide whitespace-nowrap text-rose-700 uppercase hover:bg-rose-50 ${SIZES.screened} ${press} ${focusRing}`}
-            style={{ boxShadow: SCREENED_SHADOW }}
+            data-variant="clear"
+            className={`lg-glass lg-glass--clear flex shrink-0 items-center justify-center rounded-full text-center text-lg leading-tight font-black tracking-wide whitespace-nowrap uppercase ${SIZES.screened} ${focusRing}`}
           >
             Get screened!
           </Link>

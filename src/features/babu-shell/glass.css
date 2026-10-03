@@ -1,0 +1,250 @@
+/*
+ * Liquid Glass styling for the Home tab (main menu, Baboo screen, settings,
+ * onboarding). Inspired by Apple's iOS 26 Liquid Glass material: translucent
+ * surfaces that blur and saturate what is behind them, bright specular rims,
+ * a soft inner glow, tinted glass for primary actions and springy presses.
+ *
+ * Web limits (honest notes):
+ * - Real refraction needs an SVG filter inside backdrop-filter, which only
+ *   Chromium supports. iPhone Safari does not, so this uses blur + saturate
+ *   and simulates the glass edge with layered inset highlights.
+ * - Fallbacks: opaque fills when backdrop-filter is unsupported or the
+ *   player asks for reduced transparency; no motion with reduced motion.
+ *
+ * All classes are prefixed `lg-` so they never clash with other features.
+ * These rules are unlayered, so they override Tailwind utilities on the same
+ * element. They only set surface properties (background, blur, borders,
+ * shadows, color); `.lg-pill` sets no `position`, so it can be `absolute`.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Scene: the colorful, slowly moving background glass needs to shine */
+/* ------------------------------------------------------------------ */
+
+.lg-scene {
+  position: relative;
+  isolation: isolate;
+  font-family: ui-rounded, 'SF Pro Rounded', -apple-system, system-ui, 'Segoe UI', sans-serif;
+}
+
+.lg-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.35) 1.2px, transparent 1.4px) 0 0 / 22px 22px,
+    linear-gradient(180deg, #ffe6eb 0%, #ffc6d2 55%, #ffdbe6 100%);
+}
+
+.lg-blob {
+  position: absolute;
+  width: 75vmax;
+  height: 75vmax;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.6;
+  will-change: transform;
+  animation: lg-drift 22s ease-in-out infinite alternate;
+}
+.lg-blob--pink {
+  top: -25vmax;
+  left: -30vmax;
+  background: radial-gradient(circle, #f0556a 0%, rgba(240, 85, 106, 0) 65%);
+}
+.lg-blob--teal {
+  top: 30%;
+  right: -35vmax;
+  background: radial-gradient(circle, #3cc4b4 0%, rgba(60, 196, 180, 0) 65%);
+  animation-duration: 26s;
+  animation-delay: -6s;
+}
+.lg-blob--lilac {
+  bottom: -35vmax;
+  left: -10vmax;
+  background: radial-gradient(circle, #a993d8 0%, rgba(169, 147, 216, 0) 65%);
+  animation-duration: 30s;
+  animation-delay: -12s;
+}
+
+@keyframes lg-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6vmax, 4vmax, 0) scale(1.08); }
+  100% { transform: translate3d(-4vmax, 8vmax, 0) scale(0.96); }
+}
+
+/* ------------------------------------------------------------------ */
+/* Glass surfaces                                                      */
+/* ------------------------------------------------------------------ */
+
+.lg-glass,
+.lg-card {
+  position: relative;
+  overflow: hidden;
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -14px 24px -16px rgba(255, 255, 255, 0.55),
+    0 12px 32px -12px rgba(122, 36, 48, 0.38),
+    0 2px 6px rgba(122, 36, 48, 0.12);
+}
+
+/* Specular sheen: a bright sweep across the top, a soft glow at the bottom. */
+.lg-glass::before,
+.lg-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.12) 30%, rgba(255, 255, 255, 0) 55%),
+    radial-gradient(120% 70% at 50% 125%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 60%);
+}
+
+/* Keep content above the sheen. */
+.lg-glass > *,
+.lg-card > * {
+  position: relative;
+}
+
+/* Interactive glass: springy press, like iOS controls. */
+.lg-glass {
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.35),
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.lg-glass:hover {
+  filter: brightness(1.04);
+}
+.lg-glass:active {
+  transform: scale(0.95);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -14px 24px -16px rgba(255, 255, 255, 0.55),
+    0 6px 16px -8px rgba(122, 36, 48, 0.35);
+}
+
+/* Tints. Primary actions use tinted glass, as Apple does for prominent buttons. */
+.lg-glass--pink {
+  background: rgba(240, 85, 106, 0.88);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(122, 20, 40, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -16px 28px -16px rgba(255, 210, 220, 0.7),
+    0 16px 36px -12px rgba(240, 85, 106, 0.6),
+    0 2px 6px rgba(122, 36, 48, 0.15);
+}
+.lg-glass--teal {
+  background: rgba(60, 196, 180, 0.88);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(7, 59, 54, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -16px 28px -16px rgba(200, 255, 245, 0.6),
+    0 14px 32px -12px rgba(42, 143, 131, 0.55),
+    0 2px 6px rgba(7, 59, 54, 0.15);
+}
+/* Disabled glass: frosted grey, no lift. */
+.lg-glass:disabled {
+  background: rgba(226, 232, 240, 0.8);
+  color: #334155;
+  text-shadow: none;
+  filter: none;
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 2px 6px rgba(51, 65, 85, 0.12);
+}
+
+/* Clear glass with a pink rim (Get screened). */
+.lg-glass--clear {
+  background: rgba(255, 255, 255, 0.55);
+  color: #be123c;
+  border: 1.5px solid rgba(240, 85, 106, 0.7);
+}
+
+/* Content cards: "regular" glass, more frosted so text stays easy to read. */
+.lg-card {
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  backdrop-filter: blur(24px) saturate(170%);
+}
+
+/* Small glass capsule (mood label, tagline, back links). No position, so it can be absolute. */
+.lg-pill {
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 6px 16px -8px rgba(122, 36, 48, 0.3);
+}
+
+/* Glossy title lettering. */
+.lg-title {
+  background: linear-gradient(180deg, #ff7a8c 0%, #f0556a 45%, #d63a52 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.9)) drop-shadow(0 8px 14px rgba(214, 58, 82, 0.3));
+}
+
+/* ------------------------------------------------------------------ */
+/* Accessibility and fallbacks                                         */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-blob {
+    animation: none;
+  }
+  .lg-glass {
+    transition: none;
+  }
+  .lg-glass:active {
+    transform: none;
+  }
+}
+
+/* No backdrop-filter, or the player asked for less transparency: solid fills. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .lg-card,
+  .lg-pill,
+  .lg-glass--clear {
+    background: rgba(255, 255, 255, 0.94);
+  }
+  .lg-glass--pink {
+    background: #f0556a;
+  }
+  .lg-glass--teal {
+    background: #3cc4b4;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lg-card,
+  .lg-pill,
+  .lg-glass--clear {
+    background: rgba(255, 255, 255, 0.96);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .lg-glass--pink {
+    background: #f0556a;
+  }
+  .lg-glass--teal {
+    background: #3cc4b4;
+  }
+  .lg-blob {
+    opacity: 0.35;
+  }
+}
