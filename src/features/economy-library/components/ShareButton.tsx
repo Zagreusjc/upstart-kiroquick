@@ -33,7 +33,7 @@ export function ShareButton({ className = '' }: { className?: string }) {
         disabled={status === 'sharing'}
         className="min-h-[44px] w-full rounded-xl bg-rose-600 px-4 py-2 font-semibold text-white shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 disabled:opacity-60"
       >
-        {status === 'sharing' ? 'Sharing…' : 'Share for a life ❤️'}
+        {status === 'sharing' ? 'Sharing…' : 'Share for a life 🩸'}
       </button>
       <p className="mt-2 min-h-[1.25rem] text-sm" role="status" aria-live="polite">
         {status === 'shared' && 'Thanks for sharing! A life was added.'}
