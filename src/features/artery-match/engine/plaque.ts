@@ -10,16 +10,17 @@ export const GRACE_MOVES = 3;
 export const SEED_DELAY_MOVES = 2;
 export const SPREAD_INTERVAL_SLOW = 2;
 export const SPREAD_INTERVAL_FAST = 1;
-export const FAST_SPREAD_SCORE = 2000;
+/** Score from which plaque spreads after every clean move instead of every 2nd. */
+export const FAST_SPREAD_SCORE = 800;
 /** Score from which one spread converts 2 tiles instead of 1. */
-export const SPREAD_COUNT_TWO_SCORE = 1000;
+export const SPREAD_COUNT_TWO_SCORE = 500;
 /** Score from which one spread converts the maximum of 3 tiles. */
-export const SPREAD_COUNT_THREE_SCORE = 2500;
+export const SPREAD_COUNT_THREE_SCORE = 1200;
 export const MAX_SPREAD_COUNT = 3;
 
 type BoardState = Pick<GameState, 'board' | 'rows' | 'cols'>;
 
-/** Clean moves (no block destroyed) needed before plaque spreads: 2 below 2000 points, then 1. */
+/** Clean moves (no block destroyed) needed before plaque spreads: 2 below 800 points, then 1. */
 export function spreadInterval(score: number): number {
   return score >= FAST_SPREAD_SCORE ? SPREAD_INTERVAL_FAST : SPREAD_INTERVAL_SLOW;
 }

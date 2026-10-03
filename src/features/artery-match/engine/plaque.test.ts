@@ -51,10 +51,10 @@ const PLAYABLE = ['RRWR', 'WPAP', 'PAWA', 'AWPW'];
 const ONE_BLOCK = ['RRWR', 'WPAP', 'PCWA', 'AWPW'];
 
 describe('spreadInterval', () => {
-  it('is 2 below 2000 points and 1 from 2000 points', () => {
+  it('is 2 below 800 points and 1 from 800 points', () => {
     expect(spreadInterval(0)).toBe(2);
-    expect(spreadInterval(1999)).toBe(2);
-    expect(spreadInterval(2000)).toBe(1);
+    expect(spreadInterval(799)).toBe(2);
+    expect(spreadInterval(800)).toBe(1);
     expect(spreadInterval(10000)).toBe(1);
   });
 
@@ -70,14 +70,14 @@ describe('spreadInterval', () => {
 
 describe('spreadCount', () => {
   it('ramps 1, 2, 3 at the named thresholds', () => {
-    expect(SPREAD_COUNT_TWO_SCORE).toBe(1000);
-    expect(SPREAD_COUNT_THREE_SCORE).toBe(2500);
+    expect(SPREAD_COUNT_TWO_SCORE).toBe(500);
+    expect(SPREAD_COUNT_THREE_SCORE).toBe(1200);
     expect(MAX_SPREAD_COUNT).toBe(3);
     expect(spreadCount(0)).toBe(1);
-    expect(spreadCount(999)).toBe(1);
-    expect(spreadCount(1000)).toBe(2);
-    expect(spreadCount(2499)).toBe(2);
-    expect(spreadCount(2500)).toBe(3);
+    expect(spreadCount(499)).toBe(1);
+    expect(spreadCount(500)).toBe(2);
+    expect(spreadCount(1199)).toBe(2);
+    expect(spreadCount(1200)).toBe(3);
     expect(spreadCount(10000)).toBe(3);
   });
 
@@ -327,7 +327,7 @@ describe('resolvePlaque: seeding', () => {
 });
 
 describe('resolvePlaque: spreading', () => {
-  it('spreads after 2 clean moves while the score is below 2000', () => {
+  it('spreads after 2 clean moves while the score is below 800', () => {
     const first = resolvePlaque(input(ONE_BLOCK, { cleanMoves: 0 }));
     expect(first.events).toEqual([]);
     expect(first.cleanMoves).toBe(1);
@@ -339,8 +339,8 @@ describe('resolvePlaque: spreading', () => {
     expect(second.cleanMoves).toBe(0);
   });
 
-  it('spreads after every clean move from 2000 points (2 tiles at that score)', () => {
-    const out = resolvePlaque(input(ONE_BLOCK, { cleanMoves: 0, score: 2000 }));
+  it('spreads after every clean move from 800 points (2 tiles at that score)', () => {
+    const out = resolvePlaque(input(ONE_BLOCK, { cleanMoves: 0, score: 800 }));
     expect(out.events.map((e) => e.type)).toEqual(['plaqueSpread', 'plaqueSpread']);
     expect(out.cleanMoves).toBe(0);
   });
@@ -368,13 +368,13 @@ describe('resolvePlaque: ramped spread', () => {
 
   it.each([
     [0, 1],
-    [999, 1],
-    [1000, 2],
-    [2499, 2],
-    [2500, 3],
+    [499, 1],
+    [500, 2],
+    [1199, 2],
+    [1200, 3],
     [9000, 3],
   ])('at score %i a spread emits %i plaqueSpread events', (score, expected) => {
-    // Interval is 2 below 2000 and 1 above; cleanMoves 1 is enough in both cases.
+    // Interval is 2 below 800 and 1 above; cleanMoves 1 is enough in both cases.
     const out = resolvePlaque(input(OPEN_BOARD, { cleanMoves: 1, score }));
     const spreads = spreadEvents(out);
     expect(spreads).toHaveLength(expected);
@@ -414,8 +414,8 @@ describe('resolvePlaque: ramped spread', () => {
     expect(one.cleanMoves).toBe(0);
   });
 
-  it('keeps the interval: no spread on the first clean move below 2000', () => {
-    const out = resolvePlaque(input(OPEN_BOARD, { cleanMoves: 0, score: 1500 }));
+  it('keeps the interval: no spread on the first clean move below 800', () => {
+    const out = resolvePlaque(input(OPEN_BOARD, { cleanMoves: 0, score: 700 }));
     expect(out.events).toEqual([]);
     expect(out.cleanMoves).toBe(1);
   });

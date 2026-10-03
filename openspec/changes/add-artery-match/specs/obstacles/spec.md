@@ -53,7 +53,7 @@ The system SHALL seed a single cholesterol block whenever the board has had zero
 The system SHALL count clean moves, the consecutive resolved player moves in which no cholesterol block was destroyed. When the clean-move count reaches the spread interval, exactly one existing block chosen with the RNG SHALL convert one orthogonally adjacent normal tile chosen with the RNG into cholesterol, and the count SHALL reset to 0. Seeding and spreading SHALL happen once per player move, after all cascades of that move resolve, and SHALL NOT trigger matches.
 
 #### Scenario: Spread after clean moves
-- **GIVEN** a board with cholesterol, a score below 2000 and 1 clean move counted
+- **GIVEN** a board with cholesterol, a score below 800 and 1 clean move counted
 - **WHEN** the player resolves a move that destroys no block
 - **THEN** exactly one normal tile orthogonally adjacent to a block SHALL become cholesterol and a `plaqueSpread` event SHALL be emitted
 
@@ -73,20 +73,20 @@ The system SHALL count clean moves, the consecutive resolved player moves in whi
 - **THEN** no tile SHALL be converted
 
 ### Requirement: Spread burst size
-The system SHALL convert up to N distinct normal tiles in one spread, where N is 1 below a score of 1000, 2 from 1000 and 3 from 2500, and SHALL never exceed 3 or decrease as the score rises. Each converted tile SHALL be orthogonally adjacent to a block that existed before the spread began, and tiles converted in the same spread SHALL NOT extend the candidates. When fewer candidates exist, all of them SHALL be converted.
+The system SHALL convert up to N distinct normal tiles in one spread, where N is 1 below a score of 500, 2 from 500 and 3 from 1200, and SHALL never exceed 3 or decrease as the score rises. Each converted tile SHALL be orthogonally adjacent to a block that existed before the spread began, and tiles converted in the same spread SHALL NOT extend the candidates. When fewer candidates exist, all of them SHALL be converted.
 
 #### Scenario: Starting size
-- **GIVEN** a score below 1000 and a spread due
+- **GIVEN** a score below 500 and a spread due
 - **WHEN** the spread resolves
 - **THEN** exactly one tile SHALL become cholesterol
 
 #### Scenario: Cap of three
-- **GIVEN** a score of 2500 or more with at least 3 candidate tiles and a spread due
+- **GIVEN** a score of 1200 or more with at least 3 candidate tiles and a spread due
 - **WHEN** the spread resolves
 - **THEN** exactly 3 distinct tiles SHALL become cholesterol and one `plaqueSpread` event SHALL be emitted for each
 
 #### Scenario: Limited by neighbours
-- **GIVEN** a score of 2500 or more and only 2 candidate tiles
+- **GIVEN** a score of 1200 or more and only 2 candidate tiles
 - **WHEN** the spread resolves
 - **THEN** both SHALL become cholesterol and no other tile SHALL change
 
@@ -96,7 +96,7 @@ The system SHALL convert up to N distinct normal tiles in one spread, where N is
 - **THEN** that tile SHALL remain unchanged
 
 ### Requirement: Escalating spread interval
-The system SHALL spread after every 2 clean moves while the score is below 2000 and after every clean move at a score of 2000 or more. The interval SHALL never increase as the score rises.
+The system SHALL spread after every 2 clean moves while the score is below 800 and after every clean move at a score of 800 or more. The interval SHALL never increase as the score rises.
 
 #### Scenario: Early game
 - **GIVEN** a score of 0 or 1999
@@ -104,7 +104,7 @@ The system SHALL spread after every 2 clean moves while the score is below 2000 
 - **THEN** it SHALL be 2
 
 #### Scenario: Late game
-- **GIVEN** a score of 2000 or more
+- **GIVEN** a score of 800 or more
 - **WHEN** the spread interval is computed
 - **THEN** it SHALL be 1
 

@@ -5,7 +5,7 @@
 - [x] 2.1 Seedable RNG and board generation with no initial matches and at least one legal move
 - [x] 2.2 Swap validation and match detection (rows and columns of 3 or more)
 - [x] 2.3 Clear, gravity, refill and cascades with multipliers
-- [x] 2.4 Spreading cholesterol plaque: 3-move grace period, seeding when plaque-free for 2 moves, spread to one orthogonal neighbour after 2 clean moves (1 from score 2,000), immobile blocks that tiles fall past, orthogonal-adjacent destruction; replaces the old 3%-10% refill spawn chance
+- [x] 2.4 Spreading cholesterol plaque: 3-move grace period, seeding when plaque-free for 2 moves, spread to one orthogonal neighbour after 2 clean moves (1 from score 800, burst of 2 from 500 and 3 from 1,200), immobile blocks that tiles fall past, orthogonal-adjacent destruction; replaces the old 3%-10% refill spawn chance
 - [x] 2.5 Legal-move detection and the occlusion loss condition
 - [x] 2.6 Scoring: 30 per match, 500 per cholesterol cleared, cascade multipliers
 - [x] 2.7 Default board 6x6 (rows/cols options kept for tests)
