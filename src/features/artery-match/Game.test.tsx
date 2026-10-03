@@ -1,7 +1,7 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   clearEventLog,
   getEventLog,
@@ -14,6 +14,7 @@ import {
 import {
   createGame,
   findLegalMove,
+  trySwap,
   validateSwap,
   type Cell,
   type GameEvent,
@@ -21,6 +22,7 @@ import {
   type SwapResult,
 } from './engine';
 import { ArteriaMatchGame } from './Game';
+import { resetGameSession } from './sessionStore';
 import type { GameDeps } from './useGameSession';
 
 const SEED = 1;
@@ -82,20 +84,32 @@ function setLives(count: number) {
 }
 
 beforeEach(() => {
+  resetGameSession();
   setLives(2);
   coins = fakeCoins();
   registerProvider('coins', coins);
   clearEventLog();
 });
 
-function renderGame(deps: GameDeps = {}) {
-  const user = userEvent.setup();
-  render(
+function gameElement(deps: GameDeps = {}) {
+  return (
     <StrictMode>
       <ArteriaMatchGame newSeed={() => SEED} stepMs={0} {...deps} />
-    </StrictMode>,
+    </StrictMode>
   );
+}
+
+function renderGame(deps: GameDeps = {}) {
+  const user = userEvent.setup();
+  render(gameElement(deps));
   return user;
+}
+
+function boardLabels() {
+  const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
+  return within(grid)
+    .getAllByRole('button')
+    .map((button) => button.getAttribute('aria-label'));
 }
 
 function cellButton(cell: Cell) {
@@ -277,5 +291,182 @@ describe('Arteria Match game', () => {
     expect(download).toHaveBeenCalledTimes(1);
     expect(lives.award).not.toHaveBeenCalled();
     expect(screen.getByRole('button', { name: 'Play again' })).toBeEnabled();
+  });
+
+  it('reports an unavailable image, without downloading or awarding, when the card fails and Web Share is missing', async () => {
+    const download = vi.fn();
+    const user = await playToGameOver({
+      makeCard: () => Promise.reject(new Error('canvas')),
+      nav: {},
+      download,
+    });
+    const shareButton = screen.getByRole('button', { name: 'Share brag card' });
+    await waitFor(() => expect(shareButton).toBeEnabled());
+
+    await user.click(shareButton);
+
+    await screen.findByText('Brag card image unavailable. Nothing was shared.');
+    expect(screen.queryByText('Image downloaded')).not.toBeInTheDocument();
+    expect(download).not.toHaveBeenCalled();
+    expect(lives.award).not.toHaveBeenCalled();
+    expect(eventsOf('share.completed')).toHaveLength(0);
+  });
+
+  it('announces the score once the move has finished playing back', async () => {
+    await playToGameOver({ makeCard: pngCard, stepMs: 5 });
+
+    expect(screen.getByText('Score after move 1: 1,200')).toBeInTheDocument();
+    expect(screen.getByText('Score: 1,200')).not.toHaveAttribute('aria-live');
+  });
+});
+
+describe('Arteria Match pointer drag', () => {
+  const TILE_PX = 40;
+  const win = window as unknown as { PointerEvent?: typeof MouseEvent };
+  const nativePointerEvent = win.PointerEvent;
+
+  // jsdom has no PointerEvent: a MouseEvent with a pointerId is enough for the board.
+  beforeEach(() => {
+    if (nativePointerEvent) return;
+    win.PointerEvent = class extends MouseEvent {
+      pointerId: number;
+      constructor(type: string, init: PointerEventInit = {}) {
+        super(type, init);
+        this.pointerId = init.pointerId ?? 0;
+      }
+    };
+  });
+
+  afterEach(() => {
+    if (!nativePointerEvent) delete win.PointerEvent;
+  });
+
+  it('swaps exactly once for a drag past 0.4 tiles and ignores the click that follows', async () => {
+    const swap = vi.fn(trySwap);
+    const user = renderGame({ swap });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
+    // jsdom has no layout: the board is 8 tiles of 40px.
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue({ width: 8 * TILE_PX } as DOMRect);
+    const proto = HTMLElement.prototype as { setPointerCapture?: (id: number) => void };
+    const hadCapture = 'setPointerCapture' in proto;
+    const original = proto.setPointerCapture;
+    const capture = vi.fn();
+    proto.setPointerCapture = capture;
+
+    try {
+      const [a, b] = findLegalMove(createGame(SEED))!;
+      const dirX = b.col - a.col;
+      const dirY = b.row - a.row;
+      const start = cellButton(a);
+      const at = (fraction: number) => ({
+        pointerId: 1,
+        clientX: 100 + dirX * fraction * TILE_PX,
+        clientY: 100 + dirY * fraction * TILE_PX,
+      });
+
+      fireEvent.pointerDown(start, at(0));
+      expect(capture).toHaveBeenCalledWith(1);
+      fireEvent.pointerMove(start, at(0.3));
+      expect(swap).not.toHaveBeenCalled();
+      fireEvent.pointerMove(start, at(0.5));
+      fireEvent.pointerMove(start, at(1));
+      fireEvent.pointerUp(start, at(1));
+      fireEvent.click(start);
+
+      expect(swap).toHaveBeenCalledTimes(1);
+      expect(swap).toHaveBeenCalledWith(expect.anything(), a, b);
+      expect(screen.getByText('Moves: 1')).toBeInTheDocument();
+      // The trailing click neither selects the tile nor starts a second swap.
+      expect(screen.getByRole('grid').querySelector('[aria-pressed="true"]')).toBeNull();
+    } finally {
+      if (hadCapture) proto.setPointerCapture = original;
+      else delete proto.setPointerCapture;
+    }
+  });
+});
+
+describe('Arteria Match keyboard', () => {
+  it('has one tab stop, moves focus with arrows and swaps with Enter then Space', async () => {
+    const swap = vi.fn(trySwap);
+    const user = renderGame({ swap });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
+    const buttons = within(grid).getAllByRole('button');
+    expect(buttons.filter((button) => button.tabIndex === 0)).toHaveLength(1);
+
+    await user.tab();
+    expect(cellButton({ row: 0, col: 0 })).toHaveFocus();
+    await user.keyboard('{ArrowLeft}{ArrowUp}');
+    expect(cellButton({ row: 0, col: 0 })).toHaveFocus();
+    await user.keyboard('{ArrowRight}{ArrowDown}');
+    expect(cellButton({ row: 1, col: 1 })).toHaveFocus();
+    expect(cellButton({ row: 1, col: 1 })).toHaveAttribute('tabindex', '0');
+    expect(cellButton({ row: 0, col: 0 })).toHaveAttribute('tabindex', '-1');
+    await user.keyboard('{ArrowUp}{ArrowLeft}');
+    expect(cellButton({ row: 0, col: 0 })).toHaveFocus();
+
+    const [a, b] = findLegalMove(createGame(SEED))!;
+    await user.keyboard('{ArrowDown}'.repeat(a.row) + '{ArrowRight}'.repeat(a.col));
+    expect(cellButton(a)).toHaveFocus();
+    await user.keyboard('{Enter}');
+    expect(cellButton(a)).toHaveAttribute('aria-pressed', 'true');
+
+    const toB =
+      b.col > a.col ? '{ArrowRight}' : b.col < a.col ? '{ArrowLeft}' : b.row > a.row ? '{ArrowDown}' : '{ArrowUp}';
+    await user.keyboard(toB);
+    expect(cellButton(b)).toHaveFocus();
+    await user.keyboard(' ');
+
+    expect(swap).toHaveBeenCalledTimes(1);
+    expect(swap).toHaveBeenCalledWith(expect.anything(), a, b);
+    expect(screen.getByText('Moves: 1')).toBeInTheDocument();
+  });
+});
+
+describe('Arteria Match session persistence', () => {
+  it('resumes the same game after the screen unmounts and remounts', async () => {
+    const user = userEvent.setup();
+    const view = render(gameElement());
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const [a, b] = findLegalMove(createGame(SEED))!;
+    await user.click(cellButton(a));
+    await user.click(cellButton(b));
+    expect(screen.getByText('Moves: 1')).toBeInTheDocument();
+    const before = boardLabels();
+    const scoreText = screen.getByText(/^Score: /).textContent;
+
+    // Switching bottom-nav tabs unmounts the routed screen.
+    view.unmount();
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+    render(gameElement());
+
+    expect(screen.queryByRole('button', { name: 'Play' })).not.toBeInTheDocument();
+    expect(screen.getByText('Moves: 1')).toBeInTheDocument();
+    expect(screen.getByText(/^Score: /).textContent).toBe(scoreText);
+    expect(boardLabels()).toEqual(before);
+    expect(lives.spend).toHaveBeenCalledTimes(1);
+  });
+
+  it('awards coins and game.finished exactly once when the screen unmounts mid-playback of the final move', async () => {
+    const user = userEvent.setup();
+    const view = render(gameElement({ swap: overSwap(), stepMs: 20, makeCard: pngCard }));
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    await user.click(cellButton({ row: 0, col: 0 }));
+    await user.click(cellButton({ row: 0, col: 1 }));
+    expect(coins.award).not.toHaveBeenCalled();
+
+    view.unmount();
+
+    await waitFor(() => expect(eventsOf('game.finished')).toHaveLength(1));
+    expect(coins.award).toHaveBeenCalledTimes(1);
+    expect(coins.award).toHaveBeenCalledWith('game_score', 10, expect.stringMatching(/^game_score:/));
+
+    render(gameElement({ makeCard: pngCard }));
+    expect(screen.getByRole('heading', { name: 'Complete Arterial Occlusion' })).toBeInTheDocument();
+    expect(screen.getByText('1,200')).toBeInTheDocument();
+    expect(coins.award).toHaveBeenCalledTimes(1);
+    expect(eventsOf('game.finished')).toHaveLength(1);
+    expect(lives.spend).toHaveBeenCalledTimes(1);
   });
 });

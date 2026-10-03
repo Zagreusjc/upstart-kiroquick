@@ -80,6 +80,31 @@ describe('shareBragCard', () => {
     expect(onShared).not.toHaveBeenCalled();
   });
 
+  it('reports unavailable, without downloading or awarding, when there is no PNG and no Web Share', async () => {
+    const download = vi.fn();
+    const onShared = vi.fn();
+
+    await expect(
+      shareBragCard({ blob: null, score: 24500, url, nav: {}, download, onShared }),
+    ).resolves.toBe('unavailable');
+
+    expect(download).not.toHaveBeenCalled();
+    expect(onShared).not.toHaveBeenCalled();
+  });
+
+  it('reports unavailable when there is no PNG and the text share fails', async () => {
+    const share = vi.fn().mockRejectedValue(new Error('boom'));
+    const download = vi.fn();
+    const onShared = vi.fn();
+
+    await expect(
+      shareBragCard({ blob: null, score: 24500, url, nav: { share }, download, onShared }),
+    ).resolves.toBe('unavailable');
+
+    expect(download).not.toHaveBeenCalled();
+    expect(onShared).not.toHaveBeenCalled();
+  });
+
   it('calls onShared only after the share promise resolves', async () => {
     let resolveShare: () => void = () => {};
     const share = vi.fn(
