@@ -71,7 +71,8 @@ describe('main menu', () => {
       expect(link.className).not.toMatch(/bg-linear/);
     }
 
-    // Play is the biggest; Blood Bank, Library, Baboo and Get screened share one size.
+    // Play is the biggest (256px wide); Get screened is a bit narrower (224px);
+    // Baboo, Library and Blood Bank share one size (176px).
     const play = menu().getByRole('link', { name: /^Play!$/ });
     expect(play).toHaveAttribute('data-size', 'big');
     expect(play.className).toContain('h-[clamp(4rem,12dvh,8rem)]');
@@ -81,8 +82,20 @@ describe('main menu', () => {
       expect(link).toHaveAttribute('data-size', 'regular');
       // Never under 44px tall (touch target), never over 64px.
       expect(link.className).toContain('h-[clamp(2.75rem,7dvh,4rem)]');
-      expect(link.className).toMatch(/\bw-44\b/);
     }
+    for (const name of [/Blood Bank/, /^Library/, /^Baboo/]) {
+      expect(menu().getByRole('link', { name }).className).toMatch(/\bw-44\b/);
+    }
+    expect(menu().getByRole('link', { name: /^Get screened!$/ }).className).toMatch(/\bw-56\b/);
+  });
+
+  it('orders the stack Play, Baboo, Library, Blood Bank', () => {
+    renderMenu();
+    const names = menu()
+      .getAllByRole('link')
+      .slice(0, 4)
+      .map((link) => link.textContent);
+    expect(names).toEqual(['Play!', 'BabooYour heart buddy!', 'LibraryPlay to learn!', 'Blood BankTop up your lives!']);
   });
 
   it('uses plain white lettering on teal (no outline)', () => {

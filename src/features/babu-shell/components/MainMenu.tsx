@@ -32,7 +32,15 @@ const FILL_SCREEN = 'h-[calc(100dvh_-_107px_-_env(safe-area-inset-bottom))] over
 const SIZES = {
   play: 'h-[clamp(4rem,12dvh,8rem)] w-64',
   regular: 'h-[clamp(2.75rem,7dvh,4rem)] w-44',
-  round: 'h-[clamp(3.5rem,8dvh,4.25rem)] w-[clamp(3.5rem,8dvh,4.25rem)]',
+  /** Get screened: same height as the teal buttons, 224px wide (Play is 256px). */
+  screened: 'h-[clamp(2.75rem,7dvh,4rem)] w-56',
+  /**
+   * Round buttons also shrink with the screen width (15vw), so the wide Get
+   * screened button still fits between them on a 360px phone: 54 + 224 + 54
+   * plus two 6px gaps = 344px, the space inside 8px side padding.
+   */
+  round:
+    'h-[min(clamp(3.5rem,8dvh,4.25rem),15vw)] w-[min(clamp(3.5rem,8dvh,4.25rem),15vw)]',
   gap: 'gap-[clamp(0.5rem,1.6dvh,1.25rem)]',
   playText: 'text-[clamp(2.5rem,7dvh,3.75rem)]',
   regularText: 'text-[clamp(1rem,2.6dvh,1.25rem)]',
@@ -165,7 +173,7 @@ export function MainMenu() {
     <section
       aria-labelledby="menu-title"
       data-testid="main-menu"
-      className={`relative -m-4 flex flex-col overflow-x-hidden px-4 pt-[clamp(0.75rem,3dvh,2.5rem)] pb-[clamp(0.75rem,2dvh,1.5rem)] ${FILL_SCREEN}`}
+      className={`relative -m-4 flex flex-col overflow-x-hidden px-2 pt-[clamp(0.75rem,3dvh,2.5rem)] pb-[clamp(0.75rem,2dvh,1.5rem)] ${FILL_SCREEN}`}
       style={BACKDROP}
     >
       <EcgRibbon className="top-0 -left-12 -rotate-[18deg]" />
@@ -206,17 +214,17 @@ export function MainMenu() {
         className={`relative mt-[clamp(0.5rem,1.6dvh,1.25rem)] flex shrink-0 flex-col items-center pb-1.5 ${SIZES.gap}`}
       >
         <MenuButton to={MENU_LINKS.play} title="Play!" variant="pink" big />
-        <MenuButton to={MENU_LINKS.bloodBank} title="Blood Bank" subtitle="Top up your lives!" variant="teal" />
-        <MenuButton to={MENU_LINKS.library} title="Library" subtitle="Play to learn!" variant="teal" />
         <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="teal" />
+        <MenuButton to={MENU_LINKS.library} title="Library" subtitle="Play to learn!" variant="teal" />
+        <MenuButton to={MENU_LINKS.bloodBank} title="Blood Bank" subtitle="Top up your lives!" variant="teal" />
 
-        <div className="flex max-w-full items-center justify-center gap-2">
+        <div className="flex max-w-full items-center justify-center gap-1.5">
           <RoundButton to={MENU_LINKS.refer} label="Refer a Buddy" icon="💞" />
 
           <Link
             to={MENU_LINKS.screened}
             data-size="regular"
-            className={`flex shrink-0 items-center justify-center rounded-2xl border-4 border-[#f0556a] bg-white text-center text-lg leading-tight font-black tracking-wide whitespace-nowrap text-rose-700 uppercase hover:bg-rose-50 ${REGULAR_SIZE} ${press} ${focusRing}`}
+            className={`flex shrink-0 items-center justify-center rounded-2xl border-4 border-[#f0556a] bg-white text-center text-lg leading-tight font-black tracking-wide whitespace-nowrap text-rose-700 uppercase hover:bg-rose-50 ${SIZES.screened} ${press} ${focusRing}`}
             style={{ boxShadow: SCREENED_SHADOW }}
           >
             Get screened!
