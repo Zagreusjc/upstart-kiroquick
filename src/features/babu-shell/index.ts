@@ -1,4 +1,5 @@
-import type { FeatureModule } from '../../core/contracts';
+import type { FeatureModule } from '../../core';
+import { createHealthProvider } from './healthProvider';
 import { BabuShellScreen } from './Screen';
 
 const babuShell: FeatureModule = {
@@ -7,8 +8,9 @@ const babuShell: FeatureModule = {
   order: 1,
   navItem: { label: 'Home', icon: '🏠', path: '/home' },
   Component: BabuShellScreen,
-  // CJ: register the real HealthProvider here when it is ready:
-  // register(api) { api.registerProvider('health', createHealthProvider()); },
+  register(api) {
+    api.registerProvider('health', createHealthProvider());
+  },
 };
 
 export default babuShell;
