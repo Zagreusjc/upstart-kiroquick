@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import { MOOD_LABELS } from '../constants';
+import { MOOD_LABELS, type Mood } from '../constants';
+import '../menu.css';
 import { MENU_LINKS } from '../menuLinks';
 import { useBabooMood } from '../useBabu';
 import { BabuHeart } from './BabuHeart';
@@ -8,12 +9,12 @@ import { BabuHeart } from './BabuHeart';
 /**
  * Main menu: the landing screen of the Home tab. Big game-style buttons to
  * every part of the app, with Baboo in the middle showing the same live mood
- * as the Baboo screen.
+ * as the Baboo screen. Finishing touches (gloss, press, shine, 3D title,
+ * floating Baboo, twinkles) live in `menu.css`.
  */
 
 const focusRing =
   'focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-rose-900';
-const press = 'transition-transform motion-reduce:transition-none active:translate-y-[3px]';
 
 /**
  * Exactly fill the area between the app header and bottom nav, so the page
@@ -46,11 +47,11 @@ const SIZES = {
   regularText: 'text-[clamp(1rem,2.6dvh,1.25rem)]',
 } as const;
 
-/** Dotted pink backdrop, like the mock-up. */
+/** Dotted pink backdrop, like the mock-up, with a soft light at the top. */
 const BACKDROP: CSSProperties = {
   backgroundImage:
-    'radial-gradient(rgba(255,255,255,0.5) 1.5px, transparent 1.7px), linear-gradient(180deg, #ffdbe1 0%, #ffb3c1 100%)',
-  backgroundSize: '18px 18px, 100% 100%',
+    'radial-gradient(rgba(255,255,255,0.5) 1.5px, transparent 1.7px), radial-gradient(120% 55% at 50% 0%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 60%), linear-gradient(180deg, #ffdde3 0%, #ffbcc8 60%, #ffa9b9 100%)',
+  backgroundSize: '18px 18px, 100% 100%, 100% 100%',
 };
 
 /** Solid outline so white lettering stays readable on pink. */
@@ -59,40 +60,17 @@ const OUTLINED_WHITE: CSSProperties = {
     '1px 1px 0 #be123c, -1px 1px 0 #be123c, 1px -1px 0 #be123c, -1px -1px 0 #be123c, 0 2px 3px rgba(136,19,55,0.35)',
 };
 
-const TITLE: CSSProperties = {
-  textShadow: '0 3px 0 #ffffff, 0 6px 0 rgba(190,18,60,0.22)',
-};
-
 type Variant = 'pink' | 'teal';
 
 /**
- * Solid fills with a raised "game button" shadow underneath.
+ * Solid fills; the raised lip, drop shadow and gloss come from `.mm-btn`.
  * - Dark pink #f0556a (Play), white lettering.
  * - Teal #3cc4b4, plain white lettering (as designed).
  */
-const VARIANT: Record<Variant, { className: string; shadow: string }> = {
-  pink: {
-    className: 'bg-[#f0556a] text-white hover:brightness-95',
-    shadow: '0 6px 0 #c23a4f, 0 10px 18px rgba(194, 58, 79, 0.28)',
-  },
-  teal: {
-    className: 'bg-[#3cc4b4] text-white hover:brightness-95',
-    shadow: '0 6px 0 #2a8f83, 0 10px 18px rgba(42, 143, 131, 0.28)',
-  },
+const VARIANT: Record<Variant, string> = {
+  pink: 'mm-btn mm-btn--pink bg-[#f0556a] text-white',
+  teal: 'mm-btn mm-btn--teal bg-[#3cc4b4] text-white',
 };
-
-/** Get screened: white with a pink border and a pink raised shadow. */
-const SCREENED_SHADOW = '0 6px 0 #f0556a, 0 10px 18px rgba(194, 58, 79, 0.22)';
-
-/**
- * One size for every regular menu button (Blood Bank, Library, Baboo and
- * Get screened): 176px wide, 44 to 64px tall depending on the screen. The
- * width fits the widest label, "Top up your lives!", and lets Get screened
- * sit between the two round buttons on a 360px phone.
- */
-const REGULAR_SIZE = SIZES.regular;
-/** Play is the biggest button: 256px wide, 64 to 128px tall. */
-const PLAY_SIZE = SIZES.play;
 
 /** A text-only menu button. `big` is the Play button. */
 function MenuButton({
@@ -108,22 +86,23 @@ function MenuButton({
   variant: Variant;
   big?: boolean;
 }) {
-  const v = VARIANT[variant];
   return (
     <Link
       to={to}
       data-size={big ? 'big' : 'regular'}
-      className={`flex shrink-0 flex-col items-center justify-center rounded-2xl text-center ${
-        big ? PLAY_SIZE : REGULAR_SIZE
-      } ${v.className} ${press} ${focusRing}`}
-      style={{ boxShadow: v.shadow }}
+      data-variant={variant}
+      className={`flex shrink-0 flex-col items-center justify-center text-center ${
+        big ? `${SIZES.play} mm-play rounded-[1.75rem]` : `${SIZES.regular} rounded-2xl`
+      } ${VARIANT[variant]} ${focusRing}`}
     >
       <span
-        className={`leading-tight font-black tracking-wide uppercase ${big ? SIZES.playText : SIZES.regularText}`}
+        className={`leading-tight font-black tracking-wide uppercase ${
+          big ? `${SIZES.playText} tracking-[0.06em]` : SIZES.regularText
+        }`}
       >
         {title}
       </span>
-      {subtitle && <span className="text-sm leading-tight font-bold">{subtitle}</span>}
+      {subtitle && <span className="text-sm leading-tight font-bold opacity-95">{subtitle}</span>}
     </Link>
   );
 }
@@ -133,13 +112,13 @@ function RoundButton({ to, label, icon }: { to: string; label: string; icon: str
   return (
     <Link
       to={to}
-      className={`flex shrink-0 flex-col items-center justify-center rounded-full text-center ${SIZES.round} ${VARIANT.teal.className} ${press} ${focusRing}`}
-      style={{ boxShadow: VARIANT.teal.shadow }}
+      data-variant="teal"
+      className={`flex shrink-0 flex-col items-center justify-center rounded-full text-center ${SIZES.round} ${VARIANT.teal} ${focusRing}`}
     >
-      <span aria-hidden="true" className="text-2xl leading-none">
+      <span aria-hidden="true" className="mm-icon text-xl leading-none">
         {icon}
       </span>
-      <span className="mt-1 px-1 text-[11px] leading-tight font-extrabold">{label}</span>
+      <span className="mt-0.5 px-0.5 text-[10px] leading-[1.05] font-extrabold">{label}</span>
     </Link>
   );
 }
@@ -149,7 +128,7 @@ function EcgRibbon({ className }: { className: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute flex h-11 w-40 items-center justify-center border-2 border-white bg-teal-300/90 shadow-sm ${className}`}
+      className={`pointer-events-none absolute flex h-11 w-40 items-center justify-center rounded-md border-2 border-white bg-[#5fd6c6] shadow-[0_6px_14px_-6px_rgba(42,143,131,0.6)] ${className}`}
     >
       <svg viewBox="0 0 120 30" className="h-7 w-28" fill="none" stroke="#ffffff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
         <polyline points="2,16 34,16 42,6 50,26 58,10 64,16 118,16" />
@@ -158,13 +137,25 @@ function EcgRibbon({ className }: { className: string }) {
   );
 }
 
-function Sparkle({ className, char = '✦' }: { className: string; char?: string }) {
+function Sparkle({ className, delay }: { className: string; delay: string }) {
   return (
-    <span aria-hidden="true" className={`pointer-events-none absolute text-white select-none ${className}`}>
-      {char}
+    <span
+      aria-hidden="true"
+      className={`mm-sparkle pointer-events-none absolute text-white select-none ${className}`}
+      style={{ animationDelay: delay }}
+    >
+      ✦
     </span>
   );
 }
+
+/** Mood dot color. The label text carries the meaning; the dot is decoration. */
+const MOOD_DOT: Record<Mood, string> = {
+  happy: 'bg-emerald-500',
+  ok: 'bg-amber-400',
+  tired: 'bg-rose-400',
+  rest: 'bg-violet-400',
+};
 
 export function MainMenu() {
   const { mood } = useBabooMood();
@@ -173,38 +164,50 @@ export function MainMenu() {
     <section
       aria-labelledby="menu-title"
       data-testid="main-menu"
-      className={`relative -m-4 flex flex-col overflow-x-hidden px-2 pt-[clamp(0.75rem,3dvh,2.5rem)] pb-[clamp(0.75rem,2dvh,1.5rem)] ${FILL_SCREEN}`}
+      className={`mm-root relative -m-4 flex flex-col overflow-x-hidden px-2 pt-[clamp(0.75rem,3dvh,2.5rem)] pb-[clamp(0.75rem,2dvh,1.5rem)] ${FILL_SCREEN}`}
       style={BACKDROP}
     >
+      {/* Soft colored light for depth. Decorative. */}
+      <span aria-hidden="true" className="mm-glow top-[18%] -right-16 h-48 w-48 bg-teal-200/50" />
+      <span aria-hidden="true" className="mm-glow bottom-[12%] -left-16 h-52 w-52 bg-violet-200/50" />
+      <span aria-hidden="true" className="mm-glow top-[42%] left-1/2 h-56 w-56 -translate-x-1/2 bg-white/40" />
+
       <EcgRibbon className="top-0 -left-12 -rotate-[18deg]" />
       <EcgRibbon className="top-9 -right-20 rotate-[14deg]" />
-      <Sparkle className="top-[28%] left-3 text-xl" />
-      <Sparkle className="top-[34%] right-4 text-lg text-teal-200" />
-      <Sparkle className="top-[55%] left-2 text-sm text-rose-300" />
-      <Sparkle className="top-[70%] right-2 text-xl" />
+      <Sparkle className="top-[28%] left-3 text-xl" delay="0s" />
+      <Sparkle className="top-[34%] right-4 text-lg" delay="0.9s" />
+      <Sparkle className="top-[55%] left-2 text-sm" delay="1.6s" />
+      <Sparkle className="top-[70%] right-2 text-xl" delay="0.4s" />
 
       <header className="relative z-10 shrink-0 text-center">
         <h2
           id="menu-title"
-          className="text-[clamp(1.9rem,9.5vw,2.75rem)] leading-none font-black tracking-wide text-rose-500"
-          style={TITLE}
+          className="mm-title text-[clamp(1.9rem,9.5vw,2.75rem)] leading-none font-black tracking-wide"
         >
           INLABABOO.
         </h2>
-        <p className="mt-2 text-xs font-extrabold tracking-[0.2em] text-white uppercase" style={OUTLINED_WHITE}>
+        <p className="mt-2.5 text-xs font-extrabold tracking-[0.22em] text-white uppercase" style={OUTLINED_WHITE}>
           Merge habits. Save hearts.
         </p>
       </header>
 
-      {/* Baboo takes the height that is left, between 64px and 176px. */}
+      {/* Baboo takes the height that is left, between 64px and 176px, floating on a soft glow. */}
       <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center py-1">
-        <div className="flex min-h-16 w-full flex-1 items-center justify-center">
-          <BabuHeart mood={mood} className="h-full max-h-44 w-auto max-w-44 drop-shadow-md" />
+        <div className="relative flex min-h-16 w-full flex-1 items-center justify-center">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute aspect-square h-[90%] max-h-52 rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 66%)' }}
+          />
+          <div className="mm-float relative flex h-full items-center justify-center">
+            <BabuHeart mood={mood} className="h-full max-h-44 w-auto max-w-44 drop-shadow-lg" />
+          </div>
         </div>
         <p
-          className="mt-1 shrink-0 rounded-full bg-white/80 px-3 py-0.5 text-sm font-bold text-rose-800"
+          className="mt-1 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/90 px-3 py-0.5 text-sm font-bold text-rose-800 shadow-[0_4px_12px_-4px_rgba(190,18,60,0.35)] ring-1 ring-white"
           data-testid="menu-mood"
         >
+          <span aria-hidden="true" className={`h-2 w-2 rounded-full ${MOOD_DOT[mood]}`} />
           Baboo is feeling: {MOOD_LABELS[mood]}
         </p>
       </div>
@@ -224,8 +227,8 @@ export function MainMenu() {
           <Link
             to={MENU_LINKS.screened}
             data-size="regular"
-            className={`flex shrink-0 items-center justify-center rounded-2xl border-4 border-[#f0556a] bg-white text-center text-lg leading-tight font-black tracking-wide whitespace-nowrap text-rose-700 uppercase hover:bg-rose-50 ${SIZES.screened} ${press} ${focusRing}`}
-            style={{ boxShadow: SCREENED_SHADOW }}
+            data-variant="white"
+            className={`mm-btn mm-btn--white flex shrink-0 items-center justify-center rounded-2xl border-4 border-[#f0556a] bg-white text-center text-lg leading-tight font-black tracking-wide whitespace-nowrap text-rose-600 uppercase ${SIZES.screened} ${focusRing}`}
           >
             Get screened!
           </Link>

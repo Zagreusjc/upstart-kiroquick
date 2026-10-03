@@ -65,11 +65,13 @@ describe('main menu', () => {
     expect(screen.getAllByRole('img', { name: /^Baboo is/ })).toHaveLength(1);
     expect(menu().getByRole('link', { name: /^Baboo/ }).querySelector('svg')).toBeNull();
 
-    // Solid fills (no gradients) with a raised shadow under every button.
+    // Solid fills (no gradient backgrounds); every button is a raised game button
+    // (lip, drop shadow, gloss and press from menu.css).
     for (const link of menu().getAllByRole('link')) {
-      expect(link.style.boxShadow).not.toBe('');
+      expect(link.className).toMatch(/\bmm-btn\b/);
       expect(link.className).not.toMatch(/bg-linear/);
     }
+    expect(menu().getByRole('link', { name: /^Play!$/ }).className).toMatch(/\bmm-play\b/);
 
     // Play is the biggest (256px wide); Get screened is a bit narrower (224px);
     // Baboo, Library and Blood Bank share one size (176px).
