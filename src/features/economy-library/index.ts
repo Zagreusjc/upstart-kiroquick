@@ -1,5 +1,6 @@
-import type { FeatureModule } from '../../core/contracts';
+import type { FeatureModule } from '../../core';
 import { EconomyLibraryScreen } from './Screen';
+import { getEconomyStore } from './store';
 
 const economyLibrary: FeatureModule = {
   id: 'economy-library',
@@ -7,11 +8,16 @@ const economyLibrary: FeatureModule = {
   order: 3,
   navItem: { label: 'Library', icon: '📚', path: '/library' },
   Component: EconomyLibraryScreen,
-  // Prime: register the real providers here when they are ready:
-  // register(api) {
-  //   api.registerProvider('coins', createCoinsProvider());
-  //   api.registerProvider('lives', createLivesProvider());
-  // },
+
+  // Register the real shared economy. The same instances back the screen and
+  // the app header, so coins and lives stay in sync everywhere.
+  register(api) {
+    const store = getEconomyStore();
+    api.registerProvider('coins', store.coins);
+    api.registerProvider('lives', store.lives);
+    // Refill lives from health (steps/sleep targets, once per day).
+    store.lives.bindHealth();
+  },
 };
 
 export default economyLibrary;
