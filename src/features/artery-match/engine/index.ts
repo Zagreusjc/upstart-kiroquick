@@ -27,7 +27,7 @@ export { generateBoard, inBounds, isAdjacent, swapCells } from './board';
 export { findLegalMove, hasLegalMove, validateSwap } from './legal';
 export { applyGravity, rngRefill } from './resolve';
 export type { RefillSource } from './resolve';
-export { createGame, trySwap, trySwapWith } from './game';
+export { DEFAULT_COLS, DEFAULT_ROWS, createGame, trySwap, trySwapWith } from './game';
 export {
   FAST_SPREAD_SCORE,
   GRACE_MOVES,

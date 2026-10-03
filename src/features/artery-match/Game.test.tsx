@@ -151,7 +151,7 @@ function eventsOf(type: string) {
 }
 
 describe('Arteria Match game', () => {
-  it('spends a life and shows an 8x8 board when starting with lives', async () => {
+  it('spends a life and shows a 6x6 board when starting with lives', async () => {
     const user = renderGame();
     expect(screen.getByRole('heading', { name: 'Arteria Match' })).toBeInTheDocument();
     expect(screen.getByText('Each game costs 1 life.')).toBeInTheDocument();
@@ -161,7 +161,7 @@ describe('Arteria Match game', () => {
     expect(lives.spend).toHaveBeenCalledTimes(1);
     expect(lives.lives()).toBe(1);
     const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
-    expect(within(grid).getAllByRole('gridcell')).toHaveLength(64);
+    expect(within(grid).getAllByRole('gridcell')).toHaveLength(36);
     expect(screen.getByText('Score: 0')).toBeInTheDocument();
   });
 
@@ -346,8 +346,8 @@ describe('Arteria Match pointer drag', () => {
     const user = renderGame({ swap });
     await user.click(screen.getByRole('button', { name: 'Play' }));
     const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
-    // jsdom has no layout: the board is 8 tiles of 40px.
-    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue({ width: 8 * TILE_PX } as DOMRect);
+    // jsdom has no layout: the board is 6 tiles of 40px.
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue({ width: 6 * TILE_PX } as DOMRect);
     const proto = HTMLElement.prototype as { setPointerCapture?: (id: number) => void };
     const hadCapture = 'setPointerCapture' in proto;
     const original = proto.setPointerCapture;

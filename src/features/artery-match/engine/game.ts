@@ -9,11 +9,13 @@ import { CHOLESTEROL_POINTS, POINTS_PER_TILE, waveMultiplier } from './scoring';
 import type { Board, Cell, GameEvent, GameState, SwapResult, Tile, TileType } from './types';
 
 const MAX_BOARD_ATTEMPTS = 100;
+export const DEFAULT_ROWS = 6;
+export const DEFAULT_COLS = 6;
 
-/** New game: default 8x8, no matches, no cholesterol, at least one legal move. */
+/** New game: default 6x6, no matches, no cholesterol, at least one legal move. */
 export function createGame(seed: number, opts: { rows?: number; cols?: number } = {}): GameState {
-  const rows = opts.rows ?? 8;
-  const cols = opts.cols ?? 8;
+  const rows = opts.rows ?? DEFAULT_ROWS;
+  const cols = opts.cols ?? DEFAULT_COLS;
   const rng = createRng(seed);
   for (let attempt = 0; attempt < MAX_BOARD_ATTEMPTS; attempt++) {
     const { board, nextId } = generateBoard(rows, cols, rng, 1);
