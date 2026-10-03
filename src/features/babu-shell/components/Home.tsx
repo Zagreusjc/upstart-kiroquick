@@ -33,14 +33,14 @@ export function Home() {
     <div className="space-y-4">
       <Link
         to={MENU_LINKS.home}
-        className="lg-pill inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-rose-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800"
+        className="inline-flex min-h-11 items-center rounded-xl px-1 text-sm font-semibold text-rose-700 underline hover:text-rose-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800"
       >
         <span aria-hidden="true">←&nbsp;</span>Main menu
       </Link>
       <section
         aria-labelledby="babu-title"
         data-testid="babu-hero"
-        className={`${HERO_HEIGHT} flex flex-col items-center justify-between lg-card rounded-[2rem] px-4 pt-6 pb-3 text-center`}
+        className={`${HERO_HEIGHT} flex flex-col items-center justify-between rounded-3xl bg-linear-to-b from-white to-rose-100 px-4 pt-6 pb-3 text-center shadow-sm`}
       >
         <h2 id="babu-title" className="text-sm font-semibold tracking-wide text-rose-700 uppercase">
           Your Baboo

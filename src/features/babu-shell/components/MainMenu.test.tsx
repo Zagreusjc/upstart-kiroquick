@@ -65,9 +65,10 @@ describe('main menu', () => {
     expect(screen.getAllByRole('img', { name: /^Baboo is/ })).toHaveLength(1);
     expect(menu().getByRole('link', { name: /^Baboo/ }).querySelector('svg')).toBeNull();
 
-    // Every button is a Liquid Glass surface (translucent, specular rim, shadow from glass.css).
+    // Solid fills (no gradients) with a raised shadow under every button.
     for (const link of menu().getAllByRole('link')) {
-      expect(link.className).toMatch(/\blg-glass\b/);
+      expect(link.style.boxShadow).not.toBe('');
+      expect(link.className).not.toMatch(/bg-linear/);
     }
 
     // Play is the biggest (256px wide); Get screened is a bit narrower (224px);
@@ -97,15 +98,22 @@ describe('main menu', () => {
     expect(names).toEqual(['Play!', 'BabooYour heart buddy!', 'LibraryPlay to learn!', 'Blood BankTop up your lives!']);
   });
 
-  it('uses pink glass for Play, teal glass for the rest, and clear glass for Get screened', () => {
+  it('uses plain white lettering on teal (no outline)', () => {
     renderMenu();
-    const link = (name: RegExp) => menu().getByRole('link', { name });
-    expect(link(/^Play!$/).className).toContain('lg-glass--pink');
     for (const name of [/Blood Bank/, /^Library/, /^Baboo/, /Refer a Buddy/, /Settings/]) {
-      expect(link(name).className).toContain('lg-glass--teal');
-      expect(link(name)).toHaveAttribute('data-variant', 'teal');
+      expect(menu().getByRole('link', { name }).style.textShadow).toBe('');
     }
-    expect(link(/^Get screened!$/).className).toContain('lg-glass--clear');
+  });
+
+  it('uses dark pink for Play, white-lettered teal for the rest, and a white Get screened', () => {
+    renderMenu();
+    const cls = (name: RegExp) => menu().getByRole('link', { name }).className;
+    expect(cls(/^Play!$/)).toContain('bg-[#f0556a]');
+    for (const name of [/Blood Bank/, /^Library/, /^Baboo/, /Refer a Buddy/, /Settings/]) {
+      expect(cls(name)).toContain('bg-[#3cc4b4]');
+      expect(cls(name)).toContain('text-white');
+    }
+    expect(cls(/^Get screened!$/)).toContain('bg-white');
     expect(menu().getByRole('link', { name: /^Library/ })).toHaveTextContent('Play to learn!');
   });
 
