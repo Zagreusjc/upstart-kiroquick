@@ -1,10 +1,11 @@
 import { generateBoard, swapCells } from './board';
 import { hasLegalMove, validateSwap } from './legal';
 import { matchedCells } from './match';
+import { resolvePlaque } from './plaque';
 import { applyGravity, rngRefill } from './resolve';
 import type { RefillSource } from './resolve';
 import { createRng } from './rng';
-import { CHOLESTEROL_POINTS, POINTS_PER_TILE, spawnChance, waveMultiplier } from './scoring';
+import { CHOLESTEROL_POINTS, POINTS_PER_TILE, waveMultiplier } from './scoring';
 import type { Board, Cell, GameEvent, GameState, SwapResult, Tile, TileType } from './types';
 
 const MAX_BOARD_ATTEMPTS = 100;
@@ -63,7 +64,8 @@ function adjacentCholesterol(board: Board, cleared: Cell[]): Cell[] {
 
 /**
  * Validates and resolves a swap with an explicit refill source (the test seam).
- * Each wave: score matches and adjacent cholesterol, clear, gravity, refill.
+ * Each wave: score matches and adjacent cholesterol, clear, gravity (plaque fixed), refill.
+ * After the last wave, at most one plaque seed or spread (resolvePlaque).
  * A rejected swap returns { ok: false, reason } and never touches the input state.
  */
 export function trySwapWith(state: GameState, a: Cell, b: Cell, refill: RefillSource): SwapResult {
@@ -103,8 +105,7 @@ export function trySwapWith(state: GameState, a: Cell, b: Cell, refill: RefillSo
     const fallen = applyGravity(holed);
     events.push({ type: 'fall', wave, moves: fallen.moves });
 
-    // Refill top to bottom, left to right, at the chance for the score after this wave.
-    const chance = spawnChance(score);
+    // Refill empty cells top to bottom, left to right (never cholesterol).
     const spawned: { id: number; type: TileType; cell: Cell }[] = [];
     const filled: Tile[][] = [];
     for (let r = 0; r < fallen.board.length; r++) {
@@ -115,7 +116,7 @@ export function trySwapWith(state: GameState, a: Cell, b: Cell, refill: RefillSo
           row.push(existing);
           continue;
         }
-        const tile: Tile = { id: nextId++, type: refill.next(chance) };
+        const tile: Tile = { id: nextId++, type: refill.next() };
         row.push(tile);
         spawned.push({ id: tile.id, type: tile.type, cell: { row: r, col: c } });
       }
@@ -125,15 +126,33 @@ export function trySwapWith(state: GameState, a: Cell, b: Cell, refill: RefillSo
     events.push({ type: 'refill', wave, spawned, board });
   }
 
+  // Once per move, after every cascade: seed or spread plaque (never re-resolves matches).
+  const moves = state.moves + 1;
+  const plaque = resolvePlaque({
+    board,
+    rows: state.rows,
+    cols: state.cols,
+    moves,
+    score,
+    destroyed: cholesterolCleared - state.cholesterolCleared,
+    cleanMoves: state.cleanMoves,
+    movesWithoutPlaque: state.movesWithoutPlaque,
+    rngState: refill.state(),
+    nextId,
+  });
+  if (plaque.event) events.push(plaque.event);
+
   const nextState: GameState = {
     ...state,
-    board,
+    board: plaque.board,
     score,
-    nextId,
-    moves: state.moves + 1,
+    nextId: plaque.nextId,
+    moves,
     cholesterolCleared,
     maxCascade: Math.max(state.maxCascade, wave),
-    rngState: refill.state(),
+    cleanMoves: plaque.cleanMoves,
+    movesWithoutPlaque: plaque.movesWithoutPlaque,
+    rngState: plaque.rngState,
     over: false,
   };
   const over = !hasLegalMove(nextState);

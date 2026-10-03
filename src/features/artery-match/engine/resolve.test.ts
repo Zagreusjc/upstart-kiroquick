@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { trySwapWith } from './game';
+import { countCholesterol } from './plaque';
 import { applyGravity } from './resolve';
 import { gridOf, scriptedRefill, stateFromGrid } from './test-helpers';
-import type { GameEvent, SwapResult, Tile, TileType } from './types';
+import type { GameEvent, NormalTileType, SwapResult, Tile } from './types';
 
 function expectOk(result: SwapResult) {
   if (!result.ok) throw new Error(`expected ok, got ${result.reason}`);
   return result;
 }
 
-const types = (letters: string): TileType[] =>
+const types = (letters: string): NormalTileType[] =>
   [...letters].map(
-    (l) =>
-      ({ R: 'rbc', W: 'wbc', P: 'platelet', A: 'plasma', C: 'cholesterol' })[l] as TileType,
+    (l) => ({ R: 'rbc', W: 'wbc', P: 'platelet', A: 'plasma' })[l] as NormalTileType,
   );
 
 const ofType = <T extends GameEvent['type']>(events: GameEvent[], type: T) =>
@@ -89,32 +89,74 @@ describe('resolve: cholesterol', () => {
   });
 });
 
-describe('resolve: gravity and refill', () => {
-  it('drops tiles (including cholesterol) into holes and refills every hole', () => {
-    const state = stateFromGrid(['CWP', 'APW', 'RWA', 'RAP', 'WRW']);
-    const cholesterolId = state.board[0][0].id;
-    const { state: next, events } = expectOk(
+// Column 0 has a block on top; the swap clears the R run below the A, which falls past nothing.
+const GRAVITY_GRID = ['CWP', 'APW', 'RWA', 'RAP', 'WRW'];
+const gravitySwap = (extra: Parameters<typeof stateFromGrid>[1] = {}) => {
+  const state = stateFromGrid(GRAVITY_GRID, extra);
+  return {
+    state,
+    result: expectOk(
       trySwapWith(state, { row: 4, col: 0 }, { row: 4, col: 1 }, scriptedRefill(types('RAP'))),
-    );
+    ),
+  };
+};
+
+describe('resolve: gravity and refill', () => {
+  it('tiles pass over a fixed block; the block never moves and refill fills the cells below it', () => {
+    const { state, result } = gravitySwap();
+    const { state: next, events } = result;
+    const cholesterolId = state.board[0][0].id;
+    const plasmaId = state.board[1][0].id;
     const [fall] = ofType(events, 'fall');
+    expect(fall.moves.some((m) => m.id === cholesterolId)).toBe(false);
     expect(fall.moves).toContainEqual({
-      id: cholesterolId,
-      from: { row: 0, col: 0 },
-      to: { row: 3, col: 0 },
+      id: plasmaId,
+      from: { row: 1, col: 0 },
+      to: { row: 4, col: 0 },
     });
     const [refill] = ofType(events, 'refill');
-    expect(refill.spawned).toHaveLength(3);
     expect(refill.spawned.map((s) => s.cell)).toEqual([
-      { row: 0, col: 0 },
       { row: 1, col: 0 },
       { row: 2, col: 0 },
+      { row: 3, col: 0 },
     ]);
-    expect(gridOf(next)).toEqual(['RWP', 'APW', 'PWA', 'CAP', 'AWW']);
-    expect(next.board[3][0].id).toBe(cholesterolId);
+    expect(gridOf(next)).toEqual(['CWP', 'RPW', 'AWA', 'PAP', 'AWW']);
+    expect(next.board[0][0]).toEqual({ id: cholesterolId, type: 'cholesterol' });
     // Fresh ids start at nextId.
     expect(refill.spawned.map((s) => s.id)).toEqual([16, 17, 18]);
     expect(next.nextId).toBe(19);
     expect(refill.board).toBe(next.board);
+    // First clean move: below the spread interval, nothing spreads.
+    expect(ofType(events, 'plaqueSpread')).toHaveLength(0);
+    expect(next.cleanMoves).toBe(1);
+  });
+
+  it('applyGravity keeps cholesterol fixed and drops tiles over it into holes below', () => {
+    const t = (id: number): Tile => ({ id, type: 'rbc' });
+    const c = (id: number): Tile => ({ id, type: 'cholesterol' });
+    const { board, moves } = applyGravity([
+      [t(1), t(5)],
+      [c(2), null],
+      [null, t(6)],
+      [t(3), c(7)],
+      [null, null],
+    ]);
+    expect(board.map((row) => row.map((cell) => cell?.id ?? null))).toEqual([
+      [null, null],
+      [2, null],
+      [null, 5],
+      [1, 7],
+      [3, 6],
+    ]);
+    expect(moves).toEqual(
+      expect.arrayContaining([
+        { id: 3, from: { row: 3, col: 0 }, to: { row: 4, col: 0 } },
+        { id: 1, from: { row: 0, col: 0 }, to: { row: 3, col: 0 } },
+        { id: 6, from: { row: 2, col: 1 }, to: { row: 4, col: 1 } },
+        { id: 5, from: { row: 0, col: 1 }, to: { row: 2, col: 1 } },
+      ]),
+    );
+    expect(moves).toHaveLength(4);
   });
 
   it('applyGravity compacts each column downward and lists the moves', () => {
@@ -185,5 +227,86 @@ describe('resolve: cascades', () => {
       trySwapWith(state, { row: 0, col: 2 }, { row: 0, col: 3 }, scriptedRefill(types('PWP'))),
     );
     expect(next.maxCascade).toBe(5);
+  });
+});
+
+describe('resolve: plaque after the move', () => {
+  it('spreads once after 2 clean moves below 2000 points, after the last refill', () => {
+    const { result } = gravitySwap({ moves: 10, cleanMoves: 1 });
+    const { state: next, events } = result;
+    const spreads = ofType(events, 'plaqueSpread');
+    expect(spreads).toHaveLength(1);
+    expect(spreads[0].from).toEqual({ row: 0, col: 0 });
+    expect([
+      { row: 0, col: 1 },
+      { row: 1, col: 0 },
+    ]).toContainEqual(spreads[0].to);
+    const order = events.map((e) => e.type).filter((t) => t !== 'gameOver');
+    expect(order.lastIndexOf('refill')).toBe(order.indexOf('plaqueSpread') - 1);
+    expect(order[order.length - 1]).toBe('plaqueSpread');
+    expect(countCholesterol(next.board)).toBe(2);
+    expect(spreads[0].board).toBe(next.board);
+    expect(next.cleanMoves).toBe(0);
+  });
+
+  it('does not spread after a single clean move below 2000 points', () => {
+    const { result } = gravitySwap({ moves: 10, cleanMoves: 0 });
+    expect(ofType(result.events, 'plaqueSpread')).toHaveLength(0);
+    expect(result.state.cleanMoves).toBe(1);
+    expect(countCholesterol(result.state.board)).toBe(1);
+  });
+
+  it('spreads after every clean move from 2000 points', () => {
+    const { result } = gravitySwap({ moves: 10, cleanMoves: 0, score: 2000 });
+    expect(ofType(result.events, 'plaqueSpread')).toHaveLength(1);
+    expect(countCholesterol(result.state.board)).toBe(2);
+  });
+
+  it('a move that destroys a block resets cleanMoves and prevents spread', () => {
+    const state = stateFromGrid(['RRWR', 'CPAC', 'PAWA', 'AWPW'], { moves: 10, cleanMoves: 1 });
+    const { state: next, events } = expectOk(
+      trySwapWith(state, { row: 0, col: 2 }, { row: 0, col: 3 }, scriptedRefill(types('WRPR'))),
+    );
+    expect(ofType(events, 'plaqueSpread')).toHaveLength(0);
+    expect(next.cleanMoves).toBe(0);
+    expect(countCholesterol(next.board)).toBe(1);
+    expect(next.board[1][3].type).toBe('cholesterol');
+  });
+
+  it('re-seeds at the end of the 2nd plaque-free move after the last block is cleared', () => {
+    const clearing = stateFromGrid(['PWA', 'WRP', 'RAC', 'RPP'], { moves: 10 });
+    const first = expectOk(
+      trySwapWith(clearing, { row: 1, col: 0 }, { row: 1, col: 1 }, scriptedRefill(types('RARPARP'))),
+    );
+    expect(countCholesterol(first.state.board)).toBe(0);
+    expect(ofType(first.events, 'plaqueSeeded')).toHaveLength(0);
+    expect(first.state.movesWithoutPlaque).toBe(1);
+
+    const state = stateFromGrid(['RRWR', 'WPAP', 'PAWA', 'AWPW'], {
+      moves: 10,
+      movesWithoutPlaque: 1,
+    });
+    const { state: next, events } = expectOk(
+      trySwapWith(state, { row: 0, col: 2 }, { row: 0, col: 3 }, scriptedRefill(types('PWP'))),
+    );
+    const seeds = ofType(events, 'plaqueSeeded');
+    expect(seeds).toHaveLength(1);
+    expect(countCholesterol(next.board)).toBe(1);
+    const { cell } = seeds[0];
+    expect(next.board[cell.row][cell.col].type).toBe('cholesterol');
+    expect(next.movesWithoutPlaque).toBe(0);
+  });
+
+  it('never seeds during the grace period', () => {
+    const state = stateFromGrid(['RRWR', 'WPAP', 'PAWA', 'AWPW'], {
+      moves: 2,
+      movesWithoutPlaque: 5,
+    });
+    const { state: next, events } = expectOk(
+      trySwapWith(state, { row: 0, col: 2 }, { row: 0, col: 3 }, scriptedRefill(types('PWP'))),
+    );
+    expect(ofType(events, 'plaqueSeeded')).toHaveLength(0);
+    expect(countCholesterol(next.board)).toBe(0);
+    expect(next.moves).toBe(3);
   });
 });

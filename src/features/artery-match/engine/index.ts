@@ -19,10 +19,6 @@ export {
   CHOLESTEROL_POINTS,
   MAX_MULTIPLIER,
   POINTS_PER_TILE,
-  SPAWN_CAP_SCORE,
-  SPAWN_MAX,
-  SPAWN_MIN,
-  spawnChance,
   waveMultiplier,
 } from './scoring';
 export { findMatches, matchedCells } from './match';

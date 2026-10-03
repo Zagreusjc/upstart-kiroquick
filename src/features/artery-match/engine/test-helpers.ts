@@ -1,6 +1,6 @@
 // Test-only helpers for building boards from letter grids. Not exported from the barrel.
 import type { RefillSource } from './resolve';
-import type { Board, GameState, Tile, TileType } from './types';
+import type { Board, GameState, NormalTileType, Tile, TileType } from './types';
 
 const LETTER_TO_TYPE: Record<string, TileType> = {
   R: 'rbc',
@@ -49,15 +49,18 @@ export function stateFromGrid(rows: string[], extra: Partial<GameState> = {}): G
   };
 }
 
-/** Refill source that yields the given types in order; throws when the script runs out. */
-export function scriptedRefill(types: TileType[]): RefillSource {
+/**
+ * Refill source that yields the given types in order; throws when the script runs out.
+ * state() returns rngState, which then drives the end-of-move plaque draws.
+ */
+export function scriptedRefill(types: NormalTileType[], rngState = 0): RefillSource {
   let i = 0;
   return {
     next() {
       if (i >= types.length) throw new Error('script exhausted');
       return types[i++];
     },
-    state: () => 0,
+    state: () => rngState,
   };
 }
 
