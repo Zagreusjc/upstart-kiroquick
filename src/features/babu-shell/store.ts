@@ -22,7 +22,6 @@ export interface CheckinOutcome {
   bonus: number;
 }
 
-const DEFAULTS: BabuState = { onboardedAt: null, lastCheckin: null, streak: 0, dayOffset: 0 };
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 function sanitize(raw: Partial<BabuState> | null): BabuState {

@@ -3,8 +3,6 @@ import { HEALTH_LIMITS, STORAGE_KEYS } from './constants';
 
 type Field = keyof typeof HEALTH_LIMITS;
 
-const EMPTY: HealthSnapshot = { steps: 0, sleepHours: 0, activityMinutes: 0, updatedAt: 0 };
-
 /** Clamp to the field's range and round (integers, sleep to one decimal). */
 function normalize(field: Field, value: number): number {
   const { min, max } = HEALTH_LIMITS[field];
