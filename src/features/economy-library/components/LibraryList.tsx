@@ -7,9 +7,14 @@ import { CardArt } from './CardArt';
 export function LibraryList() {
   const { isRead, readCount } = useLibrary();
 
-  // Show the cards that still refill a life first (unread), keeping their
-  // original order within each group (stable sort).
-  const sorted = [...CARDS].sort((a, b) => Number(isRead(a.id)) - Number(isRead(b.id)));
+  // Order (stable within each group): unread life-refill cards first, then
+  // unread coins-only cards, then everything already read. This keeps the
+  // strongest incentive (a life) at the top while mixing in coins rewards.
+  const rank = (id: string, reward: string) => {
+    if (isRead(id)) return 2;
+    return reward === 'life' ? 0 : 1;
+  };
+  const sorted = [...CARDS].sort((a, b) => rank(a.id, a.reward) - rank(b.id, b.reward));
 
   return (
     <section aria-labelledby="library-title" className="space-y-4">
@@ -44,10 +49,18 @@ export function LibraryList() {
                 </span>
                 <span
                   className={`shrink-0 rounded-full px-2 py-1 text-xs font-semibold ${
-                    read ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                    read
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : card.reward === 'life'
+                        ? 'bg-rose-100 text-rose-800'
+                        : 'bg-amber-100 text-amber-800'
                   }`}
                 >
-                  {read ? '✓ Read' : '🩸 +Life'}
+                  {read
+                    ? '✓ Read'
+                    : card.reward === 'life'
+                      ? '🩸 +Life'
+                      : `+${card.coins} 🪙`}
                 </span>
               </Link>
             </li>

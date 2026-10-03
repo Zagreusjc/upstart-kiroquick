@@ -13,6 +13,13 @@ export interface Source {
   url: string;
 }
 
+/**
+ * What the first read of a card gives:
+ * - `life`: coins plus one life (the strongest incentive).
+ * - `coins`: coins only (a lighter reward, usually a few more coins).
+ */
+export type CardReward = 'life' | 'coins';
+
 export interface LibraryCard {
   id: string;
   title: string;
@@ -25,9 +32,21 @@ export interface LibraryCard {
   sources: Source[];
   /** ISO date the content was last reviewed. */
   reviewed: string;
+  /**
+   * First-read reward kind. Exactly one reward per card, never both:
+   * - `life` cards refill one life and award no coins.
+   * - `coins` cards award `coins` and refill no life.
+   */
+  reward: CardReward;
+  /** Coins awarded on the first read of a `coins` card (0 for `life` cards). */
+  coins: number;
 }
 
 const REVIEWED = '2026-10-04';
+
+/** A `life` card gives a life, not coins. A `coins` card gives this many coins. */
+const LIFE_COINS = 0;
+const COINS_ONLY = 8;
 
 export const CARDS: LibraryCard[] = [
   {
@@ -39,6 +58,8 @@ export const CARDS: LibraryCard[] = [
       'It is the leading cause of death worldwide, but a large share of early deaths can be prevented by addressing everyday risk factors.',
     ],
     takeaway: 'Most CVD is driven by risk factors you can act on.',
+    reward: 'life',
+    coins: LIFE_COINS,
     sources: [
       {
         label: 'WHO: Cardiovascular diseases (CVDs)',
@@ -56,6 +77,8 @@ export const CARDS: LibraryCard[] = [
       'High blood pressure (hypertension) usually has no symptoms, so regular checks matter. It raises the risk of heart attack, stroke and kidney disease.',
     ],
     takeaway: 'Get your blood pressure checked, even when you feel fine.',
+    reward: 'life',
+    coins: LIFE_COINS,
     sources: [
       {
         label: 'WHO: Hypertension',
@@ -77,6 +100,8 @@ export const CARDS: LibraryCard[] = [
       'That build-up narrows arteries and can trigger heart attacks and strokes. Diet, activity and sometimes medicine help keep levels healthy.',
     ],
     takeaway: 'Lower LDL cholesterol means clearer arteries.',
+    reward: 'life',
+    coins: LIFE_COINS,
     sources: [
       {
         label: 'AHA: What is cholesterol?',
@@ -94,6 +119,8 @@ export const CARDS: LibraryCard[] = [
       'Regular movement lowers blood pressure, improves cholesterol and helps control weight and blood sugar.',
     ],
     takeaway: 'Aim for about 30 minutes of brisk movement most days.',
+    reward: 'life',
+    coins: LIFE_COINS,
     sources: [
       {
         label: 'WHO: Physical activity',
@@ -111,6 +138,8 @@ export const CARDS: LibraryCard[] = [
       'Cutting back on salt is one of the most effective ways to lower blood pressure.',
     ],
     takeaway: 'More whole foods, less salt and sugar.',
+    reward: 'coins',
+    coins: COINS_ONLY,
     sources: [
       {
         label: 'WHO: Healthy diet',
@@ -128,6 +157,8 @@ export const CARDS: LibraryCard[] = [
       'Risk starts dropping within the first year after quitting, and keeps improving over time.',
     ],
     takeaway: 'Quitting tobacco is one of the biggest wins for your heart.',
+    reward: 'coins',
+    coins: COINS_ONLY,
     sources: [
       {
         label: 'WHO: Tobacco',
@@ -145,6 +176,8 @@ export const CARDS: LibraryCard[] = [
       'Ongoing short or poor sleep is linked with higher blood pressure, weight gain and heart disease risk.',
     ],
     takeaway: 'Protect your sleep like you protect your diet and activity.',
+    reward: 'coins',
+    coins: COINS_ONLY,
     sources: [
       {
         label: 'AHA: Sleep and heart health',
@@ -162,6 +195,8 @@ export const CARDS: LibraryCard[] = [
       'For stroke, think F.A.S.T.: Face drooping, Arm weakness, Speech difficulty, Time to call emergency services. Act fast; minutes matter.',
     ],
     takeaway: 'If signs appear, call emergency services right away.',
+    reward: 'life',
+    coins: LIFE_COINS,
     sources: [
       {
         label: 'AHA: Warning signs of a heart attack',
@@ -179,6 +214,8 @@ export const CARDS: LibraryCard[] = [
       'Knowing your numbers lets you and a clinician act before a serious event. This app offers screening awareness, not a diagnosis.',
     ],
     takeaway: 'Regular screening turns silent risk into something you can manage.',
+    reward: 'coins',
+    coins: COINS_ONLY,
     sources: [
       {
         label: 'WHO: CVD prevention and control',

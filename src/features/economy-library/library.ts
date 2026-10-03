@@ -63,17 +63,23 @@ export function createLibraryStore(
 
     markRead: (cardId) => {
       // Unknown cards are never rewarded or recorded.
-      if (!getCard(cardId)) return false;
+      const card = getCard(cardId);
+      if (!card) return false;
       if (Object.prototype.hasOwnProperty.call(read, cardId)) return false;
 
       read[cardId] = Date.now();
       persist();
 
-      // Reward once. The idempotency key is per card per day, but the read map
-      // above already guarantees once-ever, so a repeat read never gets here.
+      // Reward once, and exactly one kind of reward per card: a `life` card
+      // refills a life only; a `coins` card awards coins only. Never both.
+      // The idempotency key is per card per day, but the read map above already
+      // guarantees once-ever, so a repeat read never gets here.
       const key = `library_read:${cardId}:${todayISO(now())}`;
-      deps.coins.award('library_read', FIRST_READ_COINS, key);
-      deps.lives.awardOnce(key, 'library_read');
+      if (card.reward === 'life') {
+        deps.lives.awardOnce(key, 'library_read');
+      } else {
+        deps.coins.award('library_read', card.coins ?? FIRST_READ_COINS, key);
+      }
       deps.emitRead(cardId);
 
       listeners.forEach((listener) => listener());
