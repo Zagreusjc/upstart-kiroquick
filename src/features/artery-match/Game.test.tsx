@@ -193,7 +193,7 @@ function eventsOf(type: string) {
 }
 
 describe('Arteria Match game', () => {
-  it('spends a life and shows a 6x6 board when starting with lives', async () => {
+  it('spends a life and shows a 5x5 board when starting with lives', async () => {
     const user = renderGame();
     expect(screen.getByRole('heading', { name: 'Arteria Match' })).toBeInTheDocument();
     expect(screen.getByText('Each game costs 1 life.')).toBeInTheDocument();
@@ -203,7 +203,7 @@ describe('Arteria Match game', () => {
     expect(lives.spend).toHaveBeenCalledTimes(1);
     expect(lives.lives()).toBe(1);
     const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
-    expect(within(grid).getAllByRole('gridcell')).toHaveLength(36);
+    expect(within(grid).getAllByRole('gridcell')).toHaveLength(25);
     expect(screen.getByText('Score: 0')).toBeInTheDocument();
   });
 
@@ -368,7 +368,7 @@ describe('Arteria Match game', () => {
     await user.click(cellButton({ row: 0, col: 1 }));
     await user.click(cellButton({ row: 0, col: 2 }));
     expect(screen.getByText(PLAQUE_HINT)).toBeInTheDocument();
-    expect(screen.getByText('Plaque: 3%')).toBeInTheDocument();
+    expect(screen.getByText('Plaque: 4%')).toBeInTheDocument();
     expect(cellButton({ row: 0, col: 0 })).toHaveAccessibleName(/^Cholesterol block/);
 
     await user.click(cellButton({ row: 1, col: 0 }));
@@ -386,7 +386,7 @@ describe('Arteria Match game', () => {
     expect(screen.getByText('Moves: 1')).toBeInTheDocument();
     const blocks = boardLabels().filter((label) => label?.startsWith('Cholesterol block'));
     expect(blocks).toHaveLength(4);
-    expect(screen.getByText('Plaque: 11%')).toBeInTheDocument();
+    expect(screen.getByText('Plaque: 16%')).toBeInTheDocument();
     for (const cell of [{ row: 0, col: 1 }, { row: 1, col: 0 }, { row: 1, col: 1 }]) {
       expect(cellButton(cell)).toHaveAccessibleName(/^Cholesterol block/);
     }
@@ -403,7 +403,7 @@ describe('Arteria Match game', () => {
     await user.click(cellButton({ row: 2, col: 0 }));
     await user.click(cellButton({ row: 2, col: 1 }));
 
-    await waitFor(() => expect(screen.getByText('Plaque: 11%')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Plaque: 16%')).toBeInTheDocument());
     observer.disconnect();
     expect(boardLabels().filter((label) => label?.startsWith('Cholesterol block'))).toHaveLength(4);
     // Frames grow the plaque 1 (seed), 2, 3, 4 blocks; at least the growth from 2 blocks shows up.
@@ -455,8 +455,8 @@ describe('Arteria Match pointer drag', () => {
     const user = renderGame({ swap });
     await user.click(screen.getByRole('button', { name: 'Play' }));
     const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
-    // jsdom has no layout: the board is 6 tiles of 40px.
-    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue({ width: 6 * TILE_PX } as DOMRect);
+    // jsdom has no layout: the board is 5 tiles of 40px.
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue({ width: 5 * TILE_PX } as DOMRect);
     const proto = HTMLElement.prototype as { setPointerCapture?: (id: number) => void };
     const hadCapture = 'setPointerCapture' in proto;
     const original = proto.setPointerCapture;
@@ -500,7 +500,7 @@ describe('Arteria Match pointer drag', () => {
     await user.click(screen.getByRole('button', { name: 'Play' }));
     const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
     // Board width / cols would give 40px tiles; the pressed tile really is 50px.
-    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue({ width: 6 * TILE_PX } as DOMRect);
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue({ width: 5 * TILE_PX } as DOMRect);
     const [a, b] = findLegalMove(createGame(SEED))!;
     const start = cellButton(a);
     vi.spyOn(start, 'getBoundingClientRect').mockReturnValue({ width: 50 } as DOMRect);
@@ -541,7 +541,8 @@ describe('Arteria Match keyboard', () => {
     expect(cellButton({ row: 0, col: 0 })).toHaveFocus();
 
     const [a, b] = findLegalMove(createGame(SEED))!;
-    await user.keyboard('{ArrowDown}'.repeat(a.row) + '{ArrowRight}'.repeat(a.col));
+    const toA = '{ArrowDown}'.repeat(a.row) + '{ArrowRight}'.repeat(a.col);
+    if (toA) await user.keyboard(toA); // empty when the first legal move starts at the top-left cell
     expect(cellButton(a)).toHaveFocus();
     await user.keyboard('{Enter}');
     expect(cellButton(a)).toHaveAttribute('aria-pressed', 'true');

@@ -9,12 +9,12 @@ The system SHALL implement the game rules as a pure TypeScript module with no Re
 - **THEN** both boards and scores SHALL be identical
 
 ### Requirement: Valid start board
-The system SHALL create a starting board of 6 columns by 6 rows by default, with no existing matches, no cholesterol and at least one legal move. Other sizes SHALL remain available as options for tests.
+The system SHALL create a starting board of 5 columns by 5 rows by default, with no existing matches, no cholesterol and at least one legal move. Other sizes SHALL remain available as options for tests.
 
 #### Scenario: New game
 - **GIVEN** any seed
 - **WHEN** a game is created with default options
-- **THEN** the board SHALL be 6 by 6, no row or column SHALL contain 3 identical tiles, no cell SHALL hold cholesterol and at least one legal swap SHALL exist
+- **THEN** the board SHALL be 5 by 5, no row or column SHALL contain 3 identical tiles, no cell SHALL hold cholesterol and at least one legal swap SHALL exist
 
 #### Scenario: Custom size
 - **GIVEN** explicit row and column options
@@ -38,6 +38,19 @@ The system SHALL accept a swap of two adjacent non-cholesterol tiles only if it 
 - **GIVEN** two tiles that are not adjacent
 - **WHEN** a swap is attempted
 - **THEN** it SHALL be rejected
+
+### Requirement: Refill avoids accidental matches
+The system SHALL choose each refilled tile so that it does not complete a line of 3 identical tiles with the tiles currently around it, so a refill never starts a cascade by luck. Only tiles dropping into place MAY set off an automatic cascade. If every tile type would complete a line at a cell, the system MAY place any type there. The choice SHALL still use the injected RNG, one draw per refilled tile.
+
+#### Scenario: Refill into a stable board
+- **GIVEN** a move that clears 3 tiles in the top row so that nothing above them falls
+- **WHEN** the row is refilled, for any seed
+- **THEN** the refilled tiles SHALL NOT create a new match and the move SHALL end after one wave
+
+#### Scenario: Deterministic refill
+- **GIVEN** the same RNG state and the same surrounding tiles
+- **WHEN** a tile is refilled twice
+- **THEN** the same tile type SHALL be chosen both times
 
 ### Requirement: Gravity, refill and cascades
 The system SHALL drop normal tiles after a clear, refill empty cells, and resolve new matches until the board is stable. Cholesterol blocks SHALL NOT fall; normal tiles SHALL fall past them into empty cells below.
