@@ -2,17 +2,17 @@ import { generateBoard, swapCells } from './board';
 import { hasLegalMove, validateSwap } from './legal';
 import { matchedCells } from './match';
 import { resolvePlaque } from './plaque';
-import { applyGravity, rngRefill } from './resolve';
+import { applyGravity, matchingTypesAt, rngRefill } from './resolve';
 import type { RefillSource } from './resolve';
 import { createRng } from './rng';
 import { CHOLESTEROL_POINTS, POINTS_PER_TILE, waveMultiplier } from './scoring';
 import type { Board, Cell, GameEvent, GameState, SwapResult, Tile, TileType } from './types';
 
 const MAX_BOARD_ATTEMPTS = 100;
-export const DEFAULT_ROWS = 6;
-export const DEFAULT_COLS = 6;
+export const DEFAULT_ROWS = 5;
+export const DEFAULT_COLS = 5;
 
-/** New game: default 6x6, no matches, no cholesterol, at least one legal move. */
+/** New game: default 5x5, no matches, no cholesterol, at least one legal move. */
 export function createGame(seed: number, opts: { rows?: number; cols?: number } = {}): GameState {
   const rows = opts.rows ?? DEFAULT_ROWS;
   const cols = opts.cols ?? DEFAULT_COLS;
@@ -107,24 +107,21 @@ export function trySwapWith(state: GameState, a: Cell, b: Cell, refill: RefillSo
     const fallen = applyGravity(holed);
     events.push({ type: 'fall', wave, moves: fallen.moves });
 
-    // Refill empty cells top to bottom, left to right (never cholesterol).
+    // Refill empty cells top to bottom, left to right (never cholesterol). Each new tile
+    // skips the types that would complete a line of 3 with the tiles around it, so a refill
+    // never chains by luck; only tiles dropping into place can set off an automatic cascade.
     const spawned: { id: number; type: TileType; cell: Cell }[] = [];
-    const filled: Tile[][] = [];
-    for (let r = 0; r < fallen.board.length; r++) {
-      const row: Tile[] = [];
-      for (let c = 0; c < fallen.board[r].length; c++) {
-        const existing = fallen.board[r][c];
-        if (existing) {
-          row.push(existing);
-          continue;
-        }
-        const tile: Tile = { id: nextId++, type: refill.next() };
-        row.push(tile);
+    const work: (Tile | null)[][] = fallen.board.map((row) => [...row]);
+    const tileAt = (r: number, c: number): Tile | null => work[r]?.[c] ?? null;
+    for (let r = 0; r < work.length; r++) {
+      for (let c = 0; c < work[r].length; c++) {
+        if (work[r][c]) continue;
+        const tile: Tile = { id: nextId++, type: refill.next(matchingTypesAt(tileAt, r, c)) };
+        work[r][c] = tile;
         spawned.push({ id: tile.id, type: tile.type, cell: { row: r, col: c } });
       }
-      filled.push(row);
     }
-    board = filled;
+    board = work as Tile[][];
     events.push({ type: 'refill', wave, spawned, board });
   }
 
