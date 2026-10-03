@@ -4,7 +4,7 @@ import { createSharer, type ShareEnv } from './sharing';
 
 const PAYLOAD = {
   title: 'INLABABU',
-  text: 'Take care of your Babus!',
+  text: 'Take care of your Baboos!',
   url: 'https://inlababu.example',
 };
 
