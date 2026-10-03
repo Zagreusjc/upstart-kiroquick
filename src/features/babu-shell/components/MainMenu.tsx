@@ -33,7 +33,13 @@ const FILL_SCREEN = 'h-[calc(100dvh_-_107px_-_env(safe-area-inset-bottom))] over
 /** Height-responsive sizes (min, preferred in dvh, max). Touch targets never go under 44px. */
 const SIZES = {
   play: 'h-[clamp(4rem,12dvh,8rem)] w-64',
-  regular: 'h-[clamp(2.75rem,7dvh,4rem)] w-44',
+  /** Height shared by Baboo, Blood Bank, Library and Get screened (44 to 64px). */
+  regular: 'h-[clamp(2.75rem,7dvh,4rem)]',
+  /**
+   * Teal button widths step down from Play (256px) like a pyramid:
+   * Baboo 192px, Blood Bank 176px, Library 160px.
+   */
+  width: { wide: 'w-48', medium: 'w-44', narrow: 'w-40' },
   /** Get screened: same height as the teal buttons, 224px wide (Play is 256px). */
   screened: 'h-[clamp(2.75rem,7dvh,4rem)] w-56',
   /**
@@ -73,12 +79,14 @@ function MenuButton({
   subtitle,
   variant,
   big = false,
+  width = 'medium',
 }: {
   to: string;
   title: string;
   subtitle?: string;
   variant: Variant;
   big?: boolean;
+  width?: keyof typeof SIZES.width;
 }) {
   return (
     <Link
@@ -86,7 +94,7 @@ function MenuButton({
       data-size={big ? 'big' : 'regular'}
       data-variant={variant}
       className={`flex shrink-0 flex-col items-center justify-center text-center ${
-        big ? `${SIZES.play} mm-play rounded-[1.75rem]` : `${SIZES.regular} rounded-2xl`
+        big ? `${SIZES.play} mm-play rounded-[1.75rem]` : `${SIZES.regular} ${SIZES.width[width]} rounded-2xl`
       } ${VARIANT[variant]} ${focusRing}`}
     >
       <span
@@ -178,7 +186,7 @@ export function MainMenu() {
           id="menu-title"
           className="mm-title text-[clamp(1.9rem,9.5vw,2.75rem)] leading-none font-black tracking-wide"
         >
-          INLABABOO.
+          INLABABOO!
         </h2>
         <p className="mt-2.5 text-xs font-extrabold tracking-[0.22em] text-white uppercase" style={OUTLINED_WHITE}>
           Love hearts. Save lives.
@@ -211,9 +219,15 @@ export function MainMenu() {
         className={`relative mt-[clamp(0.5rem,1.6dvh,1.25rem)] flex shrink-0 flex-col items-center pb-1.5 ${SIZES.gap}`}
       >
         <MenuButton to={MENU_LINKS.play} title="Play!" variant="pink" big />
-        <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="teal" />
-        <MenuButton to={MENU_LINKS.bloodBank} title="Blood Bank" subtitle="Top up your lives!" variant="teal" />
-        <MenuButton to={MENU_LINKS.library} title="Library" subtitle="Play to learn!" variant="teal" />
+        <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="teal" width="wide" />
+        <MenuButton
+          to={MENU_LINKS.bloodBank}
+          title="Blood Bank"
+          subtitle="Top up your lives!"
+          variant="teal"
+          width="medium"
+        />
+        <MenuButton to={MENU_LINKS.library} title="Library" subtitle="Play to learn!" variant="teal" width="narrow" />
 
         <div className="flex max-w-full items-center justify-center gap-1.5">
           <RoundButton to={MENU_LINKS.refer} label="Refer a Buddy" icon="💞" />

@@ -40,7 +40,7 @@ afterEach(() => {
 describe('main menu', () => {
   it('is the landing screen of the Home tab after onboarding', () => {
     renderMenu();
-    expect(screen.getByRole('heading', { name: 'INLABABOO.' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'INLABABOO!' })).toBeInTheDocument();
     expect(screen.getByText(/Love hearts\. Save lives\./i)).toBeInTheDocument();
     expect(screen.queryByText(/Merge habits/i)).not.toBeInTheDocument();
   });
@@ -86,9 +86,10 @@ describe('main menu', () => {
       // Never under 44px tall (touch target), never over 64px.
       expect(link.className).toContain('h-[clamp(2.75rem,7dvh,4rem)]');
     }
-    for (const name of [/Blood Bank/, /^Library/, /^Baboo/]) {
-      expect(menu().getByRole('link', { name }).className).toMatch(/\bw-44\b/);
-    }
+    // Teal widths step down: Baboo 192px, Blood Bank 176px, Library 160px.
+    expect(menu().getByRole('link', { name: /^Baboo/ }).className).toMatch(/\bw-48\b/);
+    expect(menu().getByRole('link', { name: /Blood Bank/ }).className).toMatch(/\bw-44\b/);
+    expect(menu().getByRole('link', { name: /^Library/ }).className).toMatch(/\bw-40\b/);
     expect(menu().getByRole('link', { name: /^Get screened!$/ }).className).toMatch(/\bw-56\b/);
   });
 
