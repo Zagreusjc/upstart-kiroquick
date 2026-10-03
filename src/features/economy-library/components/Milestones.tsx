@@ -19,7 +19,7 @@ export function Milestones() {
           ← Back to the library
         </Link>
         <h2 id="milestones-title" className="text-xl font-extrabold tracking-wide text-rose-800">
-          B+ABOO BANK
+          Blood Bank
         </h2>
         <p className="text-sm text-slate-600">
           Keep your Blood Bank topped up. Clear goals, clear rewards, no lootboxes.
