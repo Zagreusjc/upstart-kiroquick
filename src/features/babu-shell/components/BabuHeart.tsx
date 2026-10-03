@@ -1,14 +1,5 @@
 import type { Mood } from '../constants';
-
-const HEART =
-  'M100 178 C 42 136 10 102 10 62 C 10 30 34 8 62 8 C 80 8 93 18 100 32 C 107 18 120 8 138 8 C 166 8 190 30 190 62 C 190 102 158 136 100 178 Z';
-
-const FILL: Record<Mood, string> = {
-  happy: '#e11d48',
-  ok: '#f43f5e',
-  tired: '#fb7185',
-  rest: '#a78bfa',
-};
+import { babuSprite, SPRITE_HEADROOM, SPRITE_HEIGHT, SPRITE_WIDTH, type PixelRun } from '../sprite';
 
 const ACCESSIBLE_NAME: Record<Mood, string> = {
   happy: 'Babu is happy',
@@ -17,71 +8,90 @@ const ACCESSIBLE_NAME: Record<Mood, string> = {
   rest: 'Babu is in Rest Mode, sleeping',
 };
 
-const INK = '#4c0519';
-const stroke = { stroke: INK, strokeWidth: 6, strokeLinecap: 'round', fill: 'none' } as const;
+/** Heartbeat speed per mood: a lively beat when happy, slow breathing in Rest Mode. */
+const BEAT: Record<Mood, { name: string; duration: string }> = {
+  happy: { name: 'babu-lubdub', duration: '0.8s' },
+  ok: { name: 'babu-lubdub', duration: '1s' },
+  tired: { name: 'babu-lubdub', duration: '1.6s' },
+  rest: { name: 'babu-snooze', duration: '3s' },
+};
 
-function Face({ mood }: { mood: Mood }) {
-  switch (mood) {
-    case 'happy':
-      return (
-        <>
-          <path d="M60 86 Q72 70 84 86" {...stroke} />
-          <path d="M116 86 Q128 70 140 86" {...stroke} />
-          <circle cx="56" cy="108" r="10" fill="#fecdd3" opacity="0.8" />
-          <circle cx="144" cy="108" r="10" fill="#fecdd3" opacity="0.8" />
-          <path d="M74 106 Q100 138 126 106" {...stroke} />
-        </>
-      );
-    case 'ok':
-      return (
-        <>
-          <circle cx="72" cy="82" r="9" fill={INK} />
-          <circle cx="128" cy="82" r="9" fill={INK} />
-          <circle cx="75" cy="79" r="3" fill="#fff" />
-          <circle cx="131" cy="79" r="3" fill="#fff" />
-          <path d="M82 110 Q100 124 118 110" {...stroke} />
-        </>
-      );
-    case 'tired':
-      return (
-        <>
-          <path d="M60 78 L84 84" {...stroke} />
-          <path d="M140 78 L116 84" {...stroke} />
-          <ellipse cx="72" cy="90" rx="8" ry="4" fill={INK} />
-          <ellipse cx="128" cy="90" rx="8" ry="4" fill={INK} />
-          <path d="M84 118 Q92 112 100 118 Q108 124 116 118" {...stroke} />
-        </>
-      );
-    case 'rest':
-      return (
-        <>
-          <path d="M60 82 Q72 94 84 82" {...stroke} />
-          <path d="M116 82 Q128 94 140 82" {...stroke} />
-          <circle cx="100" cy="116" r="6" {...stroke} strokeWidth={5} />
-          <text x="150" y="44" fontSize="26" fontWeight="700" fill={INK}>
-            z
-          </text>
-          <text x="168" y="24" fontSize="18" fontWeight="700" fill={INK}>
-            z
-          </text>
-        </>
-      );
-  }
+/*
+ * steps(1, end) snaps between keyframes like sprite frames, which keeps the
+ * 8-bit feel: rest, big "lub", rest, smaller "dub", long pause.
+ * CSS px inside the SVG are sprite pixels, so translate(0, -1px) is one pixel.
+ */
+const CSS = `
+@keyframes babu-lubdub {
+  0% { transform: scale(1, 1); }
+  12% { transform: scale(1.1, 1.08); }
+  24% { transform: scale(0.98, 1); }
+  34% { transform: scale(1.06, 1.04); }
+  46%, 100% { transform: scale(1, 1); }
+}
+@keyframes babu-snooze {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.03, 0.98); }
+}
+@keyframes babu-z {
+  0%, 100% { transform: translate(0, 0); opacity: 1; }
+  50% { transform: translate(0, -1px); opacity: 0.55; }
+}
+@keyframes babu-shadow {
+  0% { transform: scaleX(1); }
+  12% { transform: scaleX(1.12); }
+  24%, 100% { transform: scaleX(1); }
+}
+.babu-beat, .babu-shadow {
+  transform-box: fill-box;
+  animation-iteration-count: infinite;
+  animation-timing-function: steps(1, end);
+}
+.babu-beat { transform-origin: 50% 60%; }
+.babu-shadow { transform-origin: 50% 50%; animation-name: babu-shadow; }
+.babu-z {
+  transform-box: fill-box;
+  animation: babu-z 2s steps(1, end) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .babu-beat, .babu-shadow, .babu-z { animation: none; }
+}
+`;
+
+function Pixels({ runs }: { runs: PixelRun[] }) {
+  return runs.map(({ x, y, w, color }) => (
+    <rect key={`${x}-${y}`} x={x} y={y} width={w} height={1} fill={color} />
+  ));
 }
 
-/** Babu, an inline SVG heart. Each state has its own face, not just a color. */
+/** Babu, an 8-bit anatomical heart that beats. Each state has its own face, not just a color. */
 export function BabuHeart({ mood, className = 'h-36 w-36' }: { mood: Mood; className?: string }) {
+  const sprite = babuSprite(mood);
+  const beat = BEAT[mood];
+  const timing = { animationName: beat.name, animationDuration: beat.duration };
+
   return (
     <svg
-      viewBox="0 0 200 190"
+      viewBox={`0 ${-SPRITE_HEADROOM} ${SPRITE_WIDTH} ${SPRITE_HEIGHT + SPRITE_HEADROOM}`}
       role="img"
       aria-label={ACCESSIBLE_NAME[mood]}
       data-mood={mood}
-      className={`${className} ${mood === 'rest' ? 'motion-safe:animate-pulse' : ''}`}
+      shapeRendering="crispEdges"
+      className={className}
+      style={{ imageRendering: 'pixelated', overflow: 'visible' }}
     >
-      <path d={HEART} fill={FILL[mood]} stroke={INK} strokeWidth="4" />
-      <path d="M44 44 Q56 30 72 32" stroke="#fff" strokeWidth="6" strokeLinecap="round" fill="none" opacity="0.5" />
-      <Face mood={mood} />
+      <style>{CSS}</style>
+      <g className="babu-shadow" style={{ animationDuration: beat.duration, animationName: mood === 'rest' ? 'none' : undefined }}>
+        <Pixels runs={sprite.shadow} />
+      </g>
+      <g className="babu-beat" style={timing}>
+        <Pixels runs={sprite.heart} />
+      </g>
+      {sprite.z.length > 0 && (
+        <g className="babu-z">
+          <Pixels runs={sprite.z} />
+        </g>
+      )}
     </svg>
   );
 }
