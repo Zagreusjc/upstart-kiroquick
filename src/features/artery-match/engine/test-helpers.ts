@@ -1,4 +1,5 @@
 // Test-only helpers for building boards from letter grids. Not exported from the barrel.
+import type { RefillSource } from './resolve';
 import type { Board, GameState, Tile, TileType } from './types';
 
 const LETTER_TO_TYPE: Record<string, TileType> = {
@@ -43,6 +44,18 @@ export function stateFromGrid(rows: string[], extra: Partial<GameState> = {}): G
     maxCascade: 0,
     over: false,
     ...extra,
+  };
+}
+
+/** Refill source that yields the given types in order; throws when the script runs out. */
+export function scriptedRefill(types: TileType[]): RefillSource {
+  let i = 0;
+  return {
+    next() {
+      if (i >= types.length) throw new Error('script exhausted');
+      return types[i++];
+    },
+    state: () => 0,
   };
 }
 
