@@ -1,4 +1,4 @@
-import type { FeatureModule } from '../../core/contracts';
+import type { FeatureModule } from '../../core';
 import { ArteryMatchScreen } from './Screen';
 
 const arteryMatch: FeatureModule = {
