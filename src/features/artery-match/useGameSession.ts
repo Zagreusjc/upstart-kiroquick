@@ -80,6 +80,8 @@ function prefersReducedMotion(): boolean {
 }
 
 export function useGameSession(deps: GameDeps = {}) {
+  // TODO(integration): lives and coins use the core stubs until Prime (economy-library) registers
+  // the real providers; the hooks resolve the provider at call time, so nothing changes here.
   const lives = useLives();
   const coins = useCoins();
   const swap = deps.swap ?? trySwap;
