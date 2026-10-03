@@ -1,8 +1,8 @@
-import { useHealth } from '../../../core';
+import { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { MOOD_HINTS, MOOD_LABELS, MOOD_MESSAGES } from '../constants';
-import { assessDay, computeMood } from '../mood';
-import { babuStore } from '../store';
-import { useBabuState } from '../useBabu';
+import { MENU_LINKS, PULSE_STATE } from '../menuLinks';
+import { useBabooMood } from '../useBabu';
 import { BabuHeart } from './BabuHeart';
 import { CheckinCard } from './CheckinCard';
 import { DemoControls } from './DemoControls';
@@ -13,27 +13,38 @@ import { HealthInput } from './HealthInput';
  * has a 52px header, 16px main top padding and a 55px bottom nav plus the
  * safe area. Another 16px matches the card gap, so the next card starts
  * exactly at the bottom nav and stays below the fold.
- * 52 + 16 + 55 + 16 = 139. Update this if the shell changes.
+ * The "Main menu" link above the hero adds 44px plus the 16px gap.
+ * 52 + 16 + 55 + 16 + 44 + 16 = 199. Update this if the shell changes.
  */
-const HERO_HEIGHT = 'min-h-[calc(100dvh_-_139px_-_env(safe-area-inset-bottom))]';
+const HERO_HEIGHT = 'min-h-[calc(100dvh_-_199px_-_env(safe-area-inset-bottom))]';
 
 /** Home tab: a full-screen Baboo hero, then snapshot, check-in and demo controls below the fold. */
+function scrollToDetails() {
+  const target = document.getElementById('home-details');
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  target?.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+}
+
 export function Home() {
-  const { snapshot } = useHealth();
-  const state = useBabuState();
-  const mood = computeMood(snapshot, state, babuStore.today());
-  const day = assessDay(snapshot);
+  const { mood, day } = useBabooMood();
   const message = MOOD_MESSAGES[mood].replace('{n}', String(day.goals.count));
   const hint = mood !== 'rest' && day.reason ? MOOD_HINTS[day.reason] : null;
+  const location = useLocation();
+  const openAtTasks = (location.state as { focus?: string } | null)?.focus === PULSE_STATE.focus;
 
-  const scrollToDetails = () => {
-    const target = document.getElementById('home-details');
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    target?.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-  };
+  // "Pulse" on the main menu opens this screen at today's tasks.
+  useEffect(() => {
+    if (openAtTasks) scrollToDetails();
+  }, [openAtTasks]);
 
   return (
     <div className="space-y-4">
+      <Link
+        to={MENU_LINKS.home}
+        className="inline-flex min-h-11 items-center rounded-xl px-1 text-sm font-semibold text-rose-700 underline hover:text-rose-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800"
+      >
+        <span aria-hidden="true">←&nbsp;</span>Main menu
+      </Link>
       <section
         aria-labelledby="babu-title"
         data-testid="babu-hero"

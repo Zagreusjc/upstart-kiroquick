@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { on, registerProvider, type CoinsProvider } from '../../core';
 import { createHealthProvider } from './healthProvider';
@@ -49,9 +50,20 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+/** The Home tab as the app routes it (`/home/*`), opened at the Baboo screen by default. */
+function Routed({ path = '/home/baboo' }: { path?: string }) {
+  return (
+    <MemoryRouter initialEntries={[path]}>
+      <Routes>
+        <Route path="/home/*" element={<BabuShellScreen />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
 function renderOnboarded() {
   act(() => babuStore.acceptOnboarding(1));
-  return render(<BabuShellScreen />);
+  return render(<Routed />);
 }
 
 const slider = (name: RegExp) => screen.getByRole('slider', { name });
@@ -60,7 +72,7 @@ const checkinButton = () => screen.getByRole('button', { name: /check(ed)? in/i 
 describe('onboarding', () => {
   // Scenarios: First launch, Consent is required
   it('shows onboarding first and requires consent before entering Home', () => {
-    render(<BabuShellScreen />);
+    render(<Routed />);
     expect(screen.getByRole('heading', { name: 'Meet Baboo' })).toBeInTheDocument();
     expect(screen.getByText(/Screening awareness, not a diagnosis/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Start caring for Baboo' })).toBeDisabled();
@@ -70,14 +82,14 @@ describe('onboarding', () => {
   // Scenario: Completed onboarding
   it('enters Home after consent and does not show onboarding again', async () => {
     const user = setupUser();
-    const { unmount } = render(<BabuShellScreen />);
+    const { unmount } = render(<Routed />);
     await user.click(screen.getByRole('checkbox', { name: /stores my data on this device/ }));
     await user.click(screen.getByRole('button', { name: 'Start caring for Baboo' }));
     expect(screen.getByRole('heading', { name: 'Daily check-in' })).toBeInTheDocument();
 
     unmount();
     babuStore.reload(); // simulate reopening the app
-    render(<BabuShellScreen />);
+    render(<Routed />);
     expect(screen.queryByRole('heading', { name: 'Meet Baboo' })).not.toBeInTheDocument();
   });
 });
@@ -137,7 +149,7 @@ describe('home', () => {
     unmount();
 
     registerProvider('health', createHealthProvider('test.ui.health'));
-    render(<BabuShellScreen />);
+    render(<Routed />);
     expect(slider(/Steps/)).toHaveValue('4500');
   });
 });

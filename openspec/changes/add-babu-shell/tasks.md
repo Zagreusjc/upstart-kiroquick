@@ -14,6 +14,8 @@
 ## 4. Baboo UI
 - [x] 4.1 SVG heart with four expressions and a visible state label
 - [x] 4.2 Home screen showing Baboo, today's snapshot and the mood message; disclaimer at the bottom of the snapshot card
+- [x] 4.3 Main menu at `/home` (Baboo screen moves to `/home/baboo`) with buttons to every tab and Baboo's live mood (`components/MainMenu.tsx`, `MainMenu.test.tsx`)
+- [ ] 4.4 Check the main menu on a phone at 360px
 
 ## 5. Check-in and streak
 - [x] 5.1 Write failing tests, then streak logic (pure): increment, reset after a missed day, month boundary, milestones 3/7/14/30
