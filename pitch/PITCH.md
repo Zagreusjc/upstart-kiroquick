@@ -10,10 +10,10 @@ Scoring weights to aim at: MVP and technical implementation 30%, problem and dom
 "Heart disease is the number one killer in the Philippines. In 2025, ischaemic heart disease caused about 1 in 5 registered deaths. Most people only find out late, because screening feels far away, costly and scary."
 
 **0:20 Solution (15 s)**
-"INLABABU turns heart care into a game you want to open every day. Take care of your Babus, by taking care of yourself! Our loop is Track, Play, Redeem."
+"INLABABU turns heart care into a game you want to open every day. Take care of your Baboos, by taking care of yourself! Our loop is Track, Play, Redeem."
 
 **0:35 Track (25 s), live on the phone**
-"This is Babu. I enter today's steps, sleep and activity. It's labeled demo input, because we don't pretend to read sensors. Watch Babu go from Tired to OK to Happy. I check in, my streak grows and I earn coins. Babu never dies. If I'm away, Babu goes into Rest Mode and welcomes me back. No guilt."
+"This is Baboo. I enter today's steps, sleep and activity. It's labeled demo input, because we don't pretend to read sensors. Watch Baboo go from Tired to OK to Happy. I check in, my streak grows and I earn coins. Baboo never dies. If I'm away, Baboo goes into Rest Mode and welcomes me back. No guilt."
 
 **1:00 Play (15 s)**
 "Each game of Arteria Match costs one of three lives. You clear cholesterol before the artery closes. Reading a cited library card earns lives and coins, so learning feeds playing."
@@ -22,14 +22,14 @@ Scoring weights to aim at: MVP and technical implementation 30%, problem and dom
 "Coins become a one-time QR voucher for a discounted screening. A deterministic WHO-based risk survey points you to nearby clinics and medical missions. At the front desk, the clinic opens /care/verify, enters the code and marks it redeemed. Screening awareness, not a diagnosis."
 
 **1:35 Technology judgment (15 s)**
-"We used AI only where it beats a rule. Babu's mood, the risk survey and the match engine are deterministic and unit tested. Amazon Quick does the AI work: Quick Research for cited content, Quick Index for grounded Q&A, and Quick Sight for the partner dashboard."
+"We used AI only where it beats a rule. Baboo's mood, the risk survey and the match engine are deterministic and unit tested. Amazon Quick does the AI work: Quick Research for cited content, Quick Index for grounded Q&A, and Quick Sight for the partner dashboard."
 
 **1:50 Close (10 s)**
 "Built spec-first with Kiro: steering, hooks and OpenSpec changes for four parallel branches. INLABABU: healthy habits today, a screening slot tomorrow."
 
 ## Demo checklist (before going on stage)
 
-- [ ] Onboarding already accepted. Health sliders at 0, so Babu starts Tired.
+- [ ] Onboarding already accepted. Health sliders at 0, so Baboo starts Tired.
 - [ ] Demo controls reset ("Reset demo days"). Coins visible in the header.
 - [ ] One library card unread; lives at 3; enough coins for a voucher, or a pre-filled demo state.
 - [ ] Kiro open on `.kiro/steering`, one OpenSpec change and the hooks panel (second screen or tab).
@@ -47,7 +47,7 @@ Scoring weights to aim at: MVP and technical implementation 30%, problem and dom
 **Technology judgment**
 
 - *Where is the AI?* In Quick: Research curates cited library content, Index answers grounded questions over those sources, Sight turns redemption data into a partner dashboard. Rules handle anything that has to be predictable, explainable or testable.
-- *Why not use AI for Babu's mood or the risk score?* A rule beats AI there. Thresholds are transparent, the same input always gives the same output, and a clinic can audit the risk chart. An AI risk score would be a liability.
+- *Why not use AI for Baboo's mood or the risk score?* A rule beats AI there. Thresholds are transparent, the same input always gives the same output, and a clinic can audit the risk chart. An AI risk score would be a liability.
 - *How do you know it works?* Every OpenSpec scenario maps to a unit or UI test. Lint, tests and build run before every merge.
 - *Why manual health input?* It keeps the MVP honest and private. Health Connect and HealthKit integration plugs into the same `HealthProvider` interface later.
 
@@ -60,7 +60,7 @@ Scoring weights to aim at: MVP and technical implementation 30%, problem and dom
 **Safety and ethics**
 
 - *Could someone mistake the result for a diagnosis?* Every result and every piece of health advice says "Screening awareness, not a diagnosis". Moderate or higher risk always recommends seeing a professional.
-- *Isn't gamifying health manipulative?* We use positive framing only. Babu never dies, there are no lootboxes, no PvP and no pay-to-win. Rewards are transparent milestones.
+- *Isn't gamifying health manipulative?* We use positive framing only. Baboo never dies, there are no lootboxes, no PvP and no pay-to-win. Rewards are transparent milestones.
 - *What about privacy law?* We designed for the Data Privacy Act of 2012 (RA 10173): data minimization, on-device storage, explicit consent at onboarding and no personal data in exports.
 
 **Business and feasibility**

@@ -33,9 +33,9 @@ Blocked: ... (or "nothing")
 Shot list, about 90 seconds, phone screen recording:
 
 1. Onboarding: tick consent, start.
-2. Home: move the sliders, Babu goes Tired, then OK, then Happy.
+2. Home: move the sliders, Baboo goes Tired, then OK, then Happy.
 3. Check in: coins and streak update. Demo controls: Next day twice, check in to reach the 3-day bonus.
-4. Demo controls: Skip 2 days. Rest Mode with its welcome-back message, then check in to wake Babu.
+4. Demo controls: Skip 2 days. Rest Mode with its welcome-back message, then check in to wake Baboo.
 5. Play one round of Arteria Match (a life is spent).
 6. Read a library card (life and coins awarded).
 7. Risk survey, result with the disclaimer, clinic list.

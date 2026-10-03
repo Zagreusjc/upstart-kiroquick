@@ -11,9 +11,11 @@
 - [x] 3.1 Sliders for steps, sleep and activity, labeled "Demo input"
 - [x] 3.2 Implement and register the real `HealthProvider` (persist, clamp, keep previous on invalid, stable snapshot, subscribe)
 
-## 4. Babu UI
+## 4. Baboo UI
 - [x] 4.1 SVG heart with four expressions and a visible state label
-- [x] 4.2 Home screen showing Babu, today's snapshot, the mood message and the disclaimer
+- [x] 4.2 Home screen showing Baboo, today's snapshot and the mood message; disclaimer at the bottom of the snapshot card
+- [x] 4.3 Main menu at `/home` (Baboo screen moves to `/home/baboo`) with buttons to every tab and Baboo's live mood (`components/MainMenu.tsx`, `MainMenu.test.tsx`)
+- [ ] 4.4 Check the main menu on a phone at 360px
 
 ## 5. Check-in and streak
 - [x] 5.1 Write failing tests, then streak logic (pure): increment, reset after a missed day, month boundary, milestones 3/7/14/30
@@ -32,13 +34,14 @@
 
 ## 8. Finish
 - [x] 8.1 Lint, tests and build pass
-- [ ] 8.2 Demo on a phone: change the sliders and watch Babu's mood change; check in and see the streak and coins update
+- [ ] 8.2 Demo on a phone: change the sliders and watch Baboo's mood change; check in and see the streak and coins update
 
 ## Scenario coverage
 
 | Spec | Scenario | Covered by |
 |---|---|---|
-| babu-companion | Good day, Partial day, Just below every target, Low day, New player, Same input | `mood.test.ts` |
+| babu-companion | Good day, No sleep, Short sleep, Too much sleep, No movement, Partial day, Just below every target, Low day, New player, Same input | `mood.test.ts` |
+| babu-companion | Sliders show the effect | `Screen.test.tsx` |
 | babu-companion | Player away, Rest Mode wins, Checked in yesterday, Return from Rest Mode | `mood.test.ts`, `Screen.test.tsx` |
 | babu-companion | State label | `Screen.test.tsx` |
 | health-input | Out-of-range, Invalid number, Persistence, Stable snapshot | `healthProvider.test.ts` |

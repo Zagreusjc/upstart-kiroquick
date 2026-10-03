@@ -6,7 +6,7 @@ Owner: CJ. INLABABU provides screening awareness, not a diagnosis. Clinic, missi
 
 - **The problem.** Ischaemic heart disease was the leading cause of death in the Philippines in 2025, at 19.7% of registered deaths ([PSA](https://psa.gov.ph/system/files/vsd/Press%20Release_2025%20Cause%20of%20Death%20Statistics_as%20of%2030%20April%202026_mepe-signed_0.pdf)). The main risk factors (inactivity, poor sleep, smoking, high blood pressure, diabetes) are detectable early and respond to behavior change.
 - **The gap.** People rarely go for a first screening. It feels costly, inconvenient and frightening, and nothing reminds them in between.
-- **What INLABABU changes.** A daily, positive habit loop (Babu, check-ins, streaks), cited education (library cards), a deterministic risk survey and a direct pathway to a discounted, verified screening slot.
+- **What INLABABU changes.** A daily, positive habit loop (Baboo, check-ins, streaks), cited education (library cards), a deterministic risk survey and a direct pathway to a discounted, verified screening slot.
 - **Outcome we measure.** Not app opens but **screenings completed**: vouchers redeemed at a partner, and the share of moderate-or-higher risk users who reach a clinic.
 
 ## 2. Practical deployment
@@ -29,7 +29,7 @@ For a pilot that moves beyond on-device data (for example a shared voucher regis
 
 - "Screening awareness, not a diagnosis" appears on onboarding, on Home and with every risk result.
 - Moderate or higher risk bands always recommend seeing a health professional and link to nearby clinics.
-- Babu never dies. There are no fear or guilt mechanics.
+- Baboo never dies. There are no fear or guilt mechanics.
 
 ### How a clinic validates a voucher at the front desk
 
@@ -87,7 +87,7 @@ The architecture is condition-agnostic. Each part swaps cleanly:
 | Library cards (Quick Research) | CVD basics | BP, salt, adherence | Sugar, diet, foot care |
 | Deterministic survey | WHO non-lab CVD chart | BP history and readings | A validated diabetes risk score encoded as data |
 | Voucher | Screening discount | BP check or home BP monitor loan | Fasting blood sugar or HbA1c test |
-| Babu signals | Steps, sleep, activity | Plus BP log | Plus meal log |
+| Baboo signals | Steps, sleep, activity | Plus BP log | Plus meal log |
 
 **To other regions**
 

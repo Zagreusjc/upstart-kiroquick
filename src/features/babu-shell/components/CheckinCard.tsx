@@ -34,7 +34,7 @@ export function CheckinCard({ mood }: { mood: Mood }) {
   else streakHint = 'Start a fresh streak today.';
 
   return (
-    <section aria-labelledby="checkin-title" className="rounded-2xl bg-white p-4 shadow-sm">
+    <section aria-labelledby="checkin-title" className="mm-card rounded-3xl p-4">
       <h2 id="checkin-title" className="text-lg font-bold">
         Daily check-in
       </h2>
@@ -54,12 +54,12 @@ export function CheckinCard({ mood }: { mood: Mood }) {
         type="button"
         onClick={handleCheckin}
         disabled={checkedInToday}
-        className="mt-3 min-h-11 w-full rounded-xl bg-rose-600 px-4 py-2 font-semibold text-white hover:bg-rose-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-700"
+        className="mm-btn mm-btn--pink mm-btn--soft mt-3 min-h-12 w-full rounded-2xl bg-[#f0556a] px-4 py-2 font-extrabold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-700"
       >
         {checkedInToday
           ? '✓ Checked in today'
           : mood === 'rest'
-            ? `Wake Babu up and check in (+${CHECKIN_COINS} coins)`
+            ? `Wake Baboo up and check in (+${CHECKIN_COINS} coins)`
             : `Check in for today (+${CHECKIN_COINS} coins)`}
       </button>
 

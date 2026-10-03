@@ -1,22 +1,45 @@
 import { useHealth } from '../../../core';
-import { SLIDERS, TARGETS } from '../constants';
+import { DISCLAIMER, MOOD_LABELS, MOOD_RULES, SLIDERS, TARGETS, type Mood } from '../constants';
+import type { DayAssessment } from '../mood';
 
 type Field = 'steps' | 'sleepHours' | 'activityMinutes';
 
-const FIELDS: { key: Field; label: string; unit: string }[] = [
-  { key: 'steps', label: 'Steps', unit: 'steps' },
-  { key: 'sleepHours', label: 'Sleep', unit: 'hours' },
-  { key: 'activityMinutes', label: 'Activity', unit: 'minutes' },
+const FIELDS: { key: Field; label: string; unit: string; goal: string }[] = [
+  { key: 'steps', label: 'Steps', unit: 'steps', goal: `${TARGETS.steps.toLocaleString('en-US')} steps` },
+  {
+    key: 'sleepHours',
+    label: 'Sleep',
+    unit: 'hours',
+    goal: `${TARGETS.sleepHours} to ${MOOD_RULES.sleep.healthyMaxHours} hours`,
+  },
+  { key: 'activityMinutes', label: 'Activity', unit: 'minutes', goal: `${TARGETS.activityMinutes} minutes` },
 ];
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
+const ENERGY_BAR: Record<Mood, string> = {
+  happy: 'bg-emerald-600',
+  ok: 'bg-amber-500',
+  tired: 'bg-rose-500',
+  rest: 'bg-violet-400',
+};
+
+/** Goal status text for one slider. Sleep is a range, so too much sleep is called out too. */
+function status(key: Field, value: number): { text: string; met: boolean } {
+  if (key === 'sleepHours') {
+    if (value > MOOD_RULES.sleep.healthyMaxHours) return { text: 'A bit too much', met: false };
+    if (value < MOOD_RULES.sleep.exhaustedBelowHours) return { text: 'Very short', met: false };
+  }
+  const met = key === 'sleepHours' ? value >= TARGETS.sleepHours : value >= TARGETS[key];
+  return { text: met ? '✓ Goal met' : 'Not yet', met };
+}
+
 /** Today's snapshot with manual demo sliders. Writes to the `health` provider. */
-export function HealthInput() {
+export function HealthInput({ mood, day, hint }: { mood: Mood; day: DayAssessment; hint: string | null }) {
   const { snapshot, update } = useHealth();
 
   return (
-    <section aria-labelledby="snapshot-title" className="rounded-2xl bg-white p-4 shadow-sm">
+    <section aria-labelledby="snapshot-title" className="mm-card rounded-3xl p-4">
       <div className="flex items-center justify-between gap-2">
         <h2 id="snapshot-title" className="text-lg font-bold">
           Today's snapshot
@@ -30,11 +53,38 @@ export function HealthInput() {
         phone's sensors.
       </p>
 
+      {/* Live link between the sliders and Baboo, visible while sliding. */}
+      <div className="mt-3 rounded-2xl bg-rose-50 p-3 ring-1 ring-rose-100" data-testid="babu-now">
+        <p className="flex items-baseline justify-between gap-2 text-sm" aria-live="polite">
+          <span>
+            Baboo right now: <strong>{MOOD_LABELS[mood]}</strong>
+          </span>
+          <span className="text-slate-700">
+            Energy <strong>{day.energy}%</strong>
+          </span>
+        </p>
+        <div
+          role="meter"
+          aria-label="Baboo's energy"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={day.energy}
+          aria-valuetext={`${day.energy}%, ${MOOD_LABELS[mood]}`}
+          className="mt-2 h-3 w-full overflow-hidden rounded-full bg-white ring-1 ring-rose-200"
+        >
+          <div className={`h-full rounded-full ${ENERGY_BAR[mood]} transition-[width]`} style={{ width: `${day.energy}%` }} />
+        </div>
+        {hint && <p className="mt-2 text-sm text-slate-700">{hint}</p>}
+        <p className="mt-1 text-xs text-slate-600">
+          Sleep counts most. Under {MOOD_RULES.sleep.exhaustedBelowHours} hours of sleep, or barely
+          moving, keeps Baboo tired however good the rest is.
+        </p>
+      </div>
+
       <div className="mt-3 space-y-3">
-        {FIELDS.map(({ key, label, unit }) => {
+        {FIELDS.map(({ key, label, unit, goal }) => {
           const value = snapshot[key];
-          const target = TARGETS[key];
-          const met = value >= target;
+          const { text, met } = status(key, value);
           const id = `babu-${key}`;
           return (
             <div key={key}>
@@ -43,12 +93,8 @@ export function HealthInput() {
                   {label}
                 </label>
                 <span className="text-slate-700">
-                  <span className="font-semibold">{fmt(value)}</span> / {fmt(target)} {unit}{' '}
-                  {met ? (
-                    <span className="font-semibold text-emerald-700">✓ Goal met</span>
-                  ) : (
-                    <span className="text-slate-600">Not yet</span>
-                  )}
+                  <span className="font-semibold">{fmt(value)}</span> {unit} · goal {goal}{' '}
+                  <span className={met ? 'font-semibold text-emerald-700' : 'text-slate-600'}>{text}</span>
                 </span>
               </div>
               <input
@@ -58,7 +104,7 @@ export function HealthInput() {
                 max={SLIDERS[key].max}
                 step={SLIDERS[key].step}
                 value={Math.min(value, SLIDERS[key].max)}
-                aria-valuetext={`${fmt(value)} ${unit}, goal ${fmt(target)}`}
+                aria-valuetext={`${fmt(value)} ${unit}, goal ${goal}, ${text.replace('✓ ', '')}`}
                 onChange={(event) => update({ [key]: Number(event.target.value) })}
                 className="h-11 w-full cursor-pointer accent-rose-600"
               />
@@ -66,6 +112,10 @@ export function HealthInput() {
           );
         })}
       </div>
+
+      <p className="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-600" data-testid="snapshot-disclaimer">
+        {DISCLAIMER}.
+      </p>
     </section>
   );
 }

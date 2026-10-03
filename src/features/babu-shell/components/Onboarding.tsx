@@ -13,15 +13,15 @@ export function Onboarding() {
         <BabuHeart mood="happy" className="h-28 w-28" />
       </div>
       <h2 id="onboarding-title" className="mt-2 text-center text-2xl font-bold">
-        Meet Babu
+        Meet Baboo
       </h2>
       <p className="mt-2 text-slate-700">
-        Take care of your Babus, by taking care of yourself! Babu is a heart that reflects your
+        Take care of your Baboos, by taking care of yourself! Baboo is a heart that reflects your
         steps, sleep and activity.
       </p>
       <ul className="mt-3 space-y-1 text-sm text-slate-700">
         <li>
-          <strong>Track:</strong> log your day and check in to keep Babu happy.
+          <strong>Track:</strong> log your day and check in to keep Baboo happy.
         </li>
         <li>
           <strong>Play:</strong> clear your arteries in Arteria Match.
@@ -31,7 +31,7 @@ export function Onboarding() {
         </li>
       </ul>
       <p className="mt-3 text-sm text-slate-700">
-        If you take a break, Babu simply rests and waits for you.
+        If you take a break, Baboo simply rests and waits for you.
       </p>
 
       <div role="note" className="mt-4 rounded-xl border-2 border-amber-300 bg-amber-50 p-3 text-sm">
@@ -60,7 +60,7 @@ export function Onboarding() {
         onClick={() => babuStore.acceptOnboarding()}
         className="mt-4 min-h-11 w-full rounded-xl bg-rose-600 px-4 py-2 font-semibold text-white hover:bg-rose-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-700"
       >
-        Start caring for Babu
+        Start caring for Baboo
       </button>
     </section>
   );
