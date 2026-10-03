@@ -1,0 +1,112 @@
+[
+  {
+    "id": "m-qc-heart-month-2026-09",
+    "title": "Heart health caravan",
+    "organizer": "Barangay Diliman health office (sample)",
+    "organizerType": "barangay",
+    "city": "Quezon City",
+    "venue": "Barangay hall, Diliman",
+    "date": "2026-09-26",
+    "free": true,
+    "services": ["Blood pressure check", "Blood sugar test"]
+  },
+  {
+    "id": "m-qc-bp-week-2026-10",
+    "title": "Free blood pressure week",
+    "organizer": "Quezon City Health Department (sample)",
+    "organizerType": "municipal",
+    "city": "Quezon City",
+    "venue": "Covered court, Cubao",
+    "date": "2026-10-17",
+    "free": true,
+    "services": ["Blood pressure check", "Lifestyle counselling"]
+  },
+  {
+    "id": "m-mnl-puso-caravan-2026-10",
+    "title": "Puso para sa Lahat screening day",
+    "organizer": "Heart Volunteers PH (sample)",
+    "organizerType": "organizational",
+    "city": "Manila",
+    "venue": "Plaza near Sampaloc market",
+    "date": "2026-10-24",
+    "free": true,
+    "services": ["Blood pressure check", "Blood sugar test", "ECG"]
+  },
+  {
+    "id": "m-psg-kapitolyo-2026-10",
+    "title": "Barangay wellness Saturday",
+    "organizer": "Barangay Kapitolyo health center (sample)",
+    "organizerType": "barangay",
+    "city": "Pasig",
+    "venue": "Barangay Kapitolyo covered court",
+    "date": "2026-10-31",
+    "free": true,
+    "services": ["Blood pressure check", "BMI check", "Lifestyle counselling"]
+  },
+  {
+    "id": "m-psg-ecg-2026-11",
+    "title": "Community ECG and lipid screening",
+    "organizer": "Pasig partner hospital (sample)",
+    "organizerType": "organizational",
+    "city": "Pasig",
+    "venue": "Hospital lobby, Ortigas",
+    "date": "2026-11-07",
+    "free": false,
+    "services": ["ECG", "Lipid profile"]
+  },
+  {
+    "id": "m-mnl-national-2026-11",
+    "title": "National hypertension screening drive",
+    "organizer": "National health agency program (sample)",
+    "organizerType": "national",
+    "city": "Manila",
+    "venue": "Public hospital grounds, Santa Cruz",
+    "date": "2026-11-12",
+    "free": true,
+    "services": ["Blood pressure check", "Blood sugar test", "Medicine counselling"]
+  },
+  {
+    "id": "m-ceb-mission-2026-11",
+    "title": "Cebu cardiovascular medical mission",
+    "organizer": "Cebu City Health Office (sample)",
+    "organizerType": "municipal",
+    "city": "Cebu City",
+    "venue": "Lahug barangay gym",
+    "date": "2026-11-14",
+    "free": true,
+    "services": ["Blood pressure check", "Blood sugar test", "Cardiology consult"]
+  },
+  {
+    "id": "m-dvo-mission-2026-11",
+    "title": "Heart check Sunday",
+    "organizer": "Mindanao Heart Circle (sample)",
+    "organizerType": "organizational",
+    "city": "Davao City",
+    "venue": "Public park, Poblacion",
+    "date": "2026-11-29",
+    "free": true,
+    "services": ["Blood pressure check", "Lifestyle counselling"]
+  },
+  {
+    "id": "m-ilo-mission-2026-12",
+    "title": "Year-end heart screening",
+    "organizer": "National regional hospital outreach (sample)",
+    "organizerType": "national",
+    "city": "Iloilo City",
+    "venue": "Outpatient wing, Jaro",
+    "date": "2026-12-05",
+    "free": false,
+    "services": ["ECG", "Lipid profile", "Cardiology consult"]
+  },
+  {
+    "id": "m-bgo-mission-2027-01",
+    "title": "Highland heart mission",
+    "organizer": "Baguio City Health Services (sample)",
+    "organizerType": "municipal",
+    "city": "Baguio",
+    "venue": "Session Road covered court",
+    "date": "2027-01-16",
+    "free": true,
+    "services": ["Blood pressure check", "Blood sugar test"]
+  }
+]
