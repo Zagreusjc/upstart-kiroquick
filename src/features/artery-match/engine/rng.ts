@@ -17,6 +17,12 @@ export function mulberry32(state: number): { value: number; state: number } {
   return { value, state: next };
 }
 
+/** One mulberry32 step mapped to an integer index in [0, n). */
+export function drawIndex(state: number, n: number): { index: number; state: number } {
+  const step = mulberry32(state >>> 0);
+  return { index: Math.floor(step.value * n), state: step.state };
+}
+
 export function createRng(seed: number): Rng {
   let s = seed >>> 0;
   return {

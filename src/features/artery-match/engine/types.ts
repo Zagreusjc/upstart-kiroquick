@@ -31,6 +31,10 @@ export interface GameState {
   readonly cholesterolCleared: number;
   /** Largest number of waves resolved in a single move (1 = no cascade). */
   readonly maxCascade: number;
+  /** Consecutive resolved moves that destroyed no cholesterol (drives plaque spread). */
+  readonly cleanMoves: number;
+  /** Consecutive resolved moves that ended with zero cholesterol on the board (drives seeding). */
+  readonly movesWithoutPlaque: number;
   readonly over: boolean;
 }
 
@@ -48,7 +52,11 @@ export type GameEvent =
   | { type: 'cholesterolCleared'; wave: number; multiplier: number; cells: Cell[]; points: number }
   | { type: 'fall'; wave: number; moves: FallMove[] }
   | { type: 'refill'; wave: number; spawned: { id: number; type: TileType; cell: Cell }[]; board: Board }
+  | { type: 'plaqueSeeded'; cell: Cell; board: Board }
+  | { type: 'plaqueSpread'; from: Cell; to: Cell; board: Board }
   | { type: 'gameOver'; score: number };
+
+export type PlaqueEvent = Extract<GameEvent, { type: 'plaqueSeeded' | 'plaqueSpread' }>;
 
 export type SwapResult =
   | { ok: false; reason: SwapRejection }

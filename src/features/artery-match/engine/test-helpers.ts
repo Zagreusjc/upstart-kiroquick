@@ -42,6 +42,8 @@ export function stateFromGrid(rows: string[], extra: Partial<GameState> = {}): G
     moves: 0,
     cholesterolCleared: 0,
     maxCascade: 0,
+    cleanMoves: 0,
+    movesWithoutPlaque: 0,
     over: false,
     ...extra,
   };

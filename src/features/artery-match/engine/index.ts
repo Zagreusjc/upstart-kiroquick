@@ -7,12 +7,13 @@ export type {
   GameEvent,
   GameState,
   NormalTileType,
+  PlaqueEvent,
   SwapRejection,
   SwapResult,
   Tile,
   TileType,
 } from './types';
-export { createRng, mulberry32 } from './rng';
+export { createRng, drawIndex, mulberry32 } from './rng';
 export type { Rng } from './rng';
 export {
   CHOLESTEROL_POINTS,
@@ -31,3 +32,16 @@ export { findLegalMove, hasLegalMove, validateSwap } from './legal';
 export { applyGravity, rngRefill } from './resolve';
 export type { RefillSource } from './resolve';
 export { createGame, trySwap, trySwapWith } from './game';
+export {
+  FAST_SPREAD_SCORE,
+  GRACE_MOVES,
+  SEED_DELAY_MOVES,
+  SPREAD_INTERVAL_FAST,
+  SPREAD_INTERVAL_SLOW,
+  countCholesterol,
+  resolvePlaque,
+  seedPlaque,
+  spreadInterval,
+  spreadPlaque,
+} from './plaque';
+export type { PlaqueInput, PlaqueOutput } from './plaque';

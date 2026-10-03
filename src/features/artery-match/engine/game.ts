@@ -27,6 +27,8 @@ export function createGame(seed: number, opts: { rows?: number; cols?: number } 
       moves: 0,
       cholesterolCleared: 0,
       maxCascade: 0,
+      cleanMoves: 0,
+      movesWithoutPlaque: 0,
       over: false,
     };
     if (hasLegalMove(state)) return state;
