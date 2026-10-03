@@ -36,16 +36,14 @@ describe('Library screen', () => {
     expect(screen.getByText('Screening awareness, not a diagnosis.')).toBeInTheDocument();
   });
 
-  it('shows milestone progress with an accessible progressbar', async () => {
+  it('shows the Blood Bank life meter and refill missions', async () => {
     const user = userEvent.setup();
     renderAt('/library');
     await user.click(screen.getByRole('link', { name: /View milestones/i }));
 
-    const bars = screen.getAllByRole('progressbar');
-    expect(bars.length).toBeGreaterThanOrEqual(1);
-    // The screening-discount tier requires 3 cards.
+    // The Blood Bank meter reports the current lives.
     expect(
-      screen.getByRole('progressbar', { name: /Screening discount: \d of 3 cards read/i }),
+      screen.getByRole('img', { name: /Blood Bank: \d of \d lives/i }),
     ).toBeInTheDocument();
 
     // A share-for-life control is present.

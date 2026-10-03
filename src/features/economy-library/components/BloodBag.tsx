@@ -1,11 +1,11 @@
 /**
- * Original "Baboo Bag" life meter: a stylized blood-donation bag that fills in
+ * Original "Blood Bank" life meter: a stylized blood-donation bag that fills in
  * proportion to the player's current lives. The label reads "B+" as a pun on
  * "Baboo" ("Bee positive" / stay positive). All artwork is drawn from scratch
  * here; it is not traced from any external image.
  *
  * Layout inspiration: a vertical level meter where fill height maps to the
- * resource (lives), with the current level called out beside it.
+ * resource (lives), with the current level called out beneath it.
  */
 export function BloodBag({
   lives,
@@ -30,9 +30,9 @@ export function BloodBag({
     <figure className={`flex flex-col items-center ${className}`}>
       <svg
         viewBox="0 0 160 260"
-        className="h-48 w-auto"
+        className="h-72 w-auto max-w-full"
         role="img"
-        aria-label={`Baboo bag: ${lives} of ${max} lives`}
+        aria-label={`Blood Bank: ${lives} of ${max} lives`}
       >
         <defs>
           <clipPath id="bagClip">
@@ -98,9 +98,9 @@ export function BloodBag({
         />
       </svg>
 
-      <figcaption className="mt-1 text-center">
-        <span className="block text-sm font-bold text-rose-800">
-          Baboo Bag: {lives}/{max}
+      <figcaption className="mt-2 text-center">
+        <span className="block text-base font-bold text-rose-800">
+          Blood Bank: {lives}/{max}
         </span>
         <span className="block text-xs text-slate-500">Your daily life meter</span>
       </figcaption>
