@@ -41,7 +41,8 @@ describe('main menu', () => {
   it('is the landing screen of the Home tab after onboarding', () => {
     renderMenu();
     expect(screen.getByRole('heading', { name: 'INLABABOO.' })).toBeInTheDocument();
-    expect(screen.getByText(/Merge habits\. Save hearts\./i)).toBeInTheDocument();
+    expect(screen.getByText(/Love hearts\. Save lives\./i)).toBeInTheDocument();
+    expect(screen.queryByText(/Merge habits/i)).not.toBeInTheDocument();
   });
 
   it('links every button to its tab', () => {
@@ -91,13 +92,13 @@ describe('main menu', () => {
     expect(menu().getByRole('link', { name: /^Get screened!$/ }).className).toMatch(/\bw-56\b/);
   });
 
-  it('orders the stack Play, Baboo, Library, Blood Bank', () => {
+  it('orders the stack Play, Baboo, Blood Bank, Library', () => {
     renderMenu();
     const names = menu()
       .getAllByRole('link')
       .slice(0, 4)
       .map((link) => link.textContent);
-    expect(names).toEqual(['Play!', 'BabooYour heart buddy!', 'LibraryPlay to learn!', 'Blood BankTop up your lives!']);
+    expect(names).toEqual(['Play!', 'BabooYour heart buddy!', 'Blood BankTop up your lives!', 'LibraryPlay to learn!']);
   });
 
   it('uses plain white lettering on teal (no outline)', () => {

@@ -181,7 +181,7 @@ export function MainMenu() {
           INLABABOO.
         </h2>
         <p className="mt-2.5 text-xs font-extrabold tracking-[0.22em] text-white uppercase" style={OUTLINED_WHITE}>
-          Merge habits. Save hearts.
+          Love hearts. Save lives.
         </p>
       </header>
 
@@ -212,8 +212,8 @@ export function MainMenu() {
       >
         <MenuButton to={MENU_LINKS.play} title="Play!" variant="pink" big />
         <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="teal" />
-        <MenuButton to={MENU_LINKS.library} title="Library" subtitle="Play to learn!" variant="teal" />
         <MenuButton to={MENU_LINKS.bloodBank} title="Blood Bank" subtitle="Top up your lives!" variant="teal" />
+        <MenuButton to={MENU_LINKS.library} title="Library" subtitle="Play to learn!" variant="teal" />
 
         <div className="flex max-w-full items-center justify-center gap-1.5">
           <RoundButton to={MENU_LINKS.refer} label="Refer a Buddy" icon="💞" />
