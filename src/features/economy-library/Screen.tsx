@@ -1,15 +1,19 @@
+import { Route, Routes } from 'react-router-dom';
+import { CardDetail } from './components/CardDetail';
+import { LibraryList } from './components/LibraryList';
+import { Milestones } from './components/Milestones';
+
 /**
- * PLACEHOLDER. Owner: Prime (branch feat/economy-library, change add-economy-library).
- * Replace this screen with the library, milestones and sharing.
- * Edit only files inside src/features/economy-library/.
+ * Library tab. Owner: Prime (feat/economy-library, add-economy-library).
+ * Nested routes: list, card detail and milestones + share.
  */
 export function EconomyLibraryScreen() {
   return (
-    <section aria-labelledby="library-title" className="rounded-xl bg-white p-4 shadow">
-      <h2 id="library-title" className="text-lg font-bold">
-        Library
-      </h2>
-      <p className="mt-1 text-sm text-slate-600">Owner: Prime. Placeholder screen.</p>
-    </section>
+    <Routes>
+      <Route index element={<LibraryList />} />
+      <Route path="card/:cardId" element={<CardDetail />} />
+      <Route path="milestones" element={<Milestones />} />
+      <Route path="*" element={<LibraryList />} />
+    </Routes>
   );
 }
