@@ -7,6 +7,7 @@ import {
   countCholesterol,
   resolvePlaque,
   seedPlaque,
+  seedPlaques,
   spreadCount,
   spreadInterval,
   spreadPlaque,
@@ -449,5 +450,88 @@ describe('resolvePlaque: ramped spread', () => {
     const out = resolvePlaque(input(grid, { cleanMoves: 0, score: 5000, rngState: 5 }));
     expect(countCholesterol(out.board)).toBe(7);
     expect(hasLegalMove({ ...before, board: out.board })).toBe(false);
+  });
+});
+
+describe('plaque returns at the current level', () => {
+  const BIG = ['RWPAR', 'WPARW', 'PARWP', 'ARWPA', 'RWPAR'];
+  const seedEvents = (out: ReturnType<typeof resolvePlaque>) =>
+    out.events.flatMap((e) => (e.type === 'plaqueSeeded' ? [e] : []));
+
+  it.each([
+    [0, 1],
+    [499, 1],
+    [500, 2],
+    [1199, 2],
+    [1200, 3],
+    [9000, 3],
+  ])('at score %i a reseed places %i block(s), one plaqueSeeded event each', (score, expected) => {
+    const out = resolvePlaque(
+      input(BIG, { moves: 10, movesWithoutPlaque: 1, score, totalCleared: 3 }),
+    );
+    const seeds = seedEvents(out);
+    expect(seeds).toHaveLength(expected);
+    expect(out.events).toHaveLength(expected);
+    expect(countCholesterol(out.board)).toBe(expected);
+    expect(new Set(seeds.map((e) => `${e.cell.row},${e.cell.col}`)).size).toBe(expected);
+    // Each event carries the cumulative board; the last one is the output board.
+    expect(seeds.map((e) => countCholesterol(e.board))).toEqual(
+      Array.from({ length: expected }, (_, i) => i + 1),
+    );
+    expect(seeds[expected - 1].board).toBe(out.board);
+    expect(out.movesWithoutPlaque).toBe(0);
+  });
+
+  it('keeps the spread clock running after a clear: the next clean move spreads', () => {
+    // Below 800 points the interval is 2; a reseed after a clear leaves 1 clean move banked.
+    const reseed = resolvePlaque(
+      input(BIG, { moves: 10, movesWithoutPlaque: 1, score: 300, totalCleared: 2 }),
+    );
+    expect(reseed.cleanMoves).toBe(spreadInterval(300) - 1);
+    const next = resolvePlaque(
+      input(gridOf({ ...stateFromGrid(BIG), board: reseed.board }), {
+        moves: 11,
+        score: 300,
+        cleanMoves: reseed.cleanMoves,
+        rngState: reseed.rngState,
+        nextId: reseed.nextId,
+      }),
+    );
+    expect(next.events.map((e) => e.type)).toEqual(['plaqueSpread']);
+    expect(next.cleanMoves).toBe(0);
+  });
+
+  it('spreads on the very next clean move at the fast interval too', () => {
+    const reseed = resolvePlaque(
+      input(BIG, { moves: 10, movesWithoutPlaque: 1, score: 2000, totalCleared: 5 }),
+    );
+    expect(reseed.cleanMoves).toBe(spreadInterval(2000) - 1);
+    expect(reseed.cleanMoves).toBe(0);
+  });
+
+  it('the very first seed of a game still gives the player a breather (clock starts at 0)', () => {
+    const first = resolvePlaque(input(BIG, { moves: 4, movesWithoutPlaque: 3, score: 0 }));
+    expect(seedEvents(first)).toHaveLength(1);
+    expect(first.cleanMoves).toBe(0);
+    const firstHighScore = resolvePlaque(
+      input(BIG, { moves: 4, movesWithoutPlaque: 3, score: 2000, totalCleared: 0 }),
+    );
+    expect(firstHighScore.cleanMoves).toBe(0);
+  });
+
+  it('is deterministic and seedPlaques places distinct blocks', () => {
+    const state = stateFromGrid(BIG);
+    const a = seedPlaques(state, 11, state.nextId, 3);
+    const b = seedPlaques(state, 11, state.nextId, 3);
+    expect(a).toEqual(b);
+    expect(a?.seeds).toHaveLength(3);
+    expect(a && countCholesterol(a.board)).toBe(3);
+  });
+
+  it('places as many as it can when the board is nearly full of plaque', () => {
+    const state = stateFromGrid(['CCC', 'CCC', 'CCR']);
+    const out = seedPlaques(state, 3, state.nextId, 3);
+    expect(out?.seeds).toHaveLength(1);
+    expect(seedPlaques(stateFromGrid(['CCC', 'CCC', 'CCC']), 3, 1, 2)).toBeNull();
   });
 });
