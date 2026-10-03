@@ -1,5 +1,5 @@
 import { useHealth } from '../../../core';
-import { MOOD_LABELS, MOOD_RULES, SLIDERS, TARGETS, type Mood } from '../constants';
+import { DISCLAIMER, MOOD_LABELS, MOOD_RULES, SLIDERS, TARGETS, type Mood } from '../constants';
 import type { DayAssessment } from '../mood';
 
 type Field = 'steps' | 'sleepHours' | 'activityMinutes';
@@ -112,6 +112,10 @@ export function HealthInput({ mood, day, hint }: { mood: Mood; day: DayAssessmen
           );
         })}
       </div>
+
+      <p className="mt-4 border-t border-slate-200 pt-3 text-xs text-slate-600" data-testid="snapshot-disclaimer">
+        {DISCLAIMER}.
+      </p>
     </section>
   );
 }
