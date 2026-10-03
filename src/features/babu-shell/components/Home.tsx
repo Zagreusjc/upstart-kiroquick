@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { MOOD_HINTS, MOOD_LABELS, MOOD_MESSAGES } from '../constants';
-import { MENU_LINKS, PULSE_STATE } from '../menuLinks';
+import { MENU_LINKS } from '../menuLinks';
 import { useBabooMood } from '../useBabu';
 import { BabuHeart } from './BabuHeart';
 import { CheckinCard } from './CheckinCard';
@@ -18,24 +17,17 @@ import { HealthInput } from './HealthInput';
  */
 const HERO_HEIGHT = 'min-h-[calc(100dvh_-_199px_-_env(safe-area-inset-bottom))]';
 
-/** Home tab: a full-screen Baboo hero, then snapshot, check-in and demo controls below the fold. */
 function scrollToDetails() {
   const target = document.getElementById('home-details');
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   target?.scrollIntoView?.({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
 }
 
+/** Baboo screen: a full-screen Baboo hero, then snapshot, check-in and demo controls below the fold. */
 export function Home() {
   const { mood, day } = useBabooMood();
   const message = MOOD_MESSAGES[mood].replace('{n}', String(day.goals.count));
   const hint = mood !== 'rest' && day.reason ? MOOD_HINTS[day.reason] : null;
-  const location = useLocation();
-  const openAtTasks = (location.state as { focus?: string } | null)?.focus === PULSE_STATE.focus;
-
-  // "Pulse" on the main menu opens this screen at today's tasks.
-  useEffect(() => {
-    if (openAtTasks) scrollToDetails();
-  }, [openAtTasks]);
 
   return (
     <div className="space-y-4">

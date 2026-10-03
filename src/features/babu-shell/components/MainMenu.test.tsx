@@ -48,37 +48,51 @@ describe('main menu', () => {
     renderMenu();
     const href = (name: RegExp) => menu().getByRole('link', { name }).getAttribute('href');
     expect(href(/^Play!$/)).toBe('/play');
-    expect(href(/Pulse/)).toBe('/home/baboo');
-    expect(href(/Milestones/)).toBe('/library/milestones');
+    expect(href(/Blood Bank/)).toBe('/library/milestones');
+    expect(href(/^Library$/)).toBe('/library');
     expect(href(/^Baboo/)).toBe('/home/baboo');
     expect(href(/Refer a Buddy/)).toBe('/library/milestones');
     expect(href(/^Get screened!$/)).toBe('/care');
-    expect(href(/^Library$/)).toBe('/library');
+    expect(href(/Settings/)).toBe('/home/settings');
+    expect(menu().queryByRole('link', { name: /Pulse|Milestones/ })).not.toBeInTheDocument();
   });
 
   it('uses one Get screened button, a text-only Baboo button and a bigger Play button', () => {
     renderMenu();
-    expect(menu().queryByRole('link', { name: /Partner organizations|Nearest hospital/ })).not.toBeInTheDocument();
     expect(menu().getAllByRole('link')).toHaveLength(7);
 
     // Only the main Baboo above the buttons is drawn; the Baboo button is text only.
     expect(screen.getAllByRole('img', { name: /^Baboo is/ })).toHaveLength(1);
-    const babooButton = menu().getByRole('link', { name: /^Baboo/ });
-    expect(babooButton.querySelector('svg')).toBeNull();
+    expect(menu().getByRole('link', { name: /^Baboo/ }).querySelector('svg')).toBeNull();
 
-    // Flat buttons: no drop shadows, no gradients; Baboo matches Pulse and Milestones.
+    // Flat buttons: no drop shadows, no gradients.
     for (const link of menu().getAllByRole('link')) {
       expect(link.style.boxShadow).toBe('');
       expect(link.className).not.toMatch(/bg-linear|shadow/);
     }
-    for (const name of [/Pulse/, /Milestones/, /^Baboo/]) {
-      expect(menu().getByRole('link', { name }).className).toMatch(/\bbg-teal-700\b/);
-    }
 
     expect(menu().getByRole('link', { name: /^Play!$/ })).toHaveAttribute('data-size', 'big');
-    for (const name of [/Pulse/, /Milestones/, /^Baboo/]) {
+    for (const name of [/Blood Bank/, /^Library$/, /^Baboo/]) {
       expect(menu().getByRole('link', { name })).toHaveAttribute('data-size', 'regular');
     }
+  });
+
+  it('uses dark pink for Play and Library and teal for everything else except Get screened', () => {
+    renderMenu();
+    const cls = (name: RegExp) => menu().getByRole('link', { name }).className;
+    for (const name of [/^Play!$/, /^Library$/]) expect(cls(name)).toContain('bg-[#f0556a]');
+    for (const name of [/Blood Bank/, /^Baboo/, /Refer a Buddy/, /Settings/]) {
+      expect(cls(name)).toContain('bg-[#3cc4b4]');
+    }
+    expect(cls(/^Get screened!$/)).toContain('bg-white');
+  });
+
+  it('opens settings from the menu', async () => {
+    const user = userEvent.setup({ delay: null });
+    renderMenu();
+    await user.click(menu().getByRole('link', { name: /Settings/ }));
+    expect(screen.getByRole('heading', { name: 'Settings' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Erase all my data on this device' })).toBeInTheDocument();
   });
 
   it('shows the same live mood as the Baboo screen', () => {

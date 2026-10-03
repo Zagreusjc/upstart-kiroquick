@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { MOOD_LABELS } from '../constants';
-import { MENU_LINKS, PULSE_STATE } from '../menuLinks';
+import { MENU_LINKS } from '../menuLinks';
 import { useBabooMood } from '../useBabu';
 import { BabuHeart } from './BabuHeart';
 
@@ -32,12 +32,18 @@ const TITLE: CSSProperties = {
   textShadow: '0 3px 0 #ffffff, 0 6px 0 rgba(190,18,60,0.22)',
 };
 
-type Variant = 'play' | 'teal';
+type Variant = 'pink' | 'teal';
 
-/** Flat, solid fills (no gradients, no drop shadows). White text passes contrast on both. */
+/**
+ * Flat, solid fills (no gradients, no drop shadows).
+ * - Dark pink #f0556a: white lettering, kept large (bold 20px or more) so it
+ *   meets the 3:1 contrast rule for large text.
+ * - Teal #3cc4b4: white would be too faint (about 2:1), so the lettering is
+ *   dark teal #073b36 (about 5.8:1).
+ */
 const VARIANT: Record<Variant, string> = {
-  play: 'bg-rose-600 text-white hover:bg-rose-700',
-  teal: 'bg-teal-700 text-white hover:bg-teal-800',
+  pink: 'bg-[#f0556a] text-white hover:brightness-95',
+  teal: 'bg-[#3cc4b4] text-[#073b36] hover:brightness-95',
 };
 
 /**
@@ -68,7 +74,7 @@ function MenuButton({
         big ? 'px-8 py-3' : 'px-5 py-2'
       } ${VARIANT[variant]} ${press} ${focusRing}`}
     >
-      <span className={`leading-tight font-black tracking-wide uppercase ${big ? 'text-5xl' : 'text-lg'}`}>
+      <span className={`leading-tight font-black tracking-wide uppercase ${big ? 'text-5xl' : 'text-xl'}`}>
         {title}
       </span>
       {subtitle && <span className="text-sm leading-tight font-bold">{subtitle}</span>}
@@ -76,22 +82,12 @@ function MenuButton({
   );
 }
 
-function RoundButton({
-  to,
-  label,
-  icon,
-  tone,
-}: {
-  to: string;
-  label: string;
-  icon: string;
-  tone: 'teal' | 'rose';
-}) {
-  const fill = tone === 'teal' ? 'bg-teal-700 hover:bg-teal-800' : 'bg-rose-600 hover:bg-rose-700';
+/** Round teal shortcut (Refer a Buddy, Settings). Small label, so dark lettering for contrast. */
+function RoundButton({ to, label, icon }: { to: string; label: string; icon: string }) {
   return (
     <Link
       to={to}
-      className={`flex h-[4.25rem] w-[4.25rem] shrink-0 flex-col items-center justify-center rounded-full text-center text-white ${fill} ${press} ${focusRing}`}
+      className={`flex h-[4.25rem] w-[4.25rem] shrink-0 flex-col items-center justify-center rounded-full text-center ${VARIANT.teal} ${press} ${focusRing}`}
     >
       <span aria-hidden="true" className="text-2xl leading-none">
         {icon}
@@ -164,19 +160,14 @@ export function MainMenu() {
       </div>
 
       <nav aria-label="Main menu" className="relative mt-6 flex flex-col items-center gap-4">
-        <MenuButton to={MENU_LINKS.play} title="Play!" variant="play" big />
-        <MenuButton
-          to={MENU_LINKS.baboo}
-          state={PULSE_STATE}
-          title="Pulse"
-          subtitle="Do tasks, gain beats!"
-          variant="teal"
-        />
-        <MenuButton to={MENU_LINKS.milestones} title="Milestones" subtitle="Build a habit!" variant="teal" />
+        <MenuButton to={MENU_LINKS.play} title="Play!" variant="pink" big />
+        <MenuButton to={MENU_LINKS.bloodBank} title="Blood Bank" subtitle="Top up your lives!" variant="teal" />
+        {/* Pink with white lettering: title only, kept large for contrast. */}
+        <MenuButton to={MENU_LINKS.library} title="Library" variant="pink" />
         <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="teal" />
 
         <div className="flex max-w-full items-center justify-center gap-2 pt-2">
-          <RoundButton to={MENU_LINKS.refer} label="Refer a Buddy" icon="💞" tone="teal" />
+          <RoundButton to={MENU_LINKS.refer} label="Refer a Buddy" icon="💞" />
 
           <Link
             to={MENU_LINKS.screened}
@@ -185,7 +176,7 @@ export function MainMenu() {
             Get screened!
           </Link>
 
-          <RoundButton to={MENU_LINKS.library} label="Library" icon="📖" tone="rose" />
+          <RoundButton to={MENU_LINKS.settings} label="Settings" icon="⚙️" />
         </div>
       </nav>
     </section>
