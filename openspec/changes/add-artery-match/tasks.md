@@ -1,5 +1,5 @@
 ## 1. Specs
-- [ ] 1.1 Refine `design.md` and validate the specs in this change
+- [x] 1.1 Refine `design.md` and validate the specs in this change
 
 ## 2. Engine (pure TypeScript, tests first)
 - [ ] 2.1 Seedable RNG and board generation with no initial matches and at least one legal move
