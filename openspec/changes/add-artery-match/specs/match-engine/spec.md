@@ -64,3 +64,16 @@ The system SHALL drop normal tiles after a clear, refill empty cells, and resolv
 - **GIVEN** a column with a cholesterol block and empty cells below it
 - **WHEN** gravity applies
 - **THEN** the block SHALL keep its cell and the empty cells SHALL be filled by falling normal tiles or refill
+
+### Requirement: Feedback for a swap that makes no match
+The system SHALL show the two swapped tiles trading places and then returning to their original cells when the player swaps two normal tiles that do not create a match. The board and score SHALL stay unchanged and no move SHALL be counted. Input SHALL be ignored while the animation plays. A swap involving a cholesterol block is rejected without this animation (the board shakes instead). When the player prefers reduced motion, the animation SHALL be skipped and the "No match there" message SHALL still be shown.
+
+#### Scenario: No-match swap
+- **GIVEN** two adjacent normal tiles whose swap creates no match
+- **WHEN** the player swaps them
+- **THEN** the tiles SHALL slide into each other's cells and back, the board SHALL be unchanged, and no move or life SHALL be spent
+
+#### Scenario: Cholesterol swap
+- **GIVEN** a swap that includes a cholesterol block
+- **WHEN** the player attempts it
+- **THEN** no tile SHALL slide and the swap SHALL be rejected

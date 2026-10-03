@@ -48,9 +48,30 @@
   animation: am-shake 240ms ease-in-out;
 }
 
+/* A swap that makes no match: both tiles slide into each other's cell, then return. */
+@keyframes am-swap-back {
+  0% {
+    transform: translate(0, 0);
+  }
+  40%,
+  55% {
+    transform: translate(var(--am-dx), var(--am-dy));
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.am-swap-back {
+  position: relative;
+  z-index: 2;
+  animation: am-swap-back 450ms ease-in-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .am-drop,
-  .am-shake {
+  .am-shake,
+  .am-swap-back {
     animation: none;
   }
 

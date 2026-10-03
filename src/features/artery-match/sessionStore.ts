@@ -71,6 +71,8 @@ export interface SessionSnapshot {
   clearing: ReadonlySet<string>;
   locked: boolean;
   invalid: boolean;
+  /** The two tiles of a swap that made no match: they slide into each other's cell and back. */
+  bounce: readonly [Cell, Cell] | null;
   hint: MoveHint;
   callout: Callout | null;
   /** True after the move that first seeded plaque this game, until the next successful move. */
@@ -82,6 +84,8 @@ export interface SessionSnapshot {
 const DEFAULT_STEP_MS = 160;
 const CALLOUT_MS = 1200;
 const SHAKE_MS = 300;
+/** Length of the swap-and-return animation; keep in sync with `am-swap-back` in the css. */
+const BOUNCE_MS = 450;
 const NO_CLEARING: ReadonlySet<string> = new Set();
 
 const INITIAL: SessionSnapshot = {
@@ -94,6 +98,7 @@ const INITIAL: SessionSnapshot = {
   clearing: NO_CLEARING,
   locked: false,
   invalid: false,
+  bounce: null,
   hint: null,
   callout: null,
   plaqueNotice: false,
@@ -265,13 +270,23 @@ function flashInvalid(reason: Exclude<MoveHint, null>) {
   schedule(() => set({ invalid: false }), SHAKE_MS);
 }
 
+/** A swap that makes no match: show the two tiles trading places, then returning. */
+function bounceBack(ctx: SessionContext, a: Cell, b: Cell) {
+  set({ hint: 'no-match' });
+  if ((ctx.deps.stepMs ?? DEFAULT_STEP_MS) === 0 || prefersReducedMotion()) return;
+  // Input stays locked for the animation so a second tap cannot land mid-slide.
+  set({ bounce: [a, b], locked: true });
+  schedule(() => set({ bounce: null, locked: false }), BOUNCE_MS);
+}
+
 function attemptSwap(ctx: SessionContext, a: Cell, b: Cell) {
   const current = resolved;
   if (!current || snapshot.locked) return;
   set({ selected: null });
   const result = (ctx.deps.swap ?? trySwap)(current, a, b);
   if (!result.ok) {
-    if (result.reason === 'no-match' || result.reason === 'cholesterol') flashInvalid(result.reason);
+    if (result.reason === 'no-match') bounceBack(ctx, a, b);
+    else if (result.reason === 'cholesterol') flashInvalid(result.reason);
     return;
   }
   resolved = result.state;

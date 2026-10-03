@@ -61,6 +61,10 @@ Modelled on the spreading "chocolate" obstacle in Candy Crush (reference only, n
 - Effect, same bot and seeds: 5x5 drops to 13% of moves with an automatic cascade and 3% chaining 3 or more; 6x6 to 18% and 5%. Cascades still happen when tiles dropping into place line up, so they come from the board the player built, not from refill luck. The simulation was a throwaway script and is not committed.
 - Trade-off: slightly fewer multiplier moments, and rounds end a little sooner because fewer lucky refills create moves (random bot, average moves per game 26.6 to 22.2 on 5x5). Loss rule and plaque rules are unchanged; tune the plaque numbers if rounds feel short.
 
+### Rejected swap feedback
+- A swap that makes no match (alidateSwap reason 
+o-match) plays a 450ms swap-and-return: the session store sets ounce: [a, b] and locks input, the board gives those two cell buttons the m-swap-back css animation (translate by one cell plus the 4px gap toward the partner, hold, then back; transform only), then the store clears ounce and unlocks. Nothing changes in the engine state. Reduced motion or stepMs = 0 skips the slide and only shows the hint text. A swap with a cholesterol block keeps the old whole-board shake, since the block cannot move.
+
 ### Start board and loss
 - Generation fills cells in order and rerolls any tile that would complete a match. If the finished board has no legal move, generation repeats with the advanced RNG.
 - Legal swap: two orthogonally adjacent cells, both normal tiles (not cholesterol), where the swap creates at least one match.
