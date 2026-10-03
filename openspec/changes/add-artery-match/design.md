@@ -44,7 +44,7 @@ spawnChance(score: number): number
 - Loss: after a move resolves, if no legal swap exists the game is over and the UI shows "Complete Arterial Occlusion". No reshuffle.
 
 ### Session and economy
-- Starting a game spends 1 life via `useLives()` from `../../core`. At 0 lives the start is blocked with a message explaining how to earn lives (share a brag card, daily check-in).
+- Starting a game spends 1 life via `useLives()` from `../../core`. At 0 lives the start is blocked with a message explaining how to earn lives (read a library card, share a brag card, stay active), as the game-session spec requires.
 - Coins by score band, source `game_score`, capped at 30 per game: below 300 → 0, 300+ → 5, 1,000+ → 10, 2,500+ → 20, 5,000+ → 30. The bands are a local constant and should be confirmed with Prime's economy at integration.
 - Game over emits `game.finished` with `{ score, coins, moves, cholesterolCleared, maxCascade }` through the core event bus.
 
