@@ -1,6 +1,6 @@
 import { useHealth } from '../../../core';
-import { DISCLAIMER, MOOD_LABELS, MOOD_MESSAGES } from '../constants';
-import { computeMood, goalsMet } from '../mood';
+import { DISCLAIMER, MOOD_HINTS, MOOD_LABELS, MOOD_MESSAGES } from '../constants';
+import { assessDay, computeMood } from '../mood';
 import { babuStore } from '../store';
 import { useBabuState } from '../useBabu';
 import { BabuHeart } from './BabuHeart';
@@ -22,7 +22,9 @@ export function Home() {
   const { snapshot } = useHealth();
   const state = useBabuState();
   const mood = computeMood(snapshot, state, babuStore.today());
-  const message = MOOD_MESSAGES[mood].replace('{n}', String(goalsMet(snapshot).count));
+  const day = assessDay(snapshot);
+  const message = MOOD_MESSAGES[mood].replace('{n}', String(day.goals.count));
+  const hint = mood !== 'rest' && day.reason ? MOOD_HINTS[day.reason] : null;
 
   const scrollToDetails = () => {
     const target = document.getElementById('home-details');
@@ -49,6 +51,11 @@ export function Home() {
           <p className="mt-2 max-w-xs text-base text-slate-700" aria-live="polite">
             {message}
           </p>
+          {hint && (
+            <p className="mt-1 max-w-xs text-sm font-semibold text-rose-800" data-testid="mood-hint">
+              {hint}
+            </p>
+          )}
           <p className="mt-3 text-xs text-slate-600">{DISCLAIMER}.</p>
         </div>
 
@@ -65,7 +72,7 @@ export function Home() {
       </section>
 
       <div id="home-details" className="scroll-mt-16 space-y-4">
-        <HealthInput />
+        <HealthInput mood={mood} day={day} hint={hint} />
         <CheckinCard mood={mood} />
         <DemoControls />
       </div>

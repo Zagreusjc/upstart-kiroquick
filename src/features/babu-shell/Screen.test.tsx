@@ -98,17 +98,32 @@ describe('home', () => {
   // Scenario: Update values
   it('changes Baboo mood as the sliders move', () => {
     renderOnboarded();
+    const energy = () => screen.getByRole('meter', { name: "Baboo's energy" });
     expect(screen.getByTestId('mood-label')).toHaveTextContent('Tired');
+    expect(energy()).toHaveAttribute('aria-valuenow', '0');
 
-    fireEvent.change(slider(/Steps/), { target: { value: '8000' } });
+    // Maxing out movement does not make up for no sleep.
+    fireEvent.change(slider(/Steps/), { target: { value: '20000' } });
+    fireEvent.change(slider(/Activity/), { target: { value: '120' } });
+    expect(screen.getByTestId('mood-label')).toHaveTextContent('Tired');
+    expect(screen.getByTestId('mood-hint')).toHaveTextContent(/barely slept/);
+    expect(energy()).toHaveAttribute('aria-valuenow', '60');
+
+    fireEvent.change(slider(/Sleep/), { target: { value: '5' } });
     expect(screen.getByTestId('mood-label')).toHaveTextContent('OK');
-    expect(screen.getByText('1 of 3 goals reached', { exact: false })).toBeInTheDocument();
+    expect(screen.getByText('2 of 3 goals reached', { exact: false })).toBeInTheDocument();
+    expect(screen.getByTestId('mood-hint')).toHaveTextContent(/short sleep/);
 
-    fireEvent.change(slider(/Sleep/), { target: { value: '7' } });
-    fireEvent.change(slider(/Activity/), { target: { value: '30' } });
+    fireEvent.change(slider(/Sleep/), { target: { value: '8' } });
     expect(screen.getByTestId('mood-label')).toHaveTextContent('Happy');
     expect(screen.getByRole('img', { name: 'Baboo is happy' })).toBeInTheDocument();
     expect(screen.getAllByText('✓ Goal met')).toHaveLength(3);
+    expect(screen.queryByTestId('mood-hint')).not.toBeInTheDocument();
+
+    // Too much sleep is not the goal either.
+    fireEvent.change(slider(/Sleep/), { target: { value: '12' } });
+    expect(screen.getByTestId('mood-label')).toHaveTextContent('OK');
+    expect(screen.getByText('A bit too much')).toBeInTheDocument();
   });
 
   // Scenario: Persistence

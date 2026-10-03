@@ -38,7 +38,8 @@
 
 | Spec | Scenario | Covered by |
 |---|---|---|
-| babu-companion | Good day, Partial day, Just below every target, Low day, New player, Same input | `mood.test.ts` |
+| babu-companion | Good day, No sleep, Short sleep, Too much sleep, No movement, Partial day, Just below every target, Low day, New player, Same input | `mood.test.ts` |
+| babu-companion | Sliders show the effect | `Screen.test.tsx` |
 | babu-companion | Player away, Rest Mode wins, Checked in yesterday, Return from Rest Mode | `mood.test.ts`, `Screen.test.tsx` |
 | babu-companion | State label | `Screen.test.tsx` |
 | health-input | Out-of-range, Invalid number, Persistence, Stable snapshot | `healthProvider.test.ts` |
