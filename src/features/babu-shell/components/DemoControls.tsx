@@ -2,7 +2,7 @@ import { babuStore } from '../store';
 import { useBabuState } from '../useBabu';
 
 const button =
-  'min-h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700';
+  'mm-btn mm-btn--white mm-btn--soft min-h-11 rounded-xl border-2 border-[#f0556a] bg-white px-3 text-sm font-bold text-rose-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700';
 
 /** Demo-only controls that move Baboo's calendar forward. */
 export function DemoControls() {
@@ -10,7 +10,7 @@ export function DemoControls() {
   const today = babuStore.today();
 
   return (
-    <details className="rounded-2xl bg-white p-4 shadow-sm">
+    <details className="mm-card rounded-3xl p-4">
       <summary className="min-h-11 cursor-pointer content-center font-semibold">
         Demo controls{dayOffset > 0 ? ` (Baboo's day: ${today}, +${dayOffset})` : ''}
       </summary>

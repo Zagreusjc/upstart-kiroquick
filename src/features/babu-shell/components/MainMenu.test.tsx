@@ -168,6 +168,29 @@ describe('main menu', () => {
     expect(screen.getByTestId('main-menu')).toBeInTheDocument();
   });
 
+  it('gives the Baboo screen the menu look, toned down', async () => {
+    const user = userEvent.setup({ delay: null });
+    renderMenu();
+    await user.click(menu().getByRole('link', { name: /^Baboo/ }));
+
+    const babooScreen = screen.getByTestId('baboo-screen');
+    expect(babooScreen.className).toContain('mm-root');
+    expect(babooScreen.className).toContain('-m-4');
+
+    // Same game buttons, but with the shallower "soft" lip and no Play shine.
+    const back = screen.getByRole('link', { name: /Main menu/ });
+    expect(back.className).toMatch(/\bmm-btn\b.*\bmm-btn--soft\b/);
+    const checkin = screen.getByRole('button', { name: /check in/i });
+    expect(checkin.className).toMatch(/\bmm-btn--pink\b/);
+    expect(checkin.className).toMatch(/\bmm-btn--soft\b/);
+    expect(babooScreen.querySelector('.mm-play')).toBeNull();
+
+    // Frosted cards for the hero, snapshot and check-in.
+    expect(screen.getByTestId('babu-hero').className).toMatch(/\bmm-card\b/);
+    expect(screen.getByRole('region', { name: "Today's snapshot" }).className).toMatch(/\bmm-card\b/);
+    expect(screen.getByRole('region', { name: 'Daily check-in' }).className).toMatch(/\bmm-card\b/);
+  });
+
   it('leaves the Home tab for other tabs', async () => {
     const user = userEvent.setup({ delay: null });
     renderMenu();

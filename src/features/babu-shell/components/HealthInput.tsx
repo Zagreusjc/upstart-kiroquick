@@ -39,7 +39,7 @@ export function HealthInput({ mood, day, hint }: { mood: Mood; day: DayAssessmen
   const { snapshot, update } = useHealth();
 
   return (
-    <section aria-labelledby="snapshot-title" className="rounded-2xl bg-white p-4 shadow-sm">
+    <section aria-labelledby="snapshot-title" className="mm-card rounded-3xl p-4">
       <div className="flex items-center justify-between gap-2">
         <h2 id="snapshot-title" className="text-lg font-bold">
           Today's snapshot
@@ -54,7 +54,7 @@ export function HealthInput({ mood, day, hint }: { mood: Mood; day: DayAssessmen
       </p>
 
       {/* Live link between the sliders and Baboo, visible while sliding. */}
-      <div className="mt-3 rounded-xl bg-rose-50 p-3" data-testid="babu-now">
+      <div className="mt-3 rounded-2xl bg-rose-50 p-3 ring-1 ring-rose-100" data-testid="babu-now">
         <p className="flex items-baseline justify-between gap-2 text-sm" aria-live="polite">
           <span>
             Baboo right now: <strong>{MOOD_LABELS[mood]}</strong>

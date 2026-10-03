@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MOOD_LABELS, type Mood } from '../constants';
 import '../menu.css';
 import { MENU_LINKS } from '../menuLinks';
+import { BABOO_GLOW, MENU_BACKDROP } from '../menuStyle';
 import { useBabooMood } from '../useBabu';
 import { BabuHeart } from './BabuHeart';
 
@@ -46,13 +47,6 @@ const SIZES = {
   playText: 'text-[clamp(2.5rem,7dvh,3.75rem)]',
   regularText: 'text-[clamp(1rem,2.6dvh,1.25rem)]',
 } as const;
-
-/** Dotted pink backdrop, like the mock-up, with a soft light at the top. */
-const BACKDROP: CSSProperties = {
-  backgroundImage:
-    'radial-gradient(rgba(255,255,255,0.5) 1.5px, transparent 1.7px), radial-gradient(120% 55% at 50% 0%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 60%), linear-gradient(180deg, #ffdde3 0%, #ffbcc8 60%, #ffa9b9 100%)',
-  backgroundSize: '18px 18px, 100% 100%, 100% 100%',
-};
 
 /** Solid outline so white lettering stays readable on pink. */
 const OUTLINED_WHITE: CSSProperties = {
@@ -165,7 +159,7 @@ export function MainMenu() {
       aria-labelledby="menu-title"
       data-testid="main-menu"
       className={`mm-root relative -m-4 flex flex-col overflow-x-hidden px-2 pt-[clamp(0.75rem,3dvh,2.5rem)] pb-[clamp(0.75rem,2dvh,1.5rem)] ${FILL_SCREEN}`}
-      style={BACKDROP}
+      style={MENU_BACKDROP}
     >
       {/* Soft colored light for depth. Decorative. */}
       <span aria-hidden="true" className="mm-glow top-[18%] -right-16 h-48 w-48 bg-teal-200/50" />
@@ -197,7 +191,7 @@ export function MainMenu() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute aspect-square h-[90%] max-h-52 rounded-full"
-            style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 66%)' }}
+            style={BABOO_GLOW}
           />
           <div className="mm-float relative flex h-full items-center justify-center">
             <BabuHeart mood={mood} className="h-full max-h-44 w-auto max-w-44 drop-shadow-lg" />
