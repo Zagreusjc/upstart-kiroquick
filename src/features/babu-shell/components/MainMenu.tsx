@@ -43,54 +43,59 @@ const TITLE: CSSProperties = {
 type Variant = 'pink' | 'teal';
 
 /**
- * Flat, solid fills (no gradients, no drop shadows).
- * - Dark pink #f0556a (Play): white lettering, kept large so it meets the
- *   3:1 contrast rule for large text.
- * - Teal #3cc4b4: white lettering as designed. Plain white on this teal is
- *   only about 2:1, so the text gets a thin dark-teal outline (TEAL_OUTLINE)
- *   to stay readable in sunlight.
+ * Solid fills with a raised "game button" shadow underneath.
+ * - Dark pink #f0556a (Play), white lettering.
+ * - Teal #3cc4b4, plain white lettering (as designed).
  */
-const VARIANT: Record<Variant, string> = {
-  pink: 'bg-[#f0556a] text-white hover:brightness-95',
-  teal: 'bg-[#3cc4b4] text-white hover:brightness-95',
+const VARIANT: Record<Variant, { className: string; shadow: string }> = {
+  pink: {
+    className: 'bg-[#f0556a] text-white hover:brightness-95',
+    shadow: '0 6px 0 #c23a4f, 0 10px 18px rgba(194, 58, 79, 0.28)',
+  },
+  teal: {
+    className: 'bg-[#3cc4b4] text-white hover:brightness-95',
+    shadow: '0 6px 0 #2a8f83, 0 10px 18px rgba(42, 143, 131, 0.28)',
+  },
 };
 
-/** Thin dark-teal outline behind white lettering on teal buttons. */
-const TEAL_OUTLINE: CSSProperties = {
-  textShadow:
-    '1px 1px 0 #0f5f57, -1px 1px 0 #0f5f57, 1px -1px 0 #0f5f57, -1px -1px 0 #0f5f57, 0 1px 2px rgba(7,59,54,0.45)',
-};
+/** Get screened: white with a pink border and a pink raised shadow. */
+const SCREENED_SHADOW = '0 6px 0 #f0556a, 0 10px 18px rgba(194, 58, 79, 0.22)';
 
 /**
- * A text-only menu button that hugs its text: the padding is just a little
- * wider than the words. `big` is the Play button, with larger lettering.
+ * One size for every regular menu button (Blood Bank, Library, Baboo and
+ * Get screened): 176 x 64 px. Sized to the widest label, "Top up your
+ * lives!", and narrow enough that Get screened fits between the two round
+ * buttons on a 360px phone.
  */
+const REGULAR_SIZE = 'h-16 w-44';
+/** Play is the biggest button: 256 x 128 px. */
+const PLAY_SIZE = 'h-32 w-64';
+
+/** A text-only menu button. `big` is the Play button. */
 function MenuButton({
   to,
   title,
   subtitle,
   variant,
   big = false,
-  state,
 }: {
   to: string;
   title: string;
   subtitle?: string;
   variant: Variant;
   big?: boolean;
-  state?: unknown;
 }) {
+  const v = VARIANT[variant];
   return (
     <Link
       to={to}
-      state={state}
       data-size={big ? 'big' : 'regular'}
-      className={`inline-flex min-h-11 flex-col items-center justify-center rounded-2xl text-center ${
-        big ? 'px-8 py-3' : 'px-5 py-2'
-      } ${VARIANT[variant]} ${press} ${focusRing}`}
-      style={variant === 'teal' ? TEAL_OUTLINE : undefined}
+      className={`flex shrink-0 flex-col items-center justify-center rounded-2xl text-center ${
+        big ? PLAY_SIZE : REGULAR_SIZE
+      } ${v.className} ${press} ${focusRing}`}
+      style={{ boxShadow: v.shadow }}
     >
-      <span className={`leading-tight font-black tracking-wide uppercase ${big ? 'text-5xl' : 'text-xl'}`}>
+      <span className={`leading-tight font-black tracking-wide uppercase ${big ? 'text-6xl' : 'text-xl'}`}>
         {title}
       </span>
       {subtitle && <span className="text-sm leading-tight font-bold">{subtitle}</span>}
@@ -103,8 +108,8 @@ function RoundButton({ to, label, icon }: { to: string; label: string; icon: str
   return (
     <Link
       to={to}
-      className={`flex h-[4.25rem] w-[4.25rem] shrink-0 flex-col items-center justify-center rounded-full text-center ${VARIANT.teal} ${press} ${focusRing}`}
-      style={TEAL_OUTLINE}
+      className={`flex h-[4.25rem] w-[4.25rem] shrink-0 flex-col items-center justify-center rounded-full text-center ${VARIANT.teal.className} ${press} ${focusRing}`}
+      style={{ boxShadow: VARIANT.teal.shadow }}
     >
       <span aria-hidden="true" className="text-2xl leading-none">
         {icon}
@@ -176,18 +181,20 @@ export function MainMenu() {
         </p>
       </div>
 
-      <nav aria-label="Main menu" className="relative mt-6 flex flex-col items-center gap-4">
+      <nav aria-label="Main menu" className="relative mt-6 flex flex-col items-center gap-5">
         <MenuButton to={MENU_LINKS.play} title="Play!" variant="pink" big />
         <MenuButton to={MENU_LINKS.bloodBank} title="Blood Bank" subtitle="Top up your lives!" variant="teal" />
         <MenuButton to={MENU_LINKS.library} title="Library" subtitle="Play to learn!" variant="teal" />
         <MenuButton to={MENU_LINKS.baboo} title="Baboo" subtitle="Your heart buddy!" variant="teal" />
 
-        <div className="flex max-w-full items-center justify-center gap-2 pt-2">
+        <div className="flex max-w-full items-center justify-center gap-2 pt-1">
           <RoundButton to={MENU_LINKS.refer} label="Refer a Buddy" icon="💞" />
 
           <Link
             to={MENU_LINKS.screened}
-            className={`inline-flex min-h-11 items-center justify-center rounded-2xl border-4 border-rose-500 bg-white px-3 py-2 text-center text-sm leading-tight font-black tracking-wide whitespace-nowrap text-rose-700 uppercase hover:bg-rose-50 ${press} ${focusRing}`}
+            data-size="regular"
+            className={`flex shrink-0 items-center justify-center rounded-2xl border-4 border-[#f0556a] bg-white text-center text-lg leading-tight font-black tracking-wide whitespace-nowrap text-rose-700 uppercase hover:bg-rose-50 ${REGULAR_SIZE} ${press} ${focusRing}`}
+            style={{ boxShadow: SCREENED_SHADOW }}
           >
             Get screened!
           </Link>

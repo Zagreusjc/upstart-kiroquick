@@ -65,15 +65,29 @@ describe('main menu', () => {
     expect(screen.getAllByRole('img', { name: /^Baboo is/ })).toHaveLength(1);
     expect(menu().getByRole('link', { name: /^Baboo/ }).querySelector('svg')).toBeNull();
 
-    // Flat buttons: no drop shadows, no gradients.
+    // Solid fills (no gradients) with a raised shadow under every button.
     for (const link of menu().getAllByRole('link')) {
-      expect(link.style.boxShadow).toBe('');
-      expect(link.className).not.toMatch(/bg-linear|shadow/);
+      expect(link.style.boxShadow).not.toBe('');
+      expect(link.className).not.toMatch(/bg-linear/);
     }
 
-    expect(menu().getByRole('link', { name: /^Play!$/ })).toHaveAttribute('data-size', 'big');
-    for (const name of [/Blood Bank/, /^Library/, /^Baboo/]) {
-      expect(menu().getByRole('link', { name })).toHaveAttribute('data-size', 'regular');
+    // Play is the biggest; Blood Bank, Library, Baboo and Get screened share one size.
+    const play = menu().getByRole('link', { name: /^Play!$/ });
+    expect(play).toHaveAttribute('data-size', 'big');
+    expect(play.className).toMatch(/\bh-32\b/);
+    expect(play.className).toMatch(/\bw-64\b/);
+    for (const name of [/Blood Bank/, /^Library/, /^Baboo/, /^Get screened!$/]) {
+      const link = menu().getByRole('link', { name });
+      expect(link).toHaveAttribute('data-size', 'regular');
+      expect(link.className).toMatch(/\bh-16\b/);
+      expect(link.className).toMatch(/\bw-44\b/);
+    }
+  });
+
+  it('uses plain white lettering on teal (no outline)', () => {
+    renderMenu();
+    for (const name of [/Blood Bank/, /^Library/, /^Baboo/, /Refer a Buddy/, /Settings/]) {
+      expect(menu().getByRole('link', { name }).style.textShadow).toBe('');
     }
   });
 
