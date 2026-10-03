@@ -5,7 +5,8 @@ The game is the "Play" step of the loop and the main engagement hook. Reframing 
 ## What Changes
 
 - Add a pure TypeScript match-3 engine: grid, swap validation, match detection, cascades and gravity, seedable RNG.
-- Add cholesterol obstacles: immobile, cannot be swapped, destroyed by adjacent matches, spawn chance scaling from 3% to 10% with score.
+- Add a 6x6 board (bigger tap targets on a phone).
+- Add cholesterol plaque: immobile, cannot be swapped, destroyed only by orthogonally adjacent matches. After a 3-move grace period a single block is seeded whenever the board is plaque-free, and plaque spreads to one neighbouring tile after every 2 moves that clear none (every move from a score of 2,000), until it is cleared or the artery is occluded.
 - Add scoring: 30 points per match, 500 per cholesterol block cleared, cascade multipliers.
 - Add game sessions: starting a game spends 1 life, the game ends when the artery is fully occluded with no legal moves, coins are awarded and `game.finished` is emitted.
 - Add a brag card: a shareable PNG of the score; sharing awards 1 life.

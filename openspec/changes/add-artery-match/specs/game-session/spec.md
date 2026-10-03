@@ -21,6 +21,11 @@ The system SHALL end the game when no legal move exists.
 - **WHEN** the board stabilizes
 - **THEN** the game SHALL end with a "Complete Arterial Occlusion" message
 
+#### Scenario: Plaque leaves no legal move
+- **GIVEN** a move after which seeding or spreading plaque leaves no legal swap (including a board fully covered with plaque)
+- **WHEN** the move finishes
+- **THEN** the game SHALL end with a "Complete Arterial Occlusion" message
+
 #### Scenario: Still playable
 - **GIVEN** a board with at least one legal swap
 - **WHEN** the board stabilizes
