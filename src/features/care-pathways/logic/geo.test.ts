@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { CITIES, CLINICS } from '../data';
-import { formatDistance, haversineKm, sortClinicsByDistance } from './geo';
+import {
+  NEAREST_LIMIT,
+  formatDistance,
+  haversineKm,
+  nearestClinics,
+  sortClinicsByDistance,
+} from './geo';
 
 const manila = { lat: 14.5995, lng: 120.9842 };
 const cebu = { lat: 10.3157, lng: 123.8854 };
@@ -47,6 +53,34 @@ describe('sortClinicsByDistance', () => {
     const before = CLINICS.map((c) => c.id);
     sortClinicsByDistance(CLINICS, cebu);
     expect(CLINICS.map((c) => c.id)).toEqual(before);
+  });
+});
+
+describe('nearestClinics', () => {
+  it('keeps only the 5 nearest, in distance order', () => {
+    const nearest = nearestClinics(CLINICS, manila);
+    expect(NEAREST_LIMIT).toBe(5);
+    expect(nearest).toHaveLength(5);
+    expect(nearest).toEqual(sortClinicsByDistance(CLINICS, manila).slice(0, 5));
+  });
+
+  it('applies the type filter before picking the nearest', () => {
+    const nearest = nearestClinics(CLINICS, cebu, 'private');
+    expect(nearest.length).toBeGreaterThan(0);
+    expect(nearest.length).toBeLessThanOrEqual(5);
+    expect(nearest.every((c) => c.type === 'private')).toBe(true);
+    expect(nearest[0]).toEqual(sortClinicsByDistance(CLINICS, cebu, 'private')[0]);
+  });
+
+  it('returns all of them when fewer than the limit exist', () => {
+    expect(nearestClinics(CLINICS.slice(0, 3), cebu)).toHaveLength(3);
+    expect(nearestClinics(CLINICS, cebu, 'all', 0)).toEqual([]);
+  });
+
+  it('keeps each clinic’s services', () => {
+    for (const clinic of nearestClinics(CLINICS, manila)) {
+      expect(clinic.services.length).toBeGreaterThan(0);
+    }
   });
 });
 

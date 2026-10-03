@@ -35,6 +35,19 @@ export function sortClinicsByDistance(
     .sort((a, b) => a.distanceKm - b.distanceKm || a.name.localeCompare(b.name));
 }
 
+/** How many clinics the finder shows. */
+export const NEAREST_LIMIT = 5;
+
+/** The `limit` clinics nearest to `origin` (after the type filter), nearest first. */
+export function nearestClinics(
+  clinics: readonly Clinic[],
+  origin: LatLng,
+  filter: ClinicFilter = 'all',
+  limit: number = NEAREST_LIMIT,
+): ClinicWithDistance[] {
+  return sortClinicsByDistance(clinics, origin, filter).slice(0, Math.max(0, limit));
+}
+
 export function formatDistance(km: number): string {
   if (km < 1) return `${Math.round(km * 1000)} m`;
   if (km < 100) return `${km.toFixed(1)} km`;

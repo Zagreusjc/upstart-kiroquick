@@ -217,6 +217,18 @@ describe('clinic finder screen', () => {
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 
+  it('shows only the 5 nearest clinics, each with the services it usually offers', () => {
+    renderAt('/care/clinics');
+    const items = within(screen.getByRole('list', { name: 'Clinics, nearest first' })).getAllByRole('listitem');
+    expect(items).toHaveLength(5);
+    expect(screen.getByRole('heading', { name: /5 nearest clinics, sorted from/ })).toBeInTheDocument();
+
+    // Services are visible without opening the card.
+    const first = within(items[0]);
+    expect(first.getByText('Usually offers:')).toBeVisible();
+    expect(first.getByText('Blood pressure check')).toBeVisible();
+  });
+
   it('filters by public and by private', async () => {
     const user = userEvent.setup();
     renderAt('/care/clinics');

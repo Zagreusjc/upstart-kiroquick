@@ -1,9 +1,9 @@
-import { Suspense, lazy, useState } from 'react';
+import { Fragment, Suspense, lazy, useState } from 'react';
 import { CITIES, CLINICS } from '../data';
 import { clinicContact } from '../logic/contact';
 import {
   formatDistance,
-  sortClinicsByDistance,
+  nearestClinics,
   type ClinicFilter,
   type ClinicWithDistance,
   type LatLng,
@@ -30,8 +30,8 @@ export function ClinicsScreen() {
 
   const city = CITIES.find((c) => c.id === cityId) ?? CITIES[0];
   const origin: Origin = gps ? { ...gps, label: 'your location' } : { ...city, label: city.name };
-  // 16 clinics: sorting on every render is cheap.
-  const clinics = sortClinicsByDistance(CLINICS, origin, filter);
+  // 16 clinics: sorting on every render is cheap. Only the 5 nearest are shown.
+  const clinics = nearestClinics(CLINICS, origin, filter);
 
   function locateMe() {
     if (!('geolocation' in navigator)) {
@@ -60,8 +60,8 @@ export function ClinicsScreen() {
   }
 
   return (
-    <Page title="Nearby clinics" intro="Public and private clinics, nearest first.">
-      <IllustrativeNotice what="Clinic names, locations and voucher partners" />
+    <Page title="Nearby clinics" intro="The 5 public and private clinics nearest to you, with the services they usually offer.">
+      <IllustrativeNotice what="Clinic names, locations, services and voucher partners" />
 
       <Card className="space-y-3">
         <button
@@ -145,7 +145,8 @@ export function ClinicsScreen() {
       )}
 
       <h3 className="font-bold">
-        {clinics.length} clinics sorted from {origin.label}
+        {clinics.length === 1 ? 'Nearest clinic' : `${clinics.length} nearest clinics`}, sorted from{' '}
+        {origin.label}
       </h3>
       <p className="-mt-2 text-sm text-slate-700">Tap a clinic to book or call for an appointment.</p>
       <ol className="space-y-3" aria-label="Clinics, nearest first">
@@ -208,8 +209,18 @@ function ClinicCard({
         </button>
       </h4>
 
+      {/* Spans, not a nested list, so the clinic list keeps one item per clinic. */}
+      <p className="mt-2 flex flex-wrap items-center gap-1.5 text-xs" data-testid={`services-${clinic.id}`}>
+        <span className="font-semibold text-slate-700">Usually offers:</span>
+        {clinic.services.map((service, i) => (
+          <Fragment key={service}>
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 font-medium text-slate-800">{service}</span>
+            {i < clinic.services.length - 1 && <span className="sr-only">, </span>}
+          </Fragment>
+        ))}
+      </p>
+
       <div id={panelId} hidden={!open} className="mt-3 space-y-2 border-t border-slate-200 pt-3">
-        <p className="text-sm">{clinic.services.join(' · ')}</p>
         {clinic.partner && (
           <p className="text-sm font-semibold text-rose-800">
             <span aria-hidden="true">🎟️ </span>Accepts INLABABU vouchers

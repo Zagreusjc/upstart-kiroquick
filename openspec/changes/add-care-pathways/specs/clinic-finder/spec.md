@@ -13,6 +13,24 @@ The system SHALL list clinics sorted by distance from the player's location usin
 - **WHEN** the clinic list loads
 - **THEN** the player SHALL be able to pick a city manually and the list SHALL sort from that city
 
+### Requirement: Five nearest clinics with their services
+The system SHALL list only the 5 clinics nearest to the player's location or picked city, after the type filter, and SHALL show the services each clinic usually offers on its card without opening it.
+
+#### Scenario: Top five
+- **GIVEN** more than 5 clinics match the type filter
+- **WHEN** the clinic list loads
+- **THEN** only the 5 nearest SHALL be listed, nearest first
+
+#### Scenario: Fewer than five
+- **GIVEN** fewer than 5 clinics match the type filter
+- **WHEN** the clinic list loads
+- **THEN** all matching clinics SHALL be listed
+
+#### Scenario: Services visible
+- **GIVEN** the clinic list
+- **WHEN** it is displayed
+- **THEN** each clinic card SHALL show the services it usually offers without being opened
+
 ### Requirement: Clinic types and map
 The system SHALL show public (government-run) and private clinics, SHALL let the player filter by public or private, and SHALL offer a map view with markers.
 
