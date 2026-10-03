@@ -1,5 +1,5 @@
 /**
- * CVD library content for INLABABU.
+ * CVD library content for Inlababoo.
  *
  * Content curated with Amazon Quick Research and reviewed for plain language.
  * Every card cites at least one source (WHO, the American Heart Association, or

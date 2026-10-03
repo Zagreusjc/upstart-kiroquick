@@ -2,7 +2,7 @@ import type { CoinSource, CoinsProvider } from '../../core';
 import { loadJSON, saveJSON } from '../../core';
 
 /**
- * Real coins ledger for INLABABU. Prime registers this as the `coins` provider.
+ * Real coins ledger for Inlababoo. Prime registers this as the `coins` provider.
  *
  * - Idempotent earning: an award with an already-used key changes nothing.
  * - Safe spending: never drops below zero.

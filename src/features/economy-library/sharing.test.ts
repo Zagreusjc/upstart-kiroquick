@@ -3,7 +3,7 @@ import { createLivesProvider } from './lives';
 import { createSharer, type ShareEnv } from './sharing';
 
 const PAYLOAD = {
-  title: 'INLABABU',
+  title: 'Inlababoo',
   text: 'Take care of your Baboos!',
   url: 'https://inlababu.example',
 };

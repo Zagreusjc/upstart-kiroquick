@@ -47,7 +47,7 @@ export function Milestones() {
           />
           <RefillCard
             title="Share the Game!"
-            body="Share INLABABU with a friend to refill a life."
+            body="Share Inlababoo with a friend to refill a life."
             cta={<ShareButton />}
           />
         </div>

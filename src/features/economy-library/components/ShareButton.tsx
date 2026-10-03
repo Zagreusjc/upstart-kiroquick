@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { getEconomyStore } from '../store';
 
 const SHARE_PAYLOAD = {
-  title: 'INLABABU',
+  title: 'Inlababoo',
   text: 'Take care of your Baboos, by taking care of yourself! Learn about your heart and earn screening vouchers.',
   url: typeof window !== 'undefined' ? window.location.origin : 'https://inlababu.app',
   context: 'library',

@@ -2,7 +2,7 @@ import type { HealthSnapshot, LifeSource, LivesProvider } from '../../core';
 import { getProvider, loadJSON, saveJSON, todayISO } from '../../core';
 
 /**
- * Real lives system for INLABABU. Prime registers this as the `lives` provider.
+ * Real lives system for Inlababoo. Prime registers this as the `lives` provider.
  *
  * - Starts at 3, clamped to [0, 3].
  * - Refills from: first read of a library card, a completed share, reaching the
