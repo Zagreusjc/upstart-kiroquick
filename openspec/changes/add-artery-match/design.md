@@ -106,12 +106,12 @@ Modelled on the spreading "chocolate" obstacle in Candy Crush (reference only, n
 - [ ] "Add to Home Screen" installs the PWA and the game runs from the icon.
 - [ ] Switch to another tab mid-game and back: the same board, score and moves return, and no extra life is spent.
 
-## Verification (earlier round, before the 6x6 board and spreading plaque; update after that change lands)
+## Verification (6x6 board and spreading plaque)
 
 Run on Windows from the repo root on `feat/artery-match`:
 
 - `npm run lint`: exit 0, no warnings.
-- `npx vitest run`: 22 files, 122 tests passed (before the fixes: 22 files, 114 tests). New: 2 share outcome tests in `brag/share.test.ts`; in `Game.test.tsx` the unavailable-image panel, the per-move score announcement, the pointer drag (exactly one swap past 0.4 tiles, trailing click ignored; a mutation that drops the click suppression fails it), arrow-key navigation with Enter/Space swap, resume after unmount, and the award-once-after-unmount-mid-playback case.
+- `npx vitest run`: 23 files, 145 tests passed (artery-match alone: 16 files, 120 tests). New: `engine/plaque.test.ts` (spread interval, seeding with legal-move preference and fallback, orthogonal-only spread, no room to spread, grace, first seed, re-seed, spread timing, destruction reset, determinism), plaque integration and fixed-block gravity in `engine/resolve.test.ts`, first seed at move 4 and refill-never-cholesterol in `engine/determinism.test.ts`, 6x6 default in `engine/board.test.ts`, and in `Game.test.tsx` the 36-cell board, "Plaque: N%", the once-per-game plaque hint and the tile-size drag threshold. The old `spawnChance` tests are removed.
 - `npm run build`: exit 0 (`tsc --noEmit` and `vite build`).
 - `openspec validate add-artery-match --strict`: "Change 'add-artery-match' is valid".
 - `git diff --name-only origin/base/scaffold`: only paths under `src/features/artery-match/` and `openspec/changes/add-artery-match/`.
