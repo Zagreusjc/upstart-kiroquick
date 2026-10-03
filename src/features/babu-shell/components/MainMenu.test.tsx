@@ -124,11 +124,11 @@ describe('main menu', () => {
   it('fills the screen instead of sitting in a card', () => {
     renderMenu();
     const menuEl = screen.getByTestId('main-menu');
-    expect(menuEl.className).toContain('-m-4');
     expect(menuEl.className).not.toMatch(/rounded|shadow/);
-    // Exactly one screen tall (not a minimum), so the page does not scroll.
-    expect(menuEl.className).toContain('h-[calc(100dvh_-_107px_-_env(safe-area-inset-bottom))]');
-    expect(menuEl.className).not.toContain('min-h-[calc');
+    // A full-screen layer, exactly one screen tall, so nothing scrolls.
+    expect(menuEl.className).toMatch(/\bfixed\b/);
+    expect(menuEl.className).toMatch(/\binset-0\b/);
+    expect(menuEl.className).toMatch(/\bh-dvh\b/);
   });
 
   it('opens settings from the menu', async () => {
@@ -191,6 +191,39 @@ describe('main menu', () => {
     expect(screen.getByTestId('babu-hero').className).toMatch(/\bmm-card\b/);
     expect(screen.getByRole('region', { name: "Today's snapshot" }).className).toMatch(/\bmm-card\b/);
     expect(screen.getByRole('region', { name: 'Daily check-in' }).className).toMatch(/\bmm-card\b/);
+  });
+
+  it('hides the app header and bottom nav on the menu and brings them back elsewhere', async () => {
+    const user = userEvent.setup({ delay: null });
+    // Stand-ins for the shell's header and bottom nav (src/app, owned by Jolo).
+    const header = document.body.appendChild(document.createElement('header'));
+    const nav = document.body.appendChild(document.createElement('nav'));
+    nav.setAttribute('aria-label', 'Main');
+
+    renderMenu();
+    for (const el of [header, nav]) {
+      expect(el).toHaveAttribute('inert');
+      expect(el).toHaveAttribute('aria-hidden', 'true');
+    }
+    // The menu's own title area is not hidden.
+    expect(screen.getByRole('heading', { name: 'INLABABOO!' }).closest('[inert]')).toBeNull();
+
+    // Baboo screen: header and nav are back.
+    await user.click(menu().getByRole('link', { name: /^Baboo/ }));
+    for (const el of [header, nav]) {
+      expect(el).not.toHaveAttribute('inert');
+      expect(el).not.toHaveAttribute('aria-hidden');
+    }
+
+    // Back to the menu hides them again; another tab shows them.
+    await user.click(screen.getByRole('link', { name: /Main menu/ }));
+    expect(header).toHaveAttribute('inert');
+    await user.click(menu().getByRole('link', { name: /^Play!$/ }));
+    expect(header).not.toHaveAttribute('inert');
+    expect(nav).not.toHaveAttribute('inert');
+
+    header.remove();
+    nav.remove();
   });
 
   it('leaves the Home tab for other tabs', async () => {

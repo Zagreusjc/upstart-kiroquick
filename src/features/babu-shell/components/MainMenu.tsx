@@ -1,9 +1,10 @@
-import type { CSSProperties } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { MOOD_LABELS, type Mood } from '../constants';
 import '../menu.css';
 import { MENU_LINKS } from '../menuLinks';
 import { BABOO_GLOW, MENU_BACKDROP } from '../menuStyle';
+import { useHideShellChrome } from '../shellChrome';
 import { useBabooMood } from '../useBabu';
 import { BabuHeart } from './BabuHeart';
 
@@ -18,17 +19,21 @@ const focusRing =
   'focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-rose-900';
 
 /**
- * Exactly fill the area between the app header and bottom nav, so the page
- * never scrolls. The shell (owned by Jolo) gives `main` 16px padding,
- * cancelled with `-m-4`, a 52px header and a 55px bottom nav plus the safe
- * area: 52 + 55 = 107. Update this if the shell changes.
+ * Full screen: the menu is a fixed layer over the whole viewport, covering
+ * the app shell's header and bottom nav (see `useHideShellChrome`). They
+ * come back on every other screen. Safe-area padding keeps content clear of
+ * the iPhone notch and home indicator.
  *
  * Everything inside scales with the screen height (dvh): buttons and gaps
  * shrink on shorter phones, and Baboo takes whatever height is left.
  * Only on very short screens (for example a phone in landscape) does the
  * menu scroll inside itself as a last resort.
  */
-const FILL_SCREEN = 'h-[calc(100dvh_-_107px_-_env(safe-area-inset-bottom))] overflow-y-auto';
+const FILL_SCREEN = 'fixed inset-0 z-30 h-dvh overflow-y-auto';
+const SAFE_AREA: CSSProperties = {
+  paddingTop: 'env(safe-area-inset-top)',
+  paddingBottom: 'env(safe-area-inset-bottom)',
+};
 
 /** Height-responsive sizes (min, preferred in dvh, max). Touch targets never go under 44px. */
 const SIZES = {
@@ -161,14 +166,19 @@ const MOOD_DOT: Record<Mood, string> = {
 
 export function MainMenu() {
   const { mood } = useBabooMood();
+  const layer = useRef<HTMLElement>(null);
+  useHideShellChrome(layer);
 
   return (
     <section
+      ref={layer}
       aria-labelledby="menu-title"
       data-testid="main-menu"
-      className={`mm-root relative -m-4 flex flex-col overflow-x-hidden px-2 pt-[clamp(0.75rem,3dvh,2.5rem)] pb-[clamp(0.75rem,2dvh,1.5rem)] ${FILL_SCREEN}`}
-      style={MENU_BACKDROP}
+      className={`mm-root overflow-x-hidden ${FILL_SCREEN}`}
+      style={{ ...MENU_BACKDROP, ...SAFE_AREA }}
     >
+      {/* Content column: phone width, centered on bigger screens. */}
+      <div className="relative mx-auto flex h-full max-w-md flex-col px-2 pt-[clamp(0.75rem,3dvh,2.5rem)] pb-[clamp(0.75rem,2dvh,1.5rem)]">
       {/* Soft colored light for depth. Decorative. */}
       <span aria-hidden="true" className="mm-glow top-[18%] -right-16 h-48 w-48 bg-teal-200/50" />
       <span aria-hidden="true" className="mm-glow bottom-[12%] -left-16 h-52 w-52 bg-violet-200/50" />
@@ -244,6 +254,7 @@ export function MainMenu() {
           <RoundButton to={MENU_LINKS.settings} label="Settings" icon="⚙️" />
         </div>
       </nav>
+      </div>
     </section>
   );
 }

@@ -21,6 +21,11 @@ The system SHALL show onboarding on first launch with a short explanation, conse
 ### Requirement: Main menu
 After onboarding, the Home tab (`/home`) SHALL open on a main menu with the "INLABABOO!" title, Baboo in its current mood (the same mood as the Baboo screen) with a text label, and buttons to every part of the app: Play (`/play`), Blood Bank (Prime's lives page, `/library/milestones`), Library (`/library`), Baboo (`/home/baboo`), Refer a Buddy (sharing on `/library/milestones`), a single Get screened button (`/care`) and Settings (`/home/settings`). Play SHALL be the largest button. Buttons SHALL be solid colors with a raised shadow underneath: Play dark pink `#f0556a` and the biggest (256px wide), Get screened white with a pink border and slightly narrower than Play (224px wide), every other button (Baboo, Library "Play to learn!", Blood Bank, Refer a Buddy, Settings) teal `#3cc4b4` with plain white lettering. The stack order SHALL be Play, Baboo, Blood Bank, Library. The tagline under the title SHALL read "Love hearts. Save lives." Baboo, Blood Bank and Library SHALL share one height and step down in width (Baboo 192px, Blood Bank 176px, Library 160px), and Get screened SHALL match their height. The menu SHALL be exactly one screen tall so the page does not scroll on a portrait phone: button heights and gaps scale with the screen height (never under 44px), and Baboo takes the remaining space.
 
+#### Scenario: Full screen without the app header and bottom nav
+- **GIVEN** the main menu is open
+- **WHEN** it is displayed
+- **THEN** it SHALL cover the whole screen, the app header and bottom nav SHALL be hidden and unreachable by keyboard and screen readers, and both SHALL return on every other screen
+
 #### Scenario: No scrolling on a phone
 - **GIVEN** a portrait phone screen from 640 to 844px tall
 - **WHEN** the main menu is shown
