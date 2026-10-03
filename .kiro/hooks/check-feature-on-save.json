@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Check feature on save",
+      "trigger": "PostFileSave",
+      "description": "After a TypeScript file in src is saved, lint and test the feature that changed, staying inside the owner's folder.",
+      "matcher": "src/.*\\.(ts|tsx)$",
+      "action": {
+        "type": "agent",
+        "prompt": "A source file in src/ was just saved. Run `npm run lint` and the Vitest tests for the feature folder that changed (for example `npx vitest run src/features/<name>`). If something fails, fix it only inside the current owner's folder (src/features/<name>/). Never edit src/core, src/app, package.json or another feature's folder. If the fix needs a core or dependency change, tell the user to message Jolo instead."
+      }
+    }
+  ]
+}
