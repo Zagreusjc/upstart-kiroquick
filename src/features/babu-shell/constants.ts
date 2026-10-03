@@ -1,5 +1,5 @@
 /**
- * Every Babu rule number lives here (see openspec/changes/add-babu-shell/design.md).
+ * Every Baboo rule number lives here (see openspec/changes/add-babu-shell/design.md).
  * Change a value here and the tests and UI follow.
  */
 
@@ -54,10 +54,10 @@ export const MOOD_LABELS: Record<Mood, string> = {
 
 /** Positive framing only. `{n}` is replaced with the number of goals met. */
 export const MOOD_MESSAGES: Record<Mood, string> = {
-  happy: 'Babu is happy! You reached all 3 goals today.',
-  ok: 'Babu is doing OK. {n} of 3 goals reached, nice progress.',
-  tired: 'Babu is a little tired. A short walk or an early night will perk Babu up.',
-  rest: 'Babu is resting and saved a spot for you. Welcome back! Check in to wake Babu up.',
+  happy: 'Baboo is happy! You reached all 3 goals today.',
+  ok: 'Baboo is doing OK. {n} of 3 goals reached, nice progress.',
+  tired: 'Baboo is a little tired. A short walk or an early night will perk Baboo up.',
+  rest: 'Baboo is resting and saved a spot for you. Welcome back! Check in to wake Baboo up.',
 };
 
 export const DISCLAIMER = 'Screening awareness, not a diagnosis';

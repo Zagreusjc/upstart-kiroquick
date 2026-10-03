@@ -11,9 +11,9 @@
 - [x] 3.1 Sliders for steps, sleep and activity, labeled "Demo input"
 - [x] 3.2 Implement and register the real `HealthProvider` (persist, clamp, keep previous on invalid, stable snapshot, subscribe)
 
-## 4. Babu UI
+## 4. Baboo UI
 - [x] 4.1 SVG heart with four expressions and a visible state label
-- [x] 4.2 Home screen showing Babu, today's snapshot, the mood message and the disclaimer
+- [x] 4.2 Home screen showing Baboo, today's snapshot, the mood message and the disclaimer
 
 ## 5. Check-in and streak
 - [x] 5.1 Write failing tests, then streak logic (pure): increment, reset after a missed day, month boundary, milestones 3/7/14/30
@@ -32,7 +32,7 @@
 
 ## 8. Finish
 - [x] 8.1 Lint, tests and build pass
-- [ ] 8.2 Demo on a phone: change the sliders and watch Babu's mood change; check in and see the streak and coins update
+- [ ] 8.2 Demo on a phone: change the sliders and watch Baboo's mood change; check in and see the streak and coins update
 
 ## Scenario coverage
 

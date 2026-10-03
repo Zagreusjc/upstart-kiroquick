@@ -19,14 +19,14 @@ export function goalsMet(values: HealthValues): GoalsMet {
   return { steps, sleep, activity, count: Number(steps) + Number(sleep) + Number(activity) };
 }
 
-/** True when the player has been away long enough for Babu to rest. */
+/** True when the player has been away long enough for Baboo to rest. */
 export function isResting(lastCheckin: string | null, today: string): boolean {
   if (lastCheckin === null) return false;
   return daysBetween(lastCheckin, today) >= REST_AFTER_DAYS;
 }
 
 /**
- * Babu's mood. Pure and deterministic: no randomness, no AI, no clock.
+ * Baboo's mood. Pure and deterministic: no randomness, no AI, no clock.
  * Rules (first match wins): Rest Mode, then 3 goals Happy, 1-2 OK, 0 Tired.
  */
 export function computeMood(

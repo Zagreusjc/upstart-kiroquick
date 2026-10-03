@@ -3,10 +3,10 @@ import { babuArt, ARTERY, ATRIUM, INK, MOUTH_FILL, SHADOW, TONGUE, VEIN, type Ey
 import type { Mood } from '../constants';
 
 const ACCESSIBLE_NAME: Record<Mood, string> = {
-  happy: 'Babu is happy',
-  ok: 'Babu is doing OK',
-  tired: 'Babu is a little tired',
-  rest: 'Babu is in Rest Mode, sleeping',
+  happy: 'Baboo is happy',
+  ok: 'Baboo is doing OK',
+  tired: 'Baboo is a little tired',
+  rest: 'Baboo is in Rest Mode, sleeping',
 };
 
 /** Heartbeat speed per mood: a lively beat when happy, slow breathing in Rest Mode. */
@@ -220,7 +220,7 @@ const SHAKE_LINES = [
 ];
 
 /**
- * Babu, a cartoon anatomical heart that beats. Each mood has its own face
+ * Baboo, a cartoon anatomical heart that beats. Each mood has its own face
  * (eyes, mouth and extras), not just a color. Original SVG artwork.
  */
 export function BabuHeart({ mood, className = 'h-36 w-36' }: { mood: Mood; className?: string }) {

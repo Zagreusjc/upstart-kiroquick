@@ -1,7 +1,7 @@
 import type { Mood } from './constants';
 
 /**
- * Babu's cartoon art direction: a chunky, outlined anatomical heart with
+ * Baboo's cartoon art direction: a chunky, outlined anatomical heart with
  * blue veins, a red aortic arch, lavender atria, big sparkly eyes and rosy
  * cheeks. Original artwork drawn in SVG by `components/BabuHeart.tsx`.
  *
@@ -24,7 +24,7 @@ export interface BabuArt {
   body: BodyPalette;
   eyes: Eyes;
   mouth: Mouth;
-  /** Little excitement strokes around Babu. */
+  /** Little excitement strokes around Baboo. */
   shakeLines: boolean;
   /** A small sweat drop when tired. */
   sweat: boolean;

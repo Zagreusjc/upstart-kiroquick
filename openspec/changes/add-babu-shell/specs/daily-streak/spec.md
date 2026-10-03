@@ -47,7 +47,7 @@ The system SHALL increase the streak on consecutive local days, reset it to 1 af
 - **THEN** it SHALL show 0 with an invitation to start a fresh streak, not a loss message
 
 ### Requirement: Demo day controls
-The system SHALL offer clearly labeled demo controls that move Babu's day forward so the streak, milestones and Rest Mode can be shown in one sitting.
+The system SHALL offer clearly labeled demo controls that move Baboo's day forward so the streak, milestones and Rest Mode can be shown in one sitting.
 
 #### Scenario: Next day
 - **GIVEN** the player checked in today

@@ -107,7 +107,7 @@ describe('checkIn', () => {
 
 describe('demo day controls', () => {
   // Scenario: Next day
-  it('moves Babu to the next day so the streak can grow', () => {
+  it('moves Baboo to the next day so the streak can grow', () => {
     const store = createBabuStore(KEY);
     const { coins } = fakeCoins();
     store.checkIn(coins, OCT_4);

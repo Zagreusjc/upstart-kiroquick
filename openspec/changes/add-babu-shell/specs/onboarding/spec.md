@@ -6,7 +6,7 @@ The system SHALL show onboarding on first launch with a short explanation, conse
 #### Scenario: First launch
 - **GIVEN** a fresh install
 - **WHEN** the Home tab opens
-- **THEN** onboarding SHALL appear before the Babu screen
+- **THEN** onboarding SHALL appear before the Baboo screen
 
 #### Scenario: Completed onboarding
 - **GIVEN** the player accepted onboarding
@@ -19,9 +19,9 @@ The system SHALL show onboarding on first launch with a short explanation, conse
 - **THEN** the start button SHALL be disabled and the player SHALL NOT be able to enter the Home screen
 
 ### Requirement: Home screen
-The system SHALL present Babu, today's snapshot, the health input, the check-in button, the streak and the "Screening awareness, not a diagnosis" disclaimer on the Home screen.
+The system SHALL present Baboo, today's snapshot, the health input, the check-in button, the streak and the "Screening awareness, not a diagnosis" disclaimer on the Home screen.
 
 #### Scenario: Home content
 - **GIVEN** onboarding is complete
 - **WHEN** the Home tab opens
-- **THEN** Babu, the health snapshot, the check-in button, the streak and the disclaimer SHALL be visible
+- **THEN** Baboo, the health snapshot, the check-in button, the streak and the disclaimer SHALL be visible

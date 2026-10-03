@@ -6,7 +6,7 @@ The system SHALL let the player enter steps, sleep hours and activity minutes ma
 #### Scenario: Update values
 - **GIVEN** the Home screen
 - **WHEN** the player sets steps to 8000, sleep to 7 and activity to 30
-- **THEN** the health snapshot SHALL show those values and Babu's mood SHALL update to Happy
+- **THEN** the health snapshot SHALL show those values and Baboo's mood SHALL update to Happy
 
 #### Scenario: Out-of-range input
 - **GIVEN** the health provider

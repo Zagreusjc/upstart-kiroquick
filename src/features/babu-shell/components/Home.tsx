@@ -9,7 +9,7 @@ import { DemoControls } from './DemoControls';
 import { HealthInput } from './HealthInput';
 
 /**
- * Hero height so Babu fills the first screen. The app shell (owned by Jolo)
+ * Hero height so Baboo fills the first screen. The app shell (owned by Jolo)
  * has a 52px header, 16px main top padding and a 55px bottom nav plus the
  * safe area. Another 16px matches the card gap, so the next card starts
  * exactly at the bottom nav and stays below the fold.
@@ -17,7 +17,7 @@ import { HealthInput } from './HealthInput';
  */
 const HERO_HEIGHT = 'min-h-[calc(100dvh_-_139px_-_env(safe-area-inset-bottom))]';
 
-/** Home tab: a full-screen Babu hero, then snapshot, check-in and demo controls below the fold. */
+/** Home tab: a full-screen Baboo hero, then snapshot, check-in and demo controls below the fold. */
 export function Home() {
   const { snapshot } = useHealth();
   const state = useBabuState();
@@ -38,7 +38,7 @@ export function Home() {
         className={`${HERO_HEIGHT} flex flex-col items-center justify-between rounded-3xl bg-linear-to-b from-white to-rose-100 px-4 pt-6 pb-3 text-center shadow-sm`}
       >
         <h2 id="babu-title" className="text-sm font-semibold tracking-wide text-rose-700 uppercase">
-          Your Babu
+          Your Baboo
         </h2>
 
         <div className="flex flex-1 flex-col items-center justify-center py-4">

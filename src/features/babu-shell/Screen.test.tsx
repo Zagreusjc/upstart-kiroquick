@@ -37,7 +37,7 @@ const setupUser = () => userEvent.setup({ delay: null });
 let coins: CoinsProvider;
 
 beforeEach(() => {
-  // Fake only Date so Babu's "today" is fixed; timers stay real for user-event.
+  // Fake only Date so Baboo's "today" is fixed; timers stay real for user-event.
   vi.useFakeTimers({ now: new Date(2026, 9, 4, 12, 0, 0), toFake: ['Date'] });
   babuStore.reload();
   coins = createFakeCoins();
@@ -61,9 +61,9 @@ describe('onboarding', () => {
   // Scenarios: First launch, Consent is required
   it('shows onboarding first and requires consent before entering Home', () => {
     render(<BabuShellScreen />);
-    expect(screen.getByRole('heading', { name: 'Meet Babu' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Meet Baboo' })).toBeInTheDocument();
     expect(screen.getByText(/Screening awareness, not a diagnosis/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Start caring for Babu' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Start caring for Baboo' })).toBeDisabled();
     expect(screen.queryByRole('heading', { name: 'Daily check-in' })).not.toBeInTheDocument();
   });
 
@@ -72,21 +72,21 @@ describe('onboarding', () => {
     const user = setupUser();
     const { unmount } = render(<BabuShellScreen />);
     await user.click(screen.getByRole('checkbox', { name: /stores my data on this device/ }));
-    await user.click(screen.getByRole('button', { name: 'Start caring for Babu' }));
+    await user.click(screen.getByRole('button', { name: 'Start caring for Baboo' }));
     expect(screen.getByRole('heading', { name: 'Daily check-in' })).toBeInTheDocument();
 
     unmount();
     babuStore.reload(); // simulate reopening the app
     render(<BabuShellScreen />);
-    expect(screen.queryByRole('heading', { name: 'Meet Babu' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Meet Baboo' })).not.toBeInTheDocument();
   });
 });
 
 describe('home', () => {
-  // Scenarios: Home content, Demo label, Accessible Babu
-  it('shows Babu, the snapshot, the check-in button, the streak and the disclaimer', () => {
+  // Scenarios: Home content, Demo label, Accessible Baboo
+  it('shows Baboo, the snapshot, the check-in button, the streak and the disclaimer', () => {
     renderOnboarded();
-    expect(screen.getByRole('img', { name: /Babu is/ })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /Baboo is/ })).toBeInTheDocument();
     expect(screen.getByTestId('mood-label')).toBeVisible();
     expect(screen.getByRole('heading', { name: "Today's snapshot" })).toBeInTheDocument();
     expect(screen.getAllByText(/Demo input/).length).toBeGreaterThan(0);
@@ -96,7 +96,7 @@ describe('home', () => {
   });
 
   // Scenario: Update values
-  it('changes Babu mood as the sliders move', () => {
+  it('changes Baboo mood as the sliders move', () => {
     renderOnboarded();
     expect(screen.getByTestId('mood-label')).toHaveTextContent('Tired');
 
@@ -107,7 +107,7 @@ describe('home', () => {
     fireEvent.change(slider(/Sleep/), { target: { value: '7' } });
     fireEvent.change(slider(/Activity/), { target: { value: '30' } });
     expect(screen.getByTestId('mood-label')).toHaveTextContent('Happy');
-    expect(screen.getByRole('img', { name: 'Babu is happy' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Baboo is happy' })).toBeInTheDocument();
     expect(screen.getAllByText('✓ Goal met')).toHaveLength(3);
   });
 
@@ -163,7 +163,7 @@ describe('check-in', () => {
   });
 
   // Scenarios: Player away, Return from Rest Mode, Displayed streak after a gap
-  it('shows Rest Mode after 2 days away and wakes Babu on check-in', async () => {
+  it('shows Rest Mode after 2 days away and wakes Baboo on check-in', async () => {
     const user = setupUser();
     renderOnboarded();
     await user.click(checkinButton());
@@ -174,7 +174,7 @@ describe('check-in', () => {
     expect(screen.getByTestId('streak')).toHaveTextContent('0 days streak');
     expect(screen.getByText('Start a fresh streak today.')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /Wake Babu up/ }));
+    await user.click(screen.getByRole('button', { name: /Wake Baboo up/ }));
     expect(screen.getByTestId('mood-label')).not.toHaveTextContent('Rest Mode');
     expect(screen.getByTestId('streak')).toHaveTextContent('1 day streak');
   });

@@ -8,7 +8,7 @@ export interface BabuState {
   onboardedAt: number | null;
   lastCheckin: string | null;
   streak: number;
-  /** Demo-only day offset for Babu's clock. 0 means real today. */
+  /** Demo-only day offset for Baboo's clock. 0 means real today. */
   dayOffset: number;
 }
 
@@ -36,7 +36,7 @@ function sanitize(raw: Partial<BabuState> | null): BabuState {
 }
 
 /**
- * Persisted Babu state plus the side effects of a check-in (coins, event).
+ * Persisted Baboo state plus the side effects of a check-in (coins, event).
  * The rules themselves are pure and live in `streak.ts` and `mood.ts`.
  */
 export function createBabuStore(storageKey: string = STORAGE_KEYS.babu) {
@@ -49,7 +49,7 @@ export function createBabuStore(storageKey: string = STORAGE_KEYS.babu) {
     listeners.forEach((listener) => listener());
   };
 
-  /** Babu's "now": the real date moved by the demo day offset. */
+  /** Baboo's "now": the real date moved by the demo day offset. */
   const currentDate = (base: Date = new Date()) => shiftDate(base, state.dayOffset);
 
   return {
@@ -95,7 +95,7 @@ export function createBabuStore(storageKey: string = STORAGE_KEYS.babu) {
       return { checkedIn: true, date, streak, coins: earned, bonus };
     },
 
-    /** Demo control: move Babu's clock forward by whole days. */
+    /** Demo control: move Baboo's clock forward by whole days. */
     shiftDays: (days: number) => {
       if (!Number.isInteger(days) || days <= 0) return;
       commit({ ...state, dayOffset: state.dayOffset + days });
@@ -116,5 +116,5 @@ export function createBabuStore(storageKey: string = STORAGE_KEYS.babu) {
 
 export type BabuStore = ReturnType<typeof createBabuStore>;
 
-/** The app-wide Babu store used by the Home screen. */
+/** The app-wide Baboo store used by the Home screen. */
 export const babuStore = createBabuStore();

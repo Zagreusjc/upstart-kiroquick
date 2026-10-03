@@ -1,6 +1,6 @@
 ## Context
 
-Owner: CJ. Babu, the Home tab, onboarding, manual health input and the daily check-in streak. All rules are deterministic and live in plain TypeScript under `src/features/babu-shell/`. Every number below is defined once in `constants.ts`.
+Owner: CJ. Baboo, the Home tab, onboarding, manual health input and the daily check-in streak. All rules are deterministic and live in plain TypeScript under `src/features/babu-shell/`. Every number below is defined once in `constants.ts`.
 
 ## Decisions
 
@@ -33,16 +33,16 @@ Rules are checked top to bottom. The first match wins.
 
 - Enter: last check-in is 2 or more days ago (yesterday was missed).
 - Exit: checking in today. The mood is recomputed immediately and falls through to the goal rules.
-- Babu never dies, shrinks or loses anything. Rest Mode is a sleeping heart with a "z", a soft lavender color and this wording: "Babu is resting and saved a spot for you. Welcome back! Check in to wake Babu up."
+- Baboo never dies, shrinks or loses anything. Rest Mode is a sleeping heart with a "z", a soft lavender color and this wording: "Baboo is resting and saved a spot for you. Welcome back! Check in to wake Baboo up."
 
 ### Mood messages (positive framing)
 
 | Mood | Message |
 |---|---|
-| Happy | Babu is happy! You reached all 3 goals today. |
-| OK | Babu is doing OK. {n} of 3 goals reached, nice progress. |
-| Tired | Babu is a little tired. A short walk or an early night will perk Babu up. |
-| Rest Mode | Babu is resting and saved a spot for you. Welcome back! Check in to wake Babu up. |
+| Happy | Baboo is happy! You reached all 3 goals today. |
+| OK | Baboo is doing OK. {n} of 3 goals reached, nice progress. |
+| Tired | Baboo is a little tired. A short walk or an early night will perk Baboo up. |
+| Rest Mode | Baboo is resting and saved a spot for you. Welcome back! Check in to wake Baboo up. |
 
 Color is never the only signal: each state has its own face and a visible text label.
 
@@ -68,7 +68,7 @@ Color is never the only signal: each state has its own face and a visible text l
 
 ### Demo day controls
 
-Collapsed "Demo controls" panel on Home: "Next day", "Skip 2 days" and "Reset demo days". They shift a persisted day offset that only Babu's clock uses, so the streak, milestones and Rest Mode can be shown on a phone in one sitting. They are labeled as demo controls.
+Collapsed "Demo controls" panel on Home: "Next day", "Skip 2 days" and "Reset demo days". They shift a persisted day offset that only Baboo's clock uses, so the streak, milestones and Rest Mode can be shown on a phone in one sitting. They are labeled as demo controls.
 
 ### Health provider
 
@@ -81,9 +81,9 @@ Collapsed "Demo controls" panel on Home: "Next day", "Skip 2 days" and "Reset de
 | `inlababu.babu.v1` | `{ onboardedAt, lastCheckin, streak, dayOffset }` |
 | `inlababu.babu.health.v1` | Health snapshot |
 
-### Babu artwork
+### Baboo artwork
 
-One inline SVG heart (no external assets). Each state changes the face (eyes, mouth, cheeks), the fill color and the visible label. `role="img"` with an `aria-label` such as "Babu is happy".
+One inline SVG heart (no external assets). Each state changes the face (eyes, mouth, cheeks), the fill color and the visible label. `role="img"` with an `aria-label` such as "Baboo is happy".
 
 ### Module layout
 
@@ -92,8 +92,8 @@ One inline SVG heart (no external assets). Each state changes the face (eyes, mo
 - `mood.ts`: `goalsMet`, `computeMood`
 - `streak.ts`: `applyCheckin`, `currentStreak`, `milestoneBonus`, `nextMilestone`
 - `healthProvider.ts`: the real `HealthProvider`
-- `store.ts`: persisted Babu state, `acceptOnboarding`, `checkIn`, demo day controls
-- `components/`: `Babu`, `HealthInput`, `CheckinCard`, `Onboarding`, `Home`, `DemoControls`
+- `store.ts`: persisted Baboo state, `acceptOnboarding`, `checkIn`, demo day controls
+- `components/`: `Baboo`, `HealthInput`, `CheckinCard`, `Onboarding`, `Home`, `DemoControls`
 
 ## Risks
 

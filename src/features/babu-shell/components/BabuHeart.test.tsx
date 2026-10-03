@@ -4,10 +4,10 @@ import type { Mood } from '../constants';
 import { BabuHeart } from './BabuHeart';
 
 const NAMES: Record<Mood, string> = {
-  happy: 'Babu is happy',
-  ok: 'Babu is doing OK',
-  tired: 'Babu is a little tired',
-  rest: 'Babu is in Rest Mode, sleeping',
+  happy: 'Baboo is happy',
+  ok: 'Baboo is doing OK',
+  tired: 'Baboo is a little tired',
+  rest: 'Baboo is in Rest Mode, sleeping',
 };
 
 describe('BabuHeart', () => {
@@ -39,7 +39,7 @@ describe('BabuHeart', () => {
     expect(beat('rest').animationName).toBe('babu-snooze');
   });
 
-  it('keeps clip-path ids unique when two Babus are on screen', () => {
+  it('keeps clip-path ids unique when two Baboos are on screen', () => {
     const { container } = render(
       <>
         <BabuHeart mood="happy" />

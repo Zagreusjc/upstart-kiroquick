@@ -59,7 +59,7 @@ export function CheckinCard({ mood }: { mood: Mood }) {
         {checkedInToday
           ? '✓ Checked in today'
           : mood === 'rest'
-            ? `Wake Babu up and check in (+${CHECKIN_COINS} coins)`
+            ? `Wake Baboo up and check in (+${CHECKIN_COINS} coins)`
             : `Check in for today (+${CHECKIN_COINS} coins)`}
       </button>
 
