@@ -19,9 +19,9 @@ The system SHALL show onboarding on first launch with a short explanation, conse
 - **THEN** the start button SHALL be disabled and the player SHALL NOT be able to enter the Home screen
 
 ### Requirement: Home screen
-The system SHALL present Baboo, today's snapshot, the health input, the check-in button, the streak and the "Screening awareness, not a diagnosis" disclaimer on the Home screen.
+The system SHALL present Baboo, today's snapshot, the health input, the check-in button and the streak on the Home screen. The "Screening awareness, not a diagnosis" disclaimer is shown in onboarding, not on the Home screen.
 
 #### Scenario: Home content
 - **GIVEN** onboarding is complete
 - **WHEN** the Home tab opens
-- **THEN** Baboo, the health snapshot, the check-in button, the streak and the disclaimer SHALL be visible
+- **THEN** Baboo, the health snapshot, the check-in button and the streak SHALL be visible, and the disclaimer line SHALL NOT be shown

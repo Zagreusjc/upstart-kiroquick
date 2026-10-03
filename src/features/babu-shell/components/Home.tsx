@@ -1,5 +1,5 @@
 import { useHealth } from '../../../core';
-import { DISCLAIMER, MOOD_HINTS, MOOD_LABELS, MOOD_MESSAGES } from '../constants';
+import { MOOD_HINTS, MOOD_LABELS, MOOD_MESSAGES } from '../constants';
 import { assessDay, computeMood } from '../mood';
 import { babuStore } from '../store';
 import { useBabuState } from '../useBabu';
@@ -56,7 +56,6 @@ export function Home() {
               {hint}
             </p>
           )}
-          <p className="mt-3 text-xs text-slate-600">{DISCLAIMER}.</p>
         </div>
 
         <button

@@ -84,7 +84,7 @@ describe('onboarding', () => {
 
 describe('home', () => {
   // Scenarios: Home content, Demo label, Accessible Baboo
-  it('shows Baboo, the snapshot, the check-in button, the streak and the disclaimer', () => {
+  it('shows Baboo, the snapshot, the check-in button and the streak, without the disclaimer line', () => {
     renderOnboarded();
     expect(screen.getByRole('img', { name: /Baboo is/ })).toBeInTheDocument();
     expect(screen.getByTestId('mood-label')).toBeVisible();
@@ -92,7 +92,8 @@ describe('home', () => {
     expect(screen.getAllByText(/Demo input/).length).toBeGreaterThan(0);
     expect(checkinButton()).toBeEnabled();
     expect(screen.getByTestId('streak')).toHaveTextContent('0 days streak');
-    expect(screen.getByText(/Screening awareness, not a diagnosis/)).toBeInTheDocument();
+    // The disclaimer is shown once in onboarding, not on the Home screen.
+    expect(screen.queryByText(/Screening awareness, not a diagnosis/)).not.toBeInTheDocument();
   });
 
   // Scenario: Update values
