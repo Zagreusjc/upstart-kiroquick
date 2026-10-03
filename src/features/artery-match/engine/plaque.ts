@@ -95,6 +95,38 @@ export function seedPlaque(
   return { board: withCholesterol(state.board, cell, nextId), cell, rngState: draw.state, nextId: nextId + 1 };
 }
 
+export interface PlaqueSeedStep {
+  cell: Cell;
+  /** Board after this seed and every earlier one in the same batch. */
+  board: Board;
+}
+
+/**
+ * Seeds up to `count` blocks one after another, each placed like seedPlaque (legal-move
+ * preserving when possible). Used when plaque returns at the player's current level.
+ * Returns null only when there is no normal tile at all.
+ */
+export function seedPlaques(
+  state: BoardState,
+  rngState: number,
+  nextId: number,
+  count: number,
+): { board: Board; seeds: PlaqueSeedStep[]; rngState: number; nextId: number } | null {
+  const seeds: PlaqueSeedStep[] = [];
+  let board = state.board;
+  let rng = rngState;
+  let id = nextId;
+  for (let i = 0; i < Math.max(1, Math.floor(count)); i++) {
+    const seeded = seedPlaque({ board, rows: state.rows, cols: state.cols }, rng, id);
+    if (!seeded) break;
+    board = seeded.board;
+    rng = seeded.rngState;
+    id = seeded.nextId;
+    seeds.push({ cell: seeded.cell, board });
+  }
+  return seeds.length === 0 ? null : { board, seeds, rngState: rng, nextId: id };
+}
+
 export interface PlaqueSpreadStep {
   from: Cell;
   to: Cell;
@@ -158,6 +190,8 @@ export interface PlaqueInput extends BoardState {
   movesWithoutPlaque: number;
   rngState: number;
   nextId: number;
+  /** Blocks destroyed in the whole game so far. Above 0 means plaque is coming back, not the first seed. */
+  totalCleared?: number;
 }
 
 export interface PlaqueOutput {
@@ -182,15 +216,21 @@ export function resolvePlaque(input: PlaqueInput): PlaqueOutput {
   if (countCholesterol(board) === 0) {
     const movesWithoutPlaque = input.movesWithoutPlaque + 1;
     if (moves > GRACE_MOVES && movesWithoutPlaque >= SEED_DELAY_MOVES) {
-      const seeded = seedPlaque({ board, rows, cols }, rngState, nextId);
+      // Plaque returns at the player's current level: as many blocks as one spread would add
+      // (1, 2 or 3), never a lone block once the game is past level 1. After a clear it also
+      // keeps its momentum: the next clean move spreads, instead of restarting the spread clock.
+      const seeded = seedPlaques({ board, rows, cols }, rngState, nextId, spreadCount(score));
       if (seeded) {
+        const comingBack = (input.totalCleared ?? 0) > 0;
         return {
           board: seeded.board,
-          cleanMoves: 0,
+          cleanMoves: comingBack ? spreadInterval(score) - 1 : 0,
           movesWithoutPlaque: 0,
           rngState: seeded.rngState,
           nextId: seeded.nextId,
-          events: [{ type: 'plaqueSeeded', cell: seeded.cell, board: seeded.board }],
+          events: seeded.seeds.map(
+            (step): PlaqueEvent => ({ type: 'plaqueSeeded', cell: step.cell, board: step.board }),
+          ),
         };
       }
     }

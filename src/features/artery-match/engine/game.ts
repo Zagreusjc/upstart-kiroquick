@@ -134,6 +134,7 @@ export function trySwapWith(state: GameState, a: Cell, b: Cell, refill: RefillSo
     moves,
     score,
     destroyed: cholesterolCleared - state.cholesterolCleared,
+    totalCleared: cholesterolCleared,
     cleanMoves: state.cleanMoves,
     movesWithoutPlaque: state.movesWithoutPlaque,
     rngState: refill.state(),

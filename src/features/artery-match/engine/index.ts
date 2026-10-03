@@ -40,6 +40,7 @@ export {
   countCholesterol,
   resolvePlaque,
   seedPlaque,
+  seedPlaques,
   spreadCount,
   spreadInterval,
   spreadPlaque,

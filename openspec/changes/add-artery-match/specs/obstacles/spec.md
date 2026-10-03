@@ -95,6 +95,29 @@ The system SHALL convert up to N distinct normal tiles in one spread, where N is
 - **WHEN** the spread resolves
 - **THEN** that tile SHALL remain unchanged
 
+### Requirement: Plaque returns at the current level
+The system SHALL seed returning plaque at the player's current level: the number of blocks placed in one seeding SHALL equal the current spread burst size (1 below a score of 500, 2 from 500, 3 from 1200, never more than 3), each as its own `plaqueSeeded` event. When plaque returns after the player has destroyed at least one block, the spread clock SHALL keep its momentum so that the next move which destroys no block spreads. Clearing all plaque SHALL NOT lower the burst size or the spread interval.
+
+#### Scenario: Reseed at level 3
+- **GIVEN** every block was cleared and the score is 1200 or more
+- **WHEN** plaque is seeded again
+- **THEN** 3 distinct blocks SHALL be placed and 3 `plaqueSeeded` events SHALL be emitted
+
+#### Scenario: Reseed at level 1
+- **GIVEN** every block was cleared and the score is below 500
+- **WHEN** plaque is seeded again
+- **THEN** exactly one block SHALL be placed
+
+#### Scenario: Momentum after a clear
+- **GIVEN** plaque was just reseeded after a clear and the score is below 800
+- **WHEN** the next move destroys no block
+- **THEN** the plaque SHALL spread on that move
+
+#### Scenario: First seed is gentle
+- **GIVEN** no block has been destroyed yet in the game
+- **WHEN** the first seed is placed
+- **THEN** the spread clock SHALL start at 0
+
 ### Requirement: Escalating spread interval
 The system SHALL spread after every 2 clean moves while the score is below 800 and after every clean move at a score of 800 or more. The interval SHALL never increase as the score rises.
 
