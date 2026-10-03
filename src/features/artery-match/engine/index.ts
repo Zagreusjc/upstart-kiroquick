@@ -31,13 +31,17 @@ export { DEFAULT_COLS, DEFAULT_ROWS, createGame, trySwap, trySwapWith } from './
 export {
   FAST_SPREAD_SCORE,
   GRACE_MOVES,
+  MAX_SPREAD_COUNT,
   SEED_DELAY_MOVES,
+  SPREAD_COUNT_THREE_SCORE,
+  SPREAD_COUNT_TWO_SCORE,
   SPREAD_INTERVAL_FAST,
   SPREAD_INTERVAL_SLOW,
   countCholesterol,
   resolvePlaque,
   seedPlaque,
+  spreadCount,
   spreadInterval,
   spreadPlaque,
 } from './plaque';
-export type { PlaqueInput, PlaqueOutput } from './plaque';
+export type { PlaqueInput, PlaqueOutput, PlaqueSpreadStep } from './plaque';

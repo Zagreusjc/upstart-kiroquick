@@ -67,7 +67,7 @@ function adjacentCholesterol(board: Board, cleared: Cell[]): Cell[] {
 /**
  * Validates and resolves a swap with an explicit refill source (the test seam).
  * Each wave: score matches and adjacent cholesterol, clear, gravity (plaque fixed), refill.
- * After the last wave, at most one plaque seed or spread (resolvePlaque).
+ * After the last wave, one plaque seed, or one spread of up to spreadCount(score) tiles (resolvePlaque).
  * A rejected swap returns { ok: false, reason } and never touches the input state.
  */
 export function trySwapWith(state: GameState, a: Cell, b: Cell, refill: RefillSource): SwapResult {
@@ -142,7 +142,7 @@ export function trySwapWith(state: GameState, a: Cell, b: Cell, refill: RefillSo
     rngState: refill.state(),
     nextId,
   });
-  if (plaque.event) events.push(plaque.event);
+  events.push(...plaque.events);
 
   const nextState: GameState = {
     ...state,

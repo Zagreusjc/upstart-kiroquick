@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { trySwapWith } from './game';
+import { hasLegalMove } from './legal';
 import { countCholesterol } from './plaque';
 import { applyGravity } from './resolve';
 import { gridOf, scriptedRefill, stateFromGrid } from './test-helpers';
@@ -256,10 +257,60 @@ describe('resolve: plaque after the move', () => {
     expect(countCholesterol(result.state.board)).toBe(1);
   });
 
-  it('spreads after every clean move from 2000 points', () => {
+  it('spreads after every clean move from 2000 points, 2 tiles at that score', () => {
     const { result } = gravitySwap({ moves: 10, cleanMoves: 0, score: 2000 });
-    expect(ofType(result.events, 'plaqueSpread')).toHaveLength(1);
-    expect(countCholesterol(result.state.board)).toBe(2);
+    const spreads = ofType(result.events, 'plaqueSpread');
+    // The block at (0,0) has exactly 2 normal neighbours, so both convert.
+    expect(spreads).toHaveLength(2);
+    expect(spreads.map((s) => s.from)).toEqual([
+      { row: 0, col: 0 },
+      { row: 0, col: 0 },
+    ]);
+    expect(spreads.map((s) => `${s.to.row},${s.to.col}`).sort()).toEqual(['0,1', '1,0']);
+    expect(countCholesterol(result.state.board)).toBe(3);
+  });
+
+  it('a late-game spread emits one event per converted tile after the last refill', () => {
+    const state = stateFromGrid(
+      ['RRWRA', 'WPAPW', 'PACWP', 'AWPWA', 'WRWPR'],
+      { moves: 10, cleanMoves: 0, score: 2500 },
+    );
+    const { state: next, events } = expectOk(
+      trySwapWith(state, { row: 0, col: 2 }, { row: 0, col: 3 }, scriptedRefill(types('PWP'), 4)),
+    );
+    const spreads = ofType(events, 'plaqueSpread');
+    expect(spreads).toHaveLength(3);
+    const order = events.map((e) => e.type).filter((t) => t !== 'gameOver');
+    expect(order.slice(-3)).toEqual(['plaqueSpread', 'plaqueSpread', 'plaqueSpread']);
+    expect(order[order.length - 4]).toBe('refill');
+    expect(spreads[2].board).toBe(next.board);
+    expect(countCholesterol(next.board)).toBe(4);
+    expect(next.cleanMoves).toBe(0);
+    // Every converted tile touches the pre-existing block at (2,2).
+    for (const s of spreads) {
+      expect(s.from).toEqual({ row: 2, col: 2 });
+      expect(Math.abs(s.to.row - 2) + Math.abs(s.to.col - 2)).toBe(1);
+    }
+  });
+
+  it('a burst that removes the last legal swap ends the game with a gameOver event', () => {
+    // Row 2 is plaque. The swap makes PPP in row 0; the refill 'RAP' leaves 'RAPA' / 'AWAR',
+    // whose only legal swap (0,1)-(1,1) needs a tile of row 1 that the burst turns into a block.
+    const state = stateFromGrid(['APPA', 'PWAR', 'CCCC'], { moves: 10, cleanMoves: 1, score: 5000 });
+    const { state: next, events } = expectOk(
+      trySwapWith(state, { row: 0, col: 0 }, { row: 1, col: 0 }, scriptedRefill(types('RAP'), 5)),
+    );
+    // Before the burst the refilled board still had a legal move.
+    const refill = ofType(events, 'refill').pop();
+    expect(refill).toBeDefined();
+    expect(hasLegalMove({ ...state, board: refill!.board })).toBe(true);
+    expect(ofType(events, 'plaqueSpread')).toHaveLength(3);
+    expect(hasLegalMove(next)).toBe(false);
+    expect(next.over).toBe(true);
+    const over = ofType(events, 'gameOver');
+    expect(over).toHaveLength(1);
+    expect(over[0].score).toBe(next.score);
+    expect(events[events.length - 1]).toBe(over[0]);
   });
 
   it('a move that destroys a block resets cleanMoves and prevents spread', () => {

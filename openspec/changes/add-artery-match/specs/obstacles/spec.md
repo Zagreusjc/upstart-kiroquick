@@ -72,6 +72,29 @@ The system SHALL count clean moves, the consecutive resolved player moves in whi
 - **WHEN** the spread interval is reached
 - **THEN** no tile SHALL be converted
 
+### Requirement: Spread burst size
+The system SHALL convert up to N distinct normal tiles in one spread, where N is 1 below a score of 1000, 2 from 1000 and 3 from 2500, and SHALL never exceed 3 or decrease as the score rises. Each converted tile SHALL be orthogonally adjacent to a block that existed before the spread began, and tiles converted in the same spread SHALL NOT extend the candidates. When fewer candidates exist, all of them SHALL be converted.
+
+#### Scenario: Starting size
+- **GIVEN** a score below 1000 and a spread due
+- **WHEN** the spread resolves
+- **THEN** exactly one tile SHALL become cholesterol
+
+#### Scenario: Cap of three
+- **GIVEN** a score of 2500 or more with at least 3 candidate tiles and a spread due
+- **WHEN** the spread resolves
+- **THEN** exactly 3 distinct tiles SHALL become cholesterol and one `plaqueSpread` event SHALL be emitted for each
+
+#### Scenario: Limited by neighbours
+- **GIVEN** a score of 2500 or more and only 2 candidate tiles
+- **WHEN** the spread resolves
+- **THEN** both SHALL become cholesterol and no other tile SHALL change
+
+#### Scenario: No chaining
+- **GIVEN** a tile adjacent only to a tile converted in the same spread
+- **WHEN** the spread resolves
+- **THEN** that tile SHALL remain unchanged
+
 ### Requirement: Escalating spread interval
 The system SHALL spread after every 2 clean moves while the score is below 2000 and after every clean move at a score of 2000 or more. The interval SHALL never increase as the score rises.
 

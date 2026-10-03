@@ -11,12 +11,26 @@ export const SEED_DELAY_MOVES = 2;
 export const SPREAD_INTERVAL_SLOW = 2;
 export const SPREAD_INTERVAL_FAST = 1;
 export const FAST_SPREAD_SCORE = 2000;
+/** Score from which one spread converts 2 tiles instead of 1. */
+export const SPREAD_COUNT_TWO_SCORE = 1000;
+/** Score from which one spread converts the maximum of 3 tiles. */
+export const SPREAD_COUNT_THREE_SCORE = 2500;
+export const MAX_SPREAD_COUNT = 3;
 
 type BoardState = Pick<GameState, 'board' | 'rows' | 'cols'>;
 
 /** Clean moves (no block destroyed) needed before plaque spreads: 2 below 2000 points, then 1. */
 export function spreadInterval(score: number): number {
   return score >= FAST_SPREAD_SCORE ? SPREAD_INTERVAL_FAST : SPREAD_INTERVAL_SLOW;
+}
+
+/**
+ * Tiles converted by one spread: 1 below SPREAD_COUNT_TWO_SCORE, 2 below SPREAD_COUNT_THREE_SCORE,
+ * then the cap of 3. Non-decreasing in score.
+ */
+export function spreadCount(score: number): 1 | 2 | 3 {
+  if (score >= SPREAD_COUNT_THREE_SCORE) return MAX_SPREAD_COUNT;
+  return score >= SPREAD_COUNT_TWO_SCORE ? 2 : 1;
 }
 
 export function countCholesterol(board: Board): number {
@@ -80,39 +94,58 @@ export function seedPlaque(
   return { board: withCholesterol(state.board, cell, nextId), cell, rngState: draw.state, nextId: nextId + 1 };
 }
 
+export interface PlaqueSpreadStep {
+  from: Cell;
+  to: Cell;
+  /** Board after this conversion and every earlier one in the same spread. */
+  board: Board;
+}
+
 /**
- * One block (drawn among blocks with a normal orthogonal neighbour, row-major) converts
- * one of its normal neighbours (second draw). Returns null, without drawing, when no
- * block has a normal neighbour.
+ * Converts up to `count` distinct normal tiles that touch a block which existed before the
+ * spread. The candidate set is frozen up front (blocks row-major, neighbours up, right, down,
+ * left, de-duplicated), so a converted tile never extends it: no chaining. Each pick draws
+ * one index from the RNG and removes that candidate. `from` is the first pre-existing block,
+ * in row-major order, next to the picked tile. Fewer candidates than `count` converts them
+ * all. Returns null, without drawing, when there is no candidate.
  */
 export function spreadPlaque(
   board: Board,
   rngState: number,
   nextId: number,
-): { board: Board; from: Cell; to: Cell; rngState: number; nextId: number } | null {
-  const sources: { from: Cell; targets: Cell[] }[] = [];
+  count: number = 1,
+): { board: Board; spreads: PlaqueSpreadStep[]; rngState: number; nextId: number } | null {
+  const candidates: { from: Cell; to: Cell }[] = [];
+  const seen = new Set<number>();
+  const cols = board.length > 0 ? board[0].length : 0;
   board.forEach((row, r) =>
     row.forEach((tile, c) => {
       if (tile.type !== 'cholesterol') return;
       const from = { row: r, col: c };
-      const targets = normalNeighbours(board, from);
-      if (targets.length > 0) sources.push({ from, targets });
+      for (const to of normalNeighbours(board, from)) {
+        const key = to.row * cols + to.col;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        candidates.push({ from, to });
+      }
     }),
   );
-  if (sources.length === 0) return null;
-  const pickSource = drawIndex(rngState, sources.length);
-  const { from, targets } = sources[pickSource.index];
-  const pickTarget = drawIndex(pickSource.state, targets.length);
-  const to = targets[pickTarget.index];
-  return {
-    board: withCholesterol(board, to, nextId),
-    from,
-    to,
-    rngState: pickTarget.state,
-    nextId: nextId + 1,
-  };
-}
+  if (candidates.length === 0) return null;
 
+  const picks = Math.min(Math.max(1, Math.floor(count)), candidates.length);
+  const spreads: PlaqueSpreadStep[] = [];
+  let current = board;
+  let state = rngState;
+  let id = nextId;
+  for (let i = 0; i < picks; i++) {
+    const draw = drawIndex(state, candidates.length);
+    state = draw.state;
+    const [{ from, to }] = candidates.splice(draw.index, 1);
+    current = withCholesterol(current, to, id++);
+    spreads.push({ from, to, board: current });
+  }
+  return { board: current, spreads, rngState: state, nextId: id };
+}
 export interface PlaqueInput extends BoardState {
   /** Player moves resolved so far, including this one. */
   moves: number;
@@ -132,17 +165,18 @@ export interface PlaqueOutput {
   movesWithoutPlaque: number;
   rngState: number;
   nextId: number;
-  event: PlaqueEvent | null;
+  /** Empty, one plaqueSeeded, or one plaqueSpread per converted tile in pick order. */
+  events: PlaqueEvent[];
 }
 
 /**
- * End-of-move plaque step: at most one seed or one spread. Never triggers matches
+ * End-of-move plaque step: one seed, or one spread of up to spreadCount(score) tiles. Never triggers matches
  * (converted cells are cholesterol, which cannot match), so nothing is re-resolved.
  */
 export function resolvePlaque(input: PlaqueInput): PlaqueOutput {
   const { board, rows, cols, moves, score, destroyed, rngState, nextId } = input;
   const cleanMoves = destroyed > 0 ? 0 : input.cleanMoves + 1;
-  const unchanged = { board, rngState, nextId, event: null };
+  const unchanged = { board, rngState, nextId, events: [] as PlaqueEvent[] };
 
   if (countCholesterol(board) === 0) {
     const movesWithoutPlaque = input.movesWithoutPlaque + 1;
@@ -155,7 +189,7 @@ export function resolvePlaque(input: PlaqueInput): PlaqueOutput {
           movesWithoutPlaque: 0,
           rngState: seeded.rngState,
           nextId: seeded.nextId,
-          event: { type: 'plaqueSeeded', cell: seeded.cell, board: seeded.board },
+          events: [{ type: 'plaqueSeeded', cell: seeded.cell, board: seeded.board }],
         };
       }
     }
@@ -163,7 +197,8 @@ export function resolvePlaque(input: PlaqueInput): PlaqueOutput {
   }
 
   if (cleanMoves < spreadInterval(score)) return { ...unchanged, cleanMoves, movesWithoutPlaque: 0 };
-  const spread = spreadPlaque(board, rngState, nextId);
+  // Resets cleanMoves even when no tile could convert (no RNG is drawn in that case).
+  const spread = spreadPlaque(board, rngState, nextId, spreadCount(score));
   if (!spread) return { ...unchanged, cleanMoves: 0, movesWithoutPlaque: 0 };
   return {
     board: spread.board,
@@ -171,6 +206,8 @@ export function resolvePlaque(input: PlaqueInput): PlaqueOutput {
     movesWithoutPlaque: 0,
     rngState: spread.rngState,
     nextId: spread.nextId,
-    event: { type: 'plaqueSpread', from: spread.from, to: spread.to, board: spread.board },
+    events: spread.spreads.map(
+      (step): PlaqueEvent => ({ type: 'plaqueSpread', from: step.from, to: step.to, board: step.board }),
+    ),
   };
 }

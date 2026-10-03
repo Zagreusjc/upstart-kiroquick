@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createGame, trySwap } from './game';
 import { findLegalMove } from './legal';
-import { countCholesterol } from './plaque';
+import { countCholesterol, spreadCount } from './plaque';
 import { NORMAL_TILE_TYPES } from './types';
 import type { Cell, GameEvent, GameState } from './types';
 
@@ -54,6 +54,21 @@ describe('determinism', () => {
       total += first.length;
     }
     expect(total).toBeGreaterThan(0);
+  });
+
+  it('replays long games identically and never spreads more than 3 tiles in a move', () => {
+    for (let seed = 1; seed <= 5; seed++) {
+      const a = play(seed, 120);
+      expect(play(seed, 120)).toEqual(a);
+      a.events.forEach((moveEvents, i) => {
+        const spreads = moveEvents.filter((e) => e.type === 'plaqueSpread');
+        expect(spreads.length).toBeLessThanOrEqual(3);
+        expect(spreads.length).toBeLessThanOrEqual(spreadCount(a.states[i + 1].score));
+        expect(new Set(spreads.map((e) => (e.type === 'plaqueSpread' ? `${e.to.row},${e.to.col}` : ''))).size).toBe(
+          spreads.length,
+        );
+      });
+    }
   });
 
   it('never refills with cholesterol', () => {

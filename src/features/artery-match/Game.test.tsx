@@ -152,6 +152,31 @@ function plaqueSwap() {
   });
 }
 
+/**
+ * An injected swap whose plaque step converts 3 tiles in one move: a swap event, then three
+ * plaqueSpread events with cumulative boards, optionally followed by a game over.
+ */
+function burstSwap(over = false) {
+  return vi.fn((state: GameState, a: Cell, b: Cell): SwapResult => {
+    const targets: Cell[] = [
+      { row: 0, col: 1 },
+      { row: 1, col: 0 },
+      { row: 1, col: 1 },
+    ];
+    let board = state.board.map((row) => [...row]);
+    board[0][0] = { id: 8000, type: 'cholesterol' };
+    const seed = board;
+    const events: GameEvent[] = [{ type: 'swap', a, b, board: state.board }, { type: 'plaqueSeeded', cell: { row: 0, col: 0 }, board: seed }];
+    targets.forEach((to, i) => {
+      board = board.map((row) => [...row]);
+      board[to.row][to.col] = { id: 8001 + i, type: 'cholesterol' };
+      events.push({ type: 'plaqueSpread', from: { row: 0, col: 0 }, to, board });
+    });
+    if (over) events.push({ type: 'gameOver', score: state.score });
+    return { ok: true, state: { ...state, board, moves: state.moves + 1, over }, events };
+  });
+}
+
 async function playToGameOver(deps: GameDeps = {}) {
   const user = renderGame({ swap: overSwap(), ...deps });
   await user.click(screen.getByRole('button', { name: 'Play' }));
@@ -350,6 +375,50 @@ describe('Arteria Match game', () => {
     await user.click(cellButton({ row: 1, col: 1 }));
     expect(screen.getByText('Moves: 2')).toBeInTheDocument();
     expect(screen.queryByText(PLAQUE_HINT)).not.toBeInTheDocument();
+  });
+
+  it('shows every tile converted by a multi-tile spread after the move', async () => {
+    const user = renderGame({ swap: burstSwap() });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    await user.click(cellButton({ row: 2, col: 0 }));
+    await user.click(cellButton({ row: 2, col: 1 }));
+
+    expect(screen.getByText('Moves: 1')).toBeInTheDocument();
+    const blocks = boardLabels().filter((label) => label?.startsWith('Cholesterol block'));
+    expect(blocks).toHaveLength(4);
+    expect(screen.getByText('Plaque: 11%')).toBeInTheDocument();
+    for (const cell of [{ row: 0, col: 1 }, { row: 1, col: 0 }, { row: 1, col: 1 }]) {
+      expect(cellButton(cell)).toHaveAccessibleName(/^Cholesterol block/);
+    }
+  });
+
+  it('plays the spread events back one frame at a time, then settles on all of them', async () => {
+    const user = renderGame({ swap: burstSwap(), stepMs: 15 });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const counts = new Set<number>();
+    const observer = new MutationObserver(() => {
+      counts.add(boardLabels().filter((label) => label?.startsWith('Cholesterol block')).length);
+    });
+    observer.observe(screen.getByRole('grid'), { subtree: true, attributes: true, childList: true });
+    await user.click(cellButton({ row: 2, col: 0 }));
+    await user.click(cellButton({ row: 2, col: 1 }));
+
+    await waitFor(() => expect(screen.getByText('Plaque: 11%')).toBeInTheDocument());
+    observer.disconnect();
+    expect(boardLabels().filter((label) => label?.startsWith('Cholesterol block'))).toHaveLength(4);
+    // Frames grow the plaque 1 (seed), 2, 3, 4 blocks; at least the growth from 2 blocks shows up.
+    expect(counts.has(4)).toBe(true);
+    expect(counts.has(3) || counts.has(2)).toBe(true);
+  });
+
+  it('shows Complete Arterial Occlusion when a multi-tile spread removes the last legal swap', async () => {
+    const user = renderGame({ swap: burstSwap(true), makeCard: pngCard });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    await user.click(cellButton({ row: 2, col: 0 }));
+    await user.click(cellButton({ row: 2, col: 1 }));
+
+    await screen.findByRole('heading', { name: 'Complete Arterial Occlusion' });
+    expect(eventsOf('game.finished')).toHaveLength(1);
   });
 
   it('announces the score once the move has finished playing back', async () => {
