@@ -74,12 +74,13 @@ describe('main menu', () => {
     // Play is the biggest; Blood Bank, Library, Baboo and Get screened share one size.
     const play = menu().getByRole('link', { name: /^Play!$/ });
     expect(play).toHaveAttribute('data-size', 'big');
-    expect(play.className).toMatch(/\bh-32\b/);
+    expect(play.className).toContain('h-[clamp(4rem,12dvh,8rem)]');
     expect(play.className).toMatch(/\bw-64\b/);
     for (const name of [/Blood Bank/, /^Library/, /^Baboo/, /^Get screened!$/]) {
       const link = menu().getByRole('link', { name });
       expect(link).toHaveAttribute('data-size', 'regular');
-      expect(link.className).toMatch(/\bh-16\b/);
+      // Never under 44px tall (touch target), never over 64px.
+      expect(link.className).toContain('h-[clamp(2.75rem,7dvh,4rem)]');
       expect(link.className).toMatch(/\bw-44\b/);
     }
   });
@@ -108,6 +109,9 @@ describe('main menu', () => {
     const menuEl = screen.getByTestId('main-menu');
     expect(menuEl.className).toContain('-m-4');
     expect(menuEl.className).not.toMatch(/rounded|shadow/);
+    // Exactly one screen tall (not a minimum), so the page does not scroll.
+    expect(menuEl.className).toContain('h-[calc(100dvh_-_107px_-_env(safe-area-inset-bottom))]');
+    expect(menuEl.className).not.toContain('min-h-[calc');
   });
 
   it('opens settings from the menu', async () => {
