@@ -61,14 +61,47 @@ export function BloodBag({
           strokeWidth="3"
         />
 
-        {/* Blood fill, clipped to the bag shape */}
+        {/* Blood fill, clipped to the bag shape. Height tracks lives/max and
+            animates when the count changes. */}
         <g clipPath="url(#bagClip)">
-          <rect x="30" y={fillY} width="100" height={fillHeight + 4} fill="url(#bloodGrad)" />
+          <rect
+            x="30"
+            width="100"
+            y={fillY}
+            height={fillHeight + 4}
+            fill="url(#bloodGrad)"
+            style={{ transition: 'y 400ms ease, height 400ms ease' }}
+          />
           {/* a soft surface line on the blood */}
           {ratio > 0 && ratio < 1 && (
-            <rect x="30" y={fillY} width="100" height="3" fill="#ffffff" opacity="0.35" />
+            <rect
+              x="30"
+              width="100"
+              y={fillY}
+              height="3"
+              fill="#ffffff"
+              opacity="0.35"
+              style={{ transition: 'y 400ms ease' }}
+            />
           )}
         </g>
+
+        {/* Level tick marks so each of the 3 lives reads clearly. */}
+        {Array.from({ length: safeMax - 1 }, (_, i) => {
+          const y = bagBottom - (bagHeight * (i + 1)) / safeMax;
+          return (
+            <line
+              key={i}
+              x1="118"
+              x2="126"
+              y1={y}
+              y2={y}
+              stroke="#9ca3af"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          );
+        })}
 
         {/* Label plate with the B+ pun */}
         <rect x="48" y="58" width="64" height="56" rx="6" fill="#ffffff" stroke="#e5e7eb" strokeWidth="2" />

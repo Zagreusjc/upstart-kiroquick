@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getCard } from '../cards';
 import { useLibrary } from '../useEconomy';
+import { CardArt } from './CardArt';
 
 /**
  * Card detail. Opening a card marks it read on mount, which (on the first read)
@@ -53,6 +54,8 @@ export function CardDetail() {
           {isRead(card.id) ? 'Read' : 'New'} · Reviewed {card.reviewed}
         </p>
       </header>
+
+      <CardArt cardId={card.id} size="hero" />
 
       <div className="space-y-3 rounded-xl bg-white p-4 shadow">
         {card.body.map((paragraph, i) => (
