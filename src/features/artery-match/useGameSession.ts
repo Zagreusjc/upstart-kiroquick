@@ -41,6 +41,7 @@ export function useGameSession(deps: GameDeps = {}) {
     clearing: session.clearing,
     locked: session.locked || session.phase !== 'playing',
     invalid: session.invalid,
+    bounce: session.bounce,
     hint: session.hint,
     callout: session.callout,
     plaqueNotice: session.plaqueNotice,

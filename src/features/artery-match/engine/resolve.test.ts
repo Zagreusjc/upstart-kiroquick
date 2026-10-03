@@ -233,7 +233,7 @@ describe('resolve: cascades', () => {
 
 describe('resolve: plaque after the move', () => {
   it('spreads once after 2 clean moves below 2000 points, after the last refill', () => {
-    const { result } = gravitySwap({ moves: 10, cleanMoves: 1 });
+    const { result } = gravitySwap({ moves: 5, cleanMoves: 1 });
     const { state: next, events } = result;
     const spreads = ofType(events, 'plaqueSpread');
     expect(spreads).toHaveLength(1);
@@ -251,14 +251,14 @@ describe('resolve: plaque after the move', () => {
   });
 
   it('does not spread after a single clean move below 2000 points', () => {
-    const { result } = gravitySwap({ moves: 10, cleanMoves: 0 });
+    const { result } = gravitySwap({ moves: 5, cleanMoves: 0 });
     expect(ofType(result.events, 'plaqueSpread')).toHaveLength(0);
     expect(result.state.cleanMoves).toBe(1);
     expect(countCholesterol(result.state.board)).toBe(1);
   });
 
   it('spreads after every clean move from 2000 points, 2 tiles at that score', () => {
-    const { result } = gravitySwap({ moves: 10, cleanMoves: 0, score: 2000 });
+    const { result } = gravitySwap({ moves: 5, cleanMoves: 0, score: 2000 });
     const spreads = ofType(result.events, 'plaqueSpread');
     // The block at (0,0) has exactly 2 normal neighbours, so both convert.
     expect(spreads).toHaveLength(2);
@@ -273,7 +273,7 @@ describe('resolve: plaque after the move', () => {
   it('a late-game spread emits one event per converted tile after the last refill', () => {
     const state = stateFromGrid(
       ['RRWRA', 'WPAPW', 'PACWP', 'AWPWA', 'WRWPR'],
-      { moves: 10, cleanMoves: 0, score: 2500 },
+      { moves: 5, cleanMoves: 0, score: 2500 },
     );
     const { state: next, events } = expectOk(
       trySwapWith(state, { row: 0, col: 2 }, { row: 0, col: 3 }, scriptedRefill(types('PWP'), 4)),
@@ -296,7 +296,7 @@ describe('resolve: plaque after the move', () => {
   it('a burst that removes the last legal swap ends the game with a gameOver event', () => {
     // Row 2 is plaque. The swap makes PPP in row 0; the refill 'RAP' leaves 'RAPA' / 'AWAR',
     // whose only legal swap (0,1)-(1,1) needs a tile of row 1 that the burst turns into a block.
-    const state = stateFromGrid(['APPA', 'PWAR', 'CCCC'], { moves: 10, cleanMoves: 1, score: 5000 });
+    const state = stateFromGrid(['APPA', 'PWAR', 'CCCC'], { moves: 5, cleanMoves: 1, score: 5000 });
     const { state: next, events } = expectOk(
       trySwapWith(state, { row: 0, col: 0 }, { row: 1, col: 0 }, scriptedRefill(types('RAP'), 5)),
     );
@@ -314,7 +314,7 @@ describe('resolve: plaque after the move', () => {
   });
 
   it('a move that destroys a block resets cleanMoves and prevents spread', () => {
-    const state = stateFromGrid(['RRWR', 'CPAC', 'PAWA', 'AWPW'], { moves: 10, cleanMoves: 1 });
+    const state = stateFromGrid(['RRWR', 'CPAC', 'PAWA', 'AWPW'], { moves: 5, cleanMoves: 1 });
     const { state: next, events } = expectOk(
       trySwapWith(state, { row: 0, col: 2 }, { row: 0, col: 3 }, scriptedRefill(types('WRPR'))),
     );
@@ -325,7 +325,7 @@ describe('resolve: plaque after the move', () => {
   });
 
   it('re-seeds at the end of the 2nd plaque-free move after the last block is cleared', () => {
-    const clearing = stateFromGrid(['PWA', 'WRP', 'RAC', 'RPP'], { moves: 10 });
+    const clearing = stateFromGrid(['PWA', 'WRP', 'RAC', 'RPP'], { moves: 5 });
     const first = expectOk(
       trySwapWith(clearing, { row: 1, col: 0 }, { row: 1, col: 1 }, scriptedRefill(types('RARPARP'))),
     );
@@ -334,7 +334,7 @@ describe('resolve: plaque after the move', () => {
     expect(first.state.movesWithoutPlaque).toBe(1);
 
     const state = stateFromGrid(['RRWR', 'WPAP', 'PAWA', 'AWPW'], {
-      moves: 10,
+      moves: 5,
       movesWithoutPlaque: 1,
     });
     const { state: next, events } = expectOk(

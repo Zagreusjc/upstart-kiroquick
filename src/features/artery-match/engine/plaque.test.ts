@@ -3,6 +3,8 @@ import { hasLegalMove } from './legal';
 import {
   MAX_SPREAD_COUNT,
   SPREAD_COUNT_THREE_SCORE,
+  SPREAD_COUNT_THREE_MOVES,
+  SPREAD_COUNT_TWO_MOVES,
   SPREAD_COUNT_TWO_SCORE,
   countCholesterol,
   resolvePlaque,
@@ -24,7 +26,7 @@ function input(grid: string[], extra: Partial<ResolveInput> = {}): ResolveInput 
     board: state.board,
     rows: state.rows,
     cols: state.cols,
-    moves: 10,
+    moves: 5,
     score: 0,
     destroyed: 0,
     cleanMoves: 0,
@@ -320,7 +322,7 @@ describe('resolvePlaque: seeding', () => {
     expect(clearingMove.events).toEqual([]);
     expect(clearingMove.movesWithoutPlaque).toBe(1);
 
-    const next = resolvePlaque(input(PLAYABLE, { moves: 11, movesWithoutPlaque: 1 }));
+    const next = resolvePlaque(input(PLAYABLE, { moves: 7, movesWithoutPlaque: 1 }));
     expect(next.events.map((e) => e.type)).toEqual(['plaqueSeeded']);
     expect(countCholesterol(next.board)).toBe(1);
     expect(next.movesWithoutPlaque).toBe(0);
@@ -467,7 +469,7 @@ describe('plaque returns at the current level', () => {
     [9000, 3],
   ])('at score %i a reseed places %i block(s), one plaqueSeeded event each', (score, expected) => {
     const out = resolvePlaque(
-      input(BIG, { moves: 10, movesWithoutPlaque: 1, score, totalCleared: 3 }),
+      input(BIG, { moves: 5, movesWithoutPlaque: 1, score, totalCleared: 3 }),
     );
     const seeds = seedEvents(out);
     expect(seeds).toHaveLength(expected);
@@ -485,12 +487,12 @@ describe('plaque returns at the current level', () => {
   it('keeps the spread clock running after a clear: the next clean move spreads', () => {
     // Below 800 points the interval is 2; a reseed after a clear leaves 1 clean move banked.
     const reseed = resolvePlaque(
-      input(BIG, { moves: 10, movesWithoutPlaque: 1, score: 300, totalCleared: 2 }),
+      input(BIG, { moves: 5, movesWithoutPlaque: 1, score: 300, totalCleared: 2 }),
     );
     expect(reseed.cleanMoves).toBe(spreadInterval(300) - 1);
     const next = resolvePlaque(
       input(gridOf({ ...stateFromGrid(BIG), board: reseed.board }), {
-        moves: 11,
+        moves: 7,
         score: 300,
         cleanMoves: reseed.cleanMoves,
         rngState: reseed.rngState,
@@ -503,7 +505,7 @@ describe('plaque returns at the current level', () => {
 
   it('spreads on the very next clean move at the fast interval too', () => {
     const reseed = resolvePlaque(
-      input(BIG, { moves: 10, movesWithoutPlaque: 1, score: 2000, totalCleared: 5 }),
+      input(BIG, { moves: 5, movesWithoutPlaque: 1, score: 2000, totalCleared: 5 }),
     );
     expect(reseed.cleanMoves).toBe(spreadInterval(2000) - 1);
     expect(reseed.cleanMoves).toBe(0);
@@ -533,5 +535,38 @@ describe('plaque returns at the current level', () => {
     const out = seedPlaques(state, 3, state.nextId, 3);
     expect(out?.seeds).toHaveLength(1);
     expect(seedPlaques(stateFromGrid(['CCC', 'CCC', 'CCC']), 3, 1, 2)).toBeNull();
+  });
+});
+
+describe('spreadCount by moves played', () => {
+  it('grows with the number of moves even at a score of 0', () => {
+    expect(SPREAD_COUNT_TWO_MOVES).toBe(8);
+    expect(SPREAD_COUNT_THREE_MOVES).toBe(16);
+    expect(spreadCount(0, 7)).toBe(1);
+    expect(spreadCount(0, 8)).toBe(2);
+    expect(spreadCount(0, 15)).toBe(2);
+    expect(spreadCount(0, 16)).toBe(3);
+    expect(spreadCount(0, 60)).toBe(3);
+  });
+
+  it('takes the higher of the score tier and the moves tier, never above 3', () => {
+    expect(spreadCount(500, 0)).toBe(2);
+    expect(spreadCount(500, 16)).toBe(3);
+    expect(spreadCount(1200, 0)).toBe(3);
+    expect(spreadCount(0, 0)).toBe(1);
+    for (let moves = 0; moves <= 80; moves++) {
+      for (const score of [0, 499, 500, 1199, 1200, 9000]) {
+        const n = spreadCount(score, moves);
+        expect(n).toBeGreaterThanOrEqual(spreadCount(score, Math.max(0, moves - 1)));
+        expect(n).toBeLessThanOrEqual(3);
+      }
+    }
+  });
+
+  it('a spread late in a low-scoring game converts 3 tiles', () => {
+    const out = resolvePlaque(input(OPEN_BOARD, { cleanMoves: 1, score: 0, moves: 16 }));
+    expect(out.events.filter((e) => e.type === 'plaqueSpread')).toHaveLength(3);
+    const early = resolvePlaque(input(OPEN_BOARD, { cleanMoves: 1, score: 0, moves: 5 }));
+    expect(early.events.filter((e) => e.type === 'plaqueSpread')).toHaveLength(1);
   });
 });

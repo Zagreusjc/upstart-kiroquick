@@ -63,7 +63,7 @@ describe('determinism', () => {
       a.events.forEach((moveEvents, i) => {
         const spreads = moveEvents.filter((e) => e.type === 'plaqueSpread');
         expect(spreads.length).toBeLessThanOrEqual(3);
-        expect(spreads.length).toBeLessThanOrEqual(spreadCount(a.states[i + 1].score));
+        expect(spreads.length).toBeLessThanOrEqual(spreadCount(a.states[i + 1].score, a.states[i + 1].moves));
         expect(new Set(spreads.map((e) => (e.type === 'plaqueSpread' ? `${e.to.row},${e.to.col}` : ''))).size).toBe(
           spreads.length,
         );

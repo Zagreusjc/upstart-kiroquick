@@ -16,6 +16,10 @@ export const FAST_SPREAD_SCORE = 800;
 export const SPREAD_COUNT_TWO_SCORE = 500;
 /** Score from which one spread converts the maximum of 3 tiles. */
 export const SPREAD_COUNT_THREE_SCORE = 1200;
+/** The longer a game runs, the bigger a spread gets, even at a low score: 2 tiles from this move. */
+export const SPREAD_COUNT_TWO_MOVES = 8;
+/** 3 tiles (the cap) from this move. */
+export const SPREAD_COUNT_THREE_MOVES = 16;
 export const MAX_SPREAD_COUNT = 3;
 
 type BoardState = Pick<GameState, 'board' | 'rows' | 'cols'>;
@@ -26,12 +30,15 @@ export function spreadInterval(score: number): number {
 }
 
 /**
- * Tiles converted by one spread: 1 below SPREAD_COUNT_TWO_SCORE, 2 below SPREAD_COUNT_THREE_SCORE,
- * then the cap of 3. Non-decreasing in score.
+ * Tiles converted by one spread, from whichever is higher of two tiers:
+ * score (1, then 2 from SPREAD_COUNT_TWO_SCORE, 3 from SPREAD_COUNT_THREE_SCORE) and
+ * moves played (2 from SPREAD_COUNT_TWO_MOVES, 3 from SPREAD_COUNT_THREE_MOVES), so a long game
+ * keeps growing even when the score is low. Capped at 3, never decreases.
  */
-export function spreadCount(score: number): 1 | 2 | 3 {
-  if (score >= SPREAD_COUNT_THREE_SCORE) return MAX_SPREAD_COUNT;
-  return score >= SPREAD_COUNT_TWO_SCORE ? 2 : 1;
+export function spreadCount(score: number, moves = 0): 1 | 2 | 3 {
+  const byScore = score >= SPREAD_COUNT_THREE_SCORE ? 3 : score >= SPREAD_COUNT_TWO_SCORE ? 2 : 1;
+  const byMoves = moves >= SPREAD_COUNT_THREE_MOVES ? 3 : moves >= SPREAD_COUNT_TWO_MOVES ? 2 : 1;
+  return Math.max(byScore, byMoves) as 1 | 2 | 3;
 }
 
 export function countCholesterol(board: Board): number {
@@ -205,7 +212,7 @@ export interface PlaqueOutput {
 }
 
 /**
- * End-of-move plaque step: one seed, or one spread of up to spreadCount(score) tiles. Never triggers matches
+ * End-of-move plaque step: one seed, or one spread of up to spreadCount(score, moves) tiles. Never triggers matches
  * (converted cells are cholesterol, which cannot match), so nothing is re-resolved.
  */
 export function resolvePlaque(input: PlaqueInput): PlaqueOutput {
@@ -219,7 +226,7 @@ export function resolvePlaque(input: PlaqueInput): PlaqueOutput {
       // Plaque returns at the player's current level: as many blocks as one spread would add
       // (1, 2 or 3), never a lone block once the game is past level 1. After a clear it also
       // keeps its momentum: the next clean move spreads, instead of restarting the spread clock.
-      const seeded = seedPlaques({ board, rows, cols }, rngState, nextId, spreadCount(score));
+      const seeded = seedPlaques({ board, rows, cols }, rngState, nextId, spreadCount(score, moves));
       if (seeded) {
         const comingBack = (input.totalCleared ?? 0) > 0;
         return {
@@ -239,7 +246,7 @@ export function resolvePlaque(input: PlaqueInput): PlaqueOutput {
 
   if (cleanMoves < spreadInterval(score)) return { ...unchanged, cleanMoves, movesWithoutPlaque: 0 };
   // Resets cleanMoves even when no tile could convert (no RNG is drawn in that case).
-  const spread = spreadPlaque(board, rngState, nextId, spreadCount(score));
+  const spread = spreadPlaque(board, rngState, nextId, spreadCount(score, moves));
   if (!spread) return { ...unchanged, cleanMoves: 0, movesWithoutPlaque: 0 };
   return {
     board: spread.board,

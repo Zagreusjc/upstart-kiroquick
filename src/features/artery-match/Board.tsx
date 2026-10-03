@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
 import type { Board as BoardGrid, Cell } from './engine';
 import { dragTarget } from './swapInput';
 import { TileIcon } from './TileIcon';
@@ -10,6 +10,8 @@ interface BoardProps {
   clearing: ReadonlySet<string>;
   locked: boolean;
   invalid?: boolean;
+  /** Two tiles that trade places and return (a swap that made no match). */
+  bounce?: readonly [Cell, Cell] | null;
   onCellTap(cell: Cell): void;
   onDragSwap(a: Cell, b: Cell): void;
 }
@@ -43,7 +45,18 @@ const ARROW_STEPS: Record<string, Cell> = {
  * detected on the container with pointer events. Input is ignored while locked.
  * Keyboard: one tab stop (roving tabindex); arrow keys move focus between cells.
  */
-export function Board({ board, selected, clearing, locked, invalid, onCellTap, onDragSwap }: BoardProps) {
+/** Each bouncing cell slides one cell toward its partner (its own size plus the 4px gap) and back. */
+function bounceStyle(bounce: readonly [Cell, Cell] | null | undefined, cell: Cell): CSSProperties | undefined {
+  if (!bounce) return undefined;
+  const [a, b] = bounce;
+  const from = a.row === cell.row && a.col === cell.col ? a : b.row === cell.row && b.col === cell.col ? b : null;
+  if (!from) return undefined;
+  const to = from === a ? b : a;
+  const step = (n: number) => `calc(${n} * (100% + 4px))`;
+  return { '--am-dx': step(to.col - from.col), '--am-dy': step(to.row - from.row) } as CSSProperties;
+}
+
+export function Board({ board, selected, clearing, locked, invalid, bounce, onCellTap, onDragSwap }: BoardProps) {
   const rows = board.length;
   const cols = board[0]?.length ?? 0;
   const gridRef = useRef<HTMLDivElement>(null);
@@ -138,6 +151,7 @@ export function Board({ board, selected, clearing, locked, invalid, onCellTap, o
           {line.map((tile, col) => {
             const isSelected = selected?.row === row && selected.col === col;
             const isClearing = clearing.has(cellKey({ row, col }));
+            const bounceVars = bounceStyle(bounce, { row, col });
             return (
               <div key={col} role="gridcell" className="aspect-square">
                 <button
@@ -151,9 +165,11 @@ export function Board({ board, selected, clearing, locked, invalid, onCellTap, o
                   onFocus={() => setFocusCell({ row, col })}
                   onKeyDown={(event) => handleKeyDown(event, { row, col })}
                   onClick={() => handleClick({ row, col })}
+                  data-bounce={bounceVars ? 'true' : undefined}
+                  style={bounceVars}
                   className={`block h-full w-full rounded-lg p-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-700 focus-visible:ring-inset ${
                     isSelected ? 'scale-95 bg-amber-200 ring-4 ring-amber-700 ring-inset' : 'bg-rose-50'
-                  }`}
+                  } ${bounceVars ? 'am-swap-back' : ''}`}
                 >
                   <span key={tile.id} className={`am-tile am-drop ${isClearing ? 'am-clearing' : ''}`}>
                     <TileIcon type={tile.type} />

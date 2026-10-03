@@ -605,3 +605,78 @@ describe('Arteria Match session persistence', () => {
     expect(lives.spend).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('Arteria Match swap that makes no move', () => {
+  function noMatchPair(): [Cell, Cell] {
+    const game = createGame(SEED);
+    for (let row = 0; row < game.rows; row += 1) {
+      for (let col = 0; col + 1 < game.cols; col += 1) {
+        const a = { row, col };
+        const b = { row, col: col + 1 };
+        if (validateSwap(game, a, b) === 'no-match') return [a, b];
+      }
+    }
+    throw new Error('no non-matching pair on the seed board');
+  }
+
+  it('slides the two tiles into each other and back, keeps the board, then unlocks', async () => {
+    const user = renderGame({ stepMs: 10 });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const before = boardLabels();
+    const [a, b] = noMatchPair();
+    await user.click(cellButton(a));
+    await user.click(cellButton(b));
+
+    expect(cellButton(a)).toHaveAttribute('data-bounce', 'true');
+    expect(cellButton(b)).toHaveAttribute('data-bounce', 'true');
+    // They move toward each other: a sits left of b, so a goes right and b goes left.
+    expect(cellButton(a).style.getPropertyValue('--am-dx')).toContain('1 *');
+    expect(cellButton(b).style.getPropertyValue('--am-dx')).toContain('-1 *');
+    expect(cellButton(a)).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByText('No match there. Try another swap.')).toBeInTheDocument();
+
+    await waitFor(() => expect(cellButton(a)).not.toHaveAttribute('data-bounce'), { timeout: 2000 });
+    expect(cellButton(b)).not.toHaveAttribute('data-bounce');
+    expect(cellButton(a)).not.toHaveAttribute('aria-disabled');
+    expect(boardLabels()).toEqual(before);
+    expect(screen.getByText('Score: 0')).toBeInTheDocument();
+    expect(screen.getByText('Moves: 0')).toBeInTheDocument();
+  });
+
+  it('ignores taps while the tiles are sliding', async () => {
+    const swap = vi.fn(trySwap);
+    const user = renderGame({ stepMs: 10, swap });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const [a, b] = noMatchPair();
+    await user.click(cellButton(a));
+    await user.click(cellButton(b));
+    expect(swap).toHaveBeenCalledTimes(1);
+
+    await user.click(cellButton(a));
+    await user.click(cellButton(b));
+    expect(swap).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(cellButton(a)).not.toHaveAttribute('data-bounce'), { timeout: 2000 });
+  });
+
+  it('skips the slide when animation is off (stepMs 0) but still explains why', async () => {
+    const user = renderGame();
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const [a, b] = noMatchPair();
+    await user.click(cellButton(a));
+    await user.click(cellButton(b));
+    expect(cellButton(a)).not.toHaveAttribute('data-bounce');
+    expect(screen.getByText('No match there. Try another swap.')).toBeInTheDocument();
+  });
+
+  it('does not slide for a swap with a cholesterol block; the board shakes instead', async () => {
+    const swap = vi.fn((): SwapResult => ({ ok: false, reason: 'cholesterol' }));
+    const user = renderGame({ stepMs: 10, swap });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    await user.click(cellButton({ row: 0, col: 0 }));
+    await user.click(cellButton({ row: 0, col: 1 }));
+
+    expect(swap).toHaveBeenCalledTimes(1);
+    expect(cellButton({ row: 0, col: 0 })).not.toHaveAttribute('data-bounce');
+    expect(screen.getByRole('grid', { name: 'Arteria Match board' })).toHaveClass('am-shake');
+  });
+});

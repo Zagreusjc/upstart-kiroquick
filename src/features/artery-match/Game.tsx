@@ -95,6 +95,7 @@ export function ArteriaMatchGame(props: GameDeps) {
             clearing={session.clearing}
             locked={session.locked}
             invalid={session.invalid}
+            bounce={session.bounce}
             onCellTap={session.tapCell}
             onDragSwap={session.dragSwap}
           />
