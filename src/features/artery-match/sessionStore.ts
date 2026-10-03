@@ -61,6 +61,8 @@ export interface SessionSnapshot {
   invalid: boolean;
   hint: MoveHint;
   callout: Callout | null;
+  /** True after the move that first seeded plaque this game, until the next successful move. */
+  plaqueNotice: boolean;
   coinsEarned: number;
   shareStatus: ShareStatus;
 }
@@ -82,6 +84,7 @@ const INITIAL: SessionSnapshot = {
   invalid: false,
   hint: null,
   callout: null,
+  plaqueNotice: false,
   coinsEarned: 0,
   shareStatus: 'idle',
 };
@@ -95,6 +98,8 @@ let resolved: GameState | null = null;
 let gameId = '';
 let finishedId = '';
 let sharedId = '';
+/** Game that has already shown the first-plaque hint. */
+let plaqueNoticeId = '';
 const timers = new Set<number>();
 let calloutTimer: number | null = null;
 const listeners = new Set<() => void>();
@@ -138,6 +143,7 @@ export function resetGameSession(): void {
   gameId = '';
   finishedId = '';
   sharedId = '';
+  plaqueNoticeId = '';
   listeners.forEach((listener) => listener());
 }
 
@@ -147,7 +153,7 @@ interface Frame {
   score: number;
 }
 
-/** Turns engine events into display frames: swap, then per wave clearing and refill. */
+/** Turns engine events into display frames: swap, per wave clearing and refill, then plaque. */
 function framesFor(events: GameEvent[], startScore: number): { frames: Frame[]; waves: number } {
   const frames: Frame[] = [];
   let score = startScore;
@@ -166,7 +172,7 @@ function framesFor(events: GameEvent[], startScore: number): { frames: Frame[]; 
       } else {
         frames.push({ clearing: new Set(keys), score });
       }
-    } else if (event.type === 'refill') {
+    } else if (event.type === 'refill' || event.type === 'plaqueSeeded' || event.type === 'plaqueSpread') {
       frames.push({ board: event.board, clearing: NO_CLEARING, score });
     }
   }
@@ -226,8 +232,12 @@ function showCallout(value: Callout | null) {
   }
 }
 
-function finishMove(next: GameState, waves: number, coins: SessionContext['coins']) {
+function finishMove(next: GameState, waves: number, seeded: boolean, coins: SessionContext['coins']) {
   set({ board: next.board, clearing: NO_CLEARING, score: next.score, settledScore: next.score, game: next });
+  if (seeded && plaqueNoticeId !== gameId) {
+    plaqueNoticeId = gameId;
+    set({ plaqueNotice: true });
+  }
   showCallout(calloutForWaves(waves));
   if (next.over) {
     finishGame(next, coins);
@@ -252,11 +262,12 @@ function attemptSwap(ctx: SessionContext, a: Cell, b: Cell) {
     return;
   }
   resolved = result.state;
-  set({ hint: null, locked: true });
+  set({ hint: null, plaqueNotice: false, locked: true });
   const { frames, waves } = framesFor(result.events, current.score);
+  const seeded = result.events.some((event) => event.type === 'plaqueSeeded');
   const stepMs = ctx.deps.stepMs ?? DEFAULT_STEP_MS;
   if (stepMs === 0 || prefersReducedMotion()) {
-    finishMove(result.state, waves, ctx.coins);
+    finishMove(result.state, waves, seeded, ctx.coins);
     return;
   }
   // Playback timers belong to the store, so a move (and a game over award) still completes
@@ -269,7 +280,7 @@ function attemptSwap(ctx: SessionContext, a: Cell, b: Cell) {
       set({ ...(frame.board ? { board: frame.board } : {}), clearing: frame.clearing, score: frame.score });
       schedule(tick, stepMs);
     } else {
-      finishMove(result.state, waves, ctx.coins);
+      finishMove(result.state, waves, seeded, ctx.coins);
     }
   };
   tick();

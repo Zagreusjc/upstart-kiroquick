@@ -135,6 +135,23 @@ function overSwap() {
   });
 }
 
+const PLAQUE_HINT = 'Plaque is spreading! Match next to it to clear it.';
+
+/** An injected swap that turns (0,0) into plaque and reports a plaqueSeeded event every move. */
+function plaqueSwap() {
+  let call = 0;
+  return vi.fn((state: GameState, a: Cell, b: Cell): SwapResult => {
+    call += 1;
+    const board = state.board.map((row) => [...row]);
+    board[0][0] = { id: 9000 + call, type: 'cholesterol' };
+    const events: GameEvent[] = [
+      { type: 'swap', a, b, board: state.board },
+      { type: 'plaqueSeeded', cell: { row: 0, col: 0 }, board },
+    ];
+    return { ok: true, state: { ...state, board, moves: state.moves + 1 }, events };
+  });
+}
+
 async function playToGameOver(deps: GameDeps = {}) {
   const user = renderGame({ swap: overSwap(), ...deps });
   await user.click(screen.getByRole('button', { name: 'Play' }));
@@ -312,6 +329,29 @@ describe('Arteria Match game', () => {
     expect(eventsOf('share.completed')).toHaveLength(0);
   });
 
+  it('shows plaque coverage as text, starting at 0%', async () => {
+    const user = renderGame();
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    expect(screen.getByText('Plaque: 0%')).toBeInTheDocument();
+  });
+
+  it('shows the plaque hint the first time plaque appears, then clears it on the next move', async () => {
+    const user = renderGame({ swap: plaqueSwap() });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    expect(screen.queryByText(PLAQUE_HINT)).not.toBeInTheDocument();
+
+    await user.click(cellButton({ row: 0, col: 1 }));
+    await user.click(cellButton({ row: 0, col: 2 }));
+    expect(screen.getByText(PLAQUE_HINT)).toBeInTheDocument();
+    expect(screen.getByText('Plaque: 3%')).toBeInTheDocument();
+    expect(cellButton({ row: 0, col: 0 })).toHaveAccessibleName(/^Cholesterol block/);
+
+    await user.click(cellButton({ row: 1, col: 0 }));
+    await user.click(cellButton({ row: 1, col: 1 }));
+    expect(screen.getByText('Moves: 2')).toBeInTheDocument();
+    expect(screen.queryByText(PLAQUE_HINT)).not.toBeInTheDocument();
+  });
+
   it('announces the score once the move has finished playing back', async () => {
     await playToGameOver({ makeCard: pngCard, stepMs: 5 });
 
@@ -383,6 +423,31 @@ describe('Arteria Match pointer drag', () => {
       if (hadCapture) proto.setPointerCapture = original;
       else delete proto.setPointerCapture;
     }
+  });
+
+  it('measures the threshold against the pressed tile, not the board width', async () => {
+    const swap = vi.fn(trySwap);
+    const user = renderGame({ swap });
+    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const grid = screen.getByRole('grid', { name: 'Arteria Match board' });
+    // Board width / cols would give 40px tiles; the pressed tile really is 50px.
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue({ width: 6 * TILE_PX } as DOMRect);
+    const [a, b] = findLegalMove(createGame(SEED))!;
+    const start = cellButton(a);
+    vi.spyOn(start, 'getBoundingClientRect').mockReturnValue({ width: 50 } as DOMRect);
+    const dirX = b.col - a.col;
+    const dirY = b.row - a.row;
+    const at = (px: number) => ({ pointerId: 2, clientX: 100 + dirX * px, clientY: 100 + dirY * px });
+
+    fireEvent.pointerDown(start, at(0));
+    // 18px is past 0.4 x 40 but not past 0.4 x 50.
+    fireEvent.pointerMove(start, at(18));
+    expect(swap).not.toHaveBeenCalled();
+    fireEvent.pointerMove(start, at(25));
+    fireEvent.pointerUp(start, at(25));
+
+    expect(swap).toHaveBeenCalledTimes(1);
+    expect(swap).toHaveBeenCalledWith(expect.anything(), a, b);
   });
 });
 

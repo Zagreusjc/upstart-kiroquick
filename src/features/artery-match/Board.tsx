@@ -19,6 +19,8 @@ interface DragState {
   start: Cell;
   x: number;
   y: number;
+  /** Width of the pressed tile in px (0 when layout is unavailable). */
+  tileSize: number;
   done: boolean;
 }
 
@@ -69,7 +71,14 @@ export function Board({ board, selected, clearing, locked, invalid, onCellTap, o
     if (locked) return;
     const hit = cellFromTarget(event.target);
     if (!hit) return;
-    dragRef.current = { pointerId: event.pointerId, start: hit.cell, x: event.clientX, y: event.clientY, done: false };
+    dragRef.current = {
+      pointerId: event.pointerId,
+      start: hit.cell,
+      x: event.clientX,
+      y: event.clientY,
+      tileSize: hit.el.getBoundingClientRect().width,
+      done: false,
+    };
     // Capture on the pressed button so mouse drags keep reporting and the click stays on it.
     try {
       hit.el.setPointerCapture?.(event.pointerId);
@@ -81,9 +90,11 @@ export function Board({ board, selected, clearing, locked, invalid, onCellTap, o
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current;
     if (!drag || drag.done || drag.pointerId !== event.pointerId || locked) return;
-    const width = gridRef.current?.getBoundingClientRect().width ?? 0;
-    if (width <= 0 || cols === 0) return;
-    const target = dragTarget(drag.start, event.clientX - drag.x, event.clientY - drag.y, width / cols, rows, cols);
+    if (cols === 0) return;
+    // Real tile size from the pressed tile; fall back to board width / columns.
+    const tileSize = drag.tileSize > 0 ? drag.tileSize : (gridRef.current?.getBoundingClientRect().width ?? 0) / cols;
+    if (tileSize <= 0) return;
+    const target = dragTarget(drag.start, event.clientX - drag.x, event.clientY - drag.y, tileSize, rows, cols);
     if (!target) return;
     drag.done = true;
     suppressClickRef.current = true;

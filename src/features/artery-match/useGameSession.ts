@@ -43,6 +43,7 @@ export function useGameSession(deps: GameDeps = {}) {
     invalid: session.invalid,
     hint: session.hint,
     callout: session.callout,
+    plaqueNotice: session.plaqueNotice,
     coinsEarned: session.coinsEarned,
     shareStatus: session.shareStatus,
     makeCard,
