@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link, useInRouterContext } from 'react-router-dom';
 import { CoinIcon, ScoreIcon } from '../../core';
 import type { ShareStatus } from './useGameSession';
 
@@ -20,6 +21,24 @@ const SHARE_STATUS_TEXT: Record<ShareStatus, string> = {
   downloaded: 'Image downloaded',
   unavailable: 'Brag card image unavailable. Nothing was shared.',
 };
+
+/** Route path of the care pathways tab. Linked by URL only, never imported from that feature. */
+const CARE_PATH = '/care';
+
+/** Client-side link inside the app router; a plain anchor if rendered outside one (for example in tests). */
+function CareLink() {
+  const inRouter = useInRouterContext();
+  const className = 'ui-btn ui-btn--teal';
+  return inRouter ? (
+    <Link to={CARE_PATH} className={className}>
+      Get checked!
+    </Link>
+  ) : (
+    <a href={CARE_PATH} className={className}>
+      Get checked!
+    </a>
+  );
+}
 
 export function GameOver({ score, coinsEarned, makeCard, shareStatus, onShare, onPlayAgain }: GameOverProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -86,6 +105,8 @@ export function GameOver({ score, coinsEarned, makeCard, shareStatus, onShare, o
         >
           Play again
         </button>
+        <CareLink />
+        <p className="text-center text-xs text-baboo-900/80">Screening awareness, not a diagnosis.</p>
       </div>
       <p role="status" className="mt-2 min-h-6 text-sm font-bold text-baboo-900">
         {SHARE_STATUS_TEXT[shareStatus]}
