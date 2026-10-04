@@ -1,3 +1,9 @@
-name = "inlababoo"
+# Cloudflare Workers static assets (what `npx wrangler deploy` reads).
+# The name must match the project name in the Cloudflare dashboard.
+name = "upstart-kiroquick"
 compatibility_date = "2025-01-01"
-pages_build_output_dir = "dist"
+
+[assets]
+directory = "./dist"
+# Serve index.html for unknown paths so deep links like /care work after a refresh.
+not_found_handling = "single-page-application"
