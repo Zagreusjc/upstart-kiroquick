@@ -53,7 +53,7 @@ describe('main menu', () => {
     expect(href(/^Library/)).toBe('/library');
     expect(href(/^Baboo/)).toBe('/home/baboo');
     expect(href(/Refer a Buddy/)).toBe('/library/milestones');
-    expect(href(/^Get screened!$/)).toBe('/care');
+    expect(href(/^Get checked!$/)).toBe('/care');
     expect(href(/Settings/)).toBe('/home/settings');
     expect(menu().queryByRole('link', { name: /Pulse|Milestones/ })).not.toBeInTheDocument();
   });
@@ -80,7 +80,7 @@ describe('main menu', () => {
     expect(play).toHaveAttribute('data-size', 'big');
     expect(play.className).toContain('h-[clamp(4rem,12dvh,8rem)]');
     expect(play.className).toMatch(/\bw-64\b/);
-    for (const name of [/Blood Bank/, /^Library/, /^Baboo/, /^Get screened!$/]) {
+    for (const name of [/Blood Bank/, /^Library/, /^Baboo/, /^Get checked!$/]) {
       const link = menu().getByRole('link', { name });
       expect(link).toHaveAttribute('data-size', 'regular');
       // Never under 44px tall (touch target), never over 64px.
@@ -90,7 +90,7 @@ describe('main menu', () => {
     expect(menu().getByRole('link', { name: /^Baboo/ }).className).toMatch(/\bw-48\b/);
     expect(menu().getByRole('link', { name: /Blood Bank/ }).className).toMatch(/\bw-44\b/);
     expect(menu().getByRole('link', { name: /^Library/ }).className).toMatch(/\bw-40\b/);
-    expect(menu().getByRole('link', { name: /^Get screened!$/ }).className).toMatch(/\bw-56\b/);
+    expect(menu().getByRole('link', { name: /^Get checked!$/ }).className).toMatch(/\bw-56\b/);
   });
 
   it('orders the stack Play, Baboo, Blood Bank, Library', () => {
@@ -117,7 +117,7 @@ describe('main menu', () => {
       expect(cls(name)).toContain('bg-[#3cc4b4]');
       expect(cls(name)).toContain('text-white');
     }
-    expect(cls(/^Get screened!$/)).toContain('bg-white');
+    expect(cls(/^Get checked!$/)).toContain('bg-white');
     expect(menu().getByRole('link', { name: /^Library/ })).toHaveTextContent('Play to learn!');
   });
 
@@ -177,7 +177,7 @@ describe('main menu', () => {
 
     const babooScreen = screen.getByTestId('baboo-screen');
     expect(babooScreen.className).toContain('mm-root');
-    expect(babooScreen.className).toContain('-m-4');
+    expect(babooScreen.className).toContain('-mx-4');
 
     // Same game buttons, but with the shallower "soft" lip and no Play shine.
     const back = screen.getByRole('link', { name: /Main menu/ });

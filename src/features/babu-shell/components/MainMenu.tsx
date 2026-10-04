@@ -248,7 +248,7 @@ export function MainMenu() {
             data-variant="white"
             className={`mm-btn mm-btn--white flex shrink-0 items-center justify-center rounded-2xl border-4 border-[#f0556a] bg-white text-center text-lg leading-tight font-black tracking-wide whitespace-nowrap text-rose-600 uppercase ${SIZES.screened} ${focusRing}`}
           >
-            Get screened!
+            Get checked!
           </Link>
 
           <RoundButton to={MENU_LINKS.settings} label="Settings" icon="⚙️" />
