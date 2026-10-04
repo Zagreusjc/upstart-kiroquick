@@ -1,4 +1,4 @@
-﻿import { useId } from 'react';
+import { useId } from 'react';
 import type { TileType } from './engine';
 
 // Glossy main-menu style tiles on a 100x100 viewBox: soft fill, darker "lip" outline, white gloss.
@@ -14,8 +14,8 @@ function starPoints(points: number, outer: number, inner: number): string {
   return coords.join(' ');
 }
 
-const WBC_SPIKES = starPoints(10, 49, 40);
-const PLATELET_STAR = starPoints(8, 49, 25);
+const WBC_SPIKES = starPoints(10, 46, 36);
+const PLATELET_STAR = starPoints(8, 46, 22);
 
 export function TileIcon({ type }: { type: TileType }) {
   // useId output can contain characters that are awkward inside url(#...), so keep it alphanumeric.
@@ -24,7 +24,7 @@ export function TileIcon({ type }: { type: TileType }) {
     <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false" className="am-art h-full w-full">
       {type === 'rbc' && (
         <>
-          <circle cx="50" cy="50" r="46" fill="#f0556a" stroke="#c23a4f" strokeWidth="6" />
+          <circle cx="50" cy="50" r="42" fill="#f0556a" stroke="#c23a4f" strokeWidth="6" />
           <ellipse cx="50" cy="52" rx="22" ry="16" fill="#d9405a" stroke="#a12b40" strokeWidth="2.5" />
           <ellipse cx="34" cy="28" rx="13" ry="7" fill="#ffffff" opacity="0.55" transform="rotate(-30 34 28)" />
         </>
@@ -48,14 +48,14 @@ export function TileIcon({ type }: { type: TileType }) {
         <>
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ffe27a" />
-              <stop offset="100%" stopColor="#ffb347" />
+              <stop offset="0%" stopColor="#fffaf0" />
+              <stop offset="100%" stopColor="#ffe6a8" />
             </linearGradient>
           </defs>
           <path
-            d="M50 3 C63 24 90 44 90 65 A40 40 0 0 1 10 65 C10 44 37 24 50 3 Z"
+            d="M50 6 C62 26 84 44 84 64 A34 34 0 0 1 16 64 C16 44 38 26 50 6 Z"
             fill={`url(#${gradientId})`}
-            stroke="#a9680f"
+            stroke="#b7791f"
             strokeWidth="5.5"
             strokeLinejoin="round"
           />
@@ -65,11 +65,11 @@ export function TileIcon({ type }: { type: TileType }) {
       {type === 'cholesterol' && (
         <>
           {/* Fills the whole cell edge to edge; the cell clips the corners. */}
-          <rect x="0" y="0" width="100" height="100" fill="#fff0c2" />
-          <rect x="3" y="3" width="94" height="94" rx="11" fill="none" stroke="#b7791f" strokeWidth="6" />
-          <circle cx="31" cy="34" r="14" fill="#ffd98a" stroke="#b7791f" strokeWidth="3" />
-          <circle cx="68" cy="62" r="17" fill="#ffd98a" stroke="#b7791f" strokeWidth="3" />
-          <circle cx="33" cy="72" r="9" fill="#ffd98a" stroke="#b7791f" strokeWidth="3" />
+          <rect x="0" y="0" width="100" height="100" fill="#ffc94d" />
+          <rect x="3" y="3" width="94" height="94" rx="11" fill="none" stroke="#a9680f" strokeWidth="6" />
+          <circle cx="31" cy="34" r="14" fill="#ffe27a" stroke="#a9680f" strokeWidth="3" />
+          <circle cx="68" cy="62" r="17" fill="#ffe27a" stroke="#a9680f" strokeWidth="3" />
+          <circle cx="33" cy="72" r="9" fill="#ffe27a" stroke="#a9680f" strokeWidth="3" />
           <ellipse cx="66" cy="27" rx="15" ry="5.500" fill="#ffffff" opacity="0.8" />
         </>
       )}
