@@ -1,6 +1,6 @@
-# INLABABU product guide
+# INLABABOO product guide
 
-INLABABU is a mobile-first PWA health game for the Kiro x Quick Hackathon (Health domain). Tagline: "Take care of your Babus, by taking care of yourself!"
+INLABABOO is a mobile-first PWA health game for the Kiro x Quick Hackathon (Health domain). Tagline: "Take care of your Babus, by taking care of yourself!"
 
 ## Goals
 

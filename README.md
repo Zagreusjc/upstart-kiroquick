@@ -1,8 +1,8 @@
-# INLABABU
+# INLABABOO
 
 > Take care of your Babus, by taking care of yourself!
 
-INLABABU is a mobile-first health game built for the **Kiro x Quick Hackathon** (Health domain). It turns healthy habits and cardiovascular education into coins, and coins into real discounted clinic screenings.
+INLABABOO is a mobile-first health game built for the **Kiro x Quick Hackathon** (Health domain). It turns healthy habits and cardiovascular education into coins, and coins into real discounted clinic screenings.
 
 ## Goals
 
@@ -76,6 +76,6 @@ Geolocation and the PWA install prompt need HTTPS, so use the deployed Amplify U
 
 ## Disclaimer
 
-INLABABU provides screening awareness, not a diagnosis. Health input (steps and sleep) is manual demo input. Clinic, medical mission and voucher partner data are illustrative.
+INLABABOO provides screening awareness, not a diagnosis. Health input (steps and sleep) is manual demo input. Clinic, medical mission and voucher partner data are illustrative.
 
 The hackathon briefs are intentionally not stored in this repository.

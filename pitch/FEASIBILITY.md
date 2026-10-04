@@ -1,12 +1,12 @@
-# INLABABU finals feasibility pack
+# INLABABOO finals feasibility pack
 
-Owner: CJ. INLABABU provides screening awareness, not a diagnosis. Clinic, mission and voucher partner data in the app are illustrative.
+Owner: CJ. INLABABOO provides screening awareness, not a diagnosis. Clinic, mission and voucher partner data in the app are illustrative.
 
 ## 1. Real-world impact
 
 - **The problem.** Ischaemic heart disease was the leading cause of death in the Philippines in 2025, at 19.7% of registered deaths ([PSA](https://psa.gov.ph/system/files/vsd/Press%20Release_2025%20Cause%20of%20Death%20Statistics_as%20of%2030%20April%202026_mepe-signed_0.pdf)). The main risk factors (inactivity, poor sleep, smoking, high blood pressure, diabetes) are detectable early and respond to behavior change.
 - **The gap.** People rarely go for a first screening. It feels costly, inconvenient and frightening, and nothing reminds them in between.
-- **What INLABABU changes.** A daily, positive habit loop (Baboo, check-ins, streaks), cited education (library cards), a deterministic risk survey and a direct pathway to a discounted, verified screening slot.
+- **What INLABABOO changes.** A daily, positive habit loop (Baboo, check-ins, streaks), cited education (library cards), a deterministic risk survey and a direct pathway to a discounted, verified screening slot.
 - **Outcome we measure.** Not app opens but **screenings completed**: vouchers redeemed at a partner, and the share of moderate-or-higher risk users who reach a clinic.
 
 ## 2. Practical deployment
@@ -15,7 +15,7 @@ Owner: CJ. INLABABU provides screening awareness, not a diagnosis. Clinic, missi
 
 Health information is *sensitive personal information* under the Act, so we design for data minimization from the start.
 
-| Principle | How INLABABU applies it |
+| Principle | How INLABABOO applies it |
 |---|---|
 | Transparency and consent | Onboarding explains what is stored and requires an explicit tick box before use. |
 | Proportionality (data minimization) | No names, contact details, accounts or precise location. Health input is manual and stays on the device. |

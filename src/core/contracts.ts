@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 
 /**
- * Shared contracts for INLABABU.
+ * Shared contracts for INLABABOO.
  *
  * OWNER: Jolo (edited on `base/scaffold` only). Feature owners must not edit
  * this file. If you need a change, message Jolo.

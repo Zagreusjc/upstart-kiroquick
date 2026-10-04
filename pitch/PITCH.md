@@ -1,4 +1,4 @@
-# INLABABU semis pitch (2 min) and Q&A bank
+# INLABABOO semis pitch (2 min) and Q&A bank
 
 Owner: CJ. Format: 2 minutes pitch, 2 minutes Q&A. The demo runs on a phone, mirrored to the screen.
 
@@ -10,7 +10,7 @@ Scoring weights to aim at: MVP and technical implementation 30%, problem and dom
 "Heart disease is the number one killer in the Philippines. In 2025, ischaemic heart disease caused about 1 in 5 registered deaths. Most people only find out late, because screening feels far away, costly and scary."
 
 **0:20 Solution (15 s)**
-"INLABABU turns heart care into a game you want to open every day. Take care of your Baboos, by taking care of yourself! Our loop is Track, Play, Redeem."
+"INLABABOO turns heart care into a game you want to open every day. Take care of your Baboos, by taking care of yourself! Our loop is Track, Play, Redeem."
 
 **0:35 Track (25 s), live on the phone**
 "This is Baboo. I enter today's steps, sleep and activity. It's labeled demo input, because we don't pretend to read sensors. Watch Baboo go from Tired to OK to Happy. I check in, my streak grows and I earn coins. Baboo never dies. If I'm away, Baboo goes into Rest Mode and welcomes me back. No guilt."
@@ -25,7 +25,7 @@ Scoring weights to aim at: MVP and technical implementation 30%, problem and dom
 "We used AI only where it beats a rule. Baboo's mood, the risk survey and the match engine are deterministic and unit tested. Amazon Quick does the AI work: Quick Research for cited content, Quick Index for grounded Q&A, and Quick Sight for the partner dashboard."
 
 **1:50 Close (10 s)**
-"Built spec-first with Kiro: steering, hooks and OpenSpec changes for four parallel branches. INLABABU: healthy habits today, a screening slot tomorrow."
+"Built spec-first with Kiro: steering, hooks and OpenSpec changes for four parallel branches. INLABABOO: healthy habits today, a screening slot tomorrow."
 
 ## Demo checklist (before going on stage)
 

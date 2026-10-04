@@ -10,7 +10,7 @@ const backLink =
 export function Settings({ reload = () => window.location.reload() }: { reload?: () => void }) {
   function erase() {
     const ok = window.confirm(
-      'Erase all INLABABU data on this device? Baboo, coins, lives, vouchers and progress will be reset. This cannot be undone.',
+      'Erase all INLABABOO data on this device? Baboo, coins, lives, vouchers and progress will be reset. This cannot be undone.',
     );
     if (!ok) return;
     eraseAppData();

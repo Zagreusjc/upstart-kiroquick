@@ -2,7 +2,7 @@
  * Tiny localStorage wrapper. Falls back to an in-memory map when storage is
  * unavailable (private mode, quota errors), so the app never crashes.
  *
- * All INLABABU keys use the `inlababu.` prefix and a version suffix.
+ * All INLABABOO keys use the `inlababoo.` prefix and a version suffix.
  */
 
 const memory = new Map<string, string>();

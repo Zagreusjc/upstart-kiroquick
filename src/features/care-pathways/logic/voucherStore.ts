@@ -14,7 +14,7 @@ import {
  * the MVP: the clinic verify page reads the same localStorage.
  */
 
-export const VOUCHERS_KEY = 'inlababu.care.vouchers.v1';
+export const VOUCHERS_KEY = 'inlababoo.care.vouchers.v1';
 
 export function loadVouchers(): Voucher[] {
   const stored = loadJSON<Voucher[]>(VOUCHERS_KEY, []);

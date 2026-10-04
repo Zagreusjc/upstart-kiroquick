@@ -1,8 +1,8 @@
-# Project context: INLABABU
+# Project context: INLABABOO
 
 ## Purpose
 
-INLABABU is a mobile-first PWA health game for the Kiro x Quick Hackathon (Health domain). The demo loop is Track, Play, Redeem:
+INLABABOO is a mobile-first PWA health game for the Kiro x Quick Hackathon (Health domain). The demo loop is Track, Play, Redeem:
 
 - Track: Babu (a heart-shaped pet) reflects steps, sleep, activity and daily check-ins.
 - Play: an artery match-3 game ("Arteria Match"). Each game costs 1 of 3 lives.

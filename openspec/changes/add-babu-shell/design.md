@@ -85,14 +85,14 @@ Collapsed "Demo controls" panel on Home: "Next day", "Skip 2 days" and "Reset de
 
 ### Health provider
 
-`createHealthProvider()` implements `HealthProvider`. It clamps to the ranges above, keeps the previous value when a patch value is not a finite number, returns the same snapshot object until data changes, persists to `inlababu.babu.health.v1` and notifies subscribers. Registered from `register(api)` in `index.ts`. Values persist across reloads and are not reset at midnight in the MVP.
+`createHealthProvider()` implements `HealthProvider`. It clamps to the ranges above, keeps the previous value when a patch value is not a finite number, returns the same snapshot object until data changes, persists to `inlababoo.babu.health.v1` and notifies subscribers. Registered from `register(api)` in `index.ts`. Values persist across reloads and are not reset at midnight in the MVP.
 
 ### Storage (all through `src/core/storage.ts`)
 
 | Key | Content |
 |---|---|
-| `inlababu.babu.v1` | `{ onboardedAt, lastCheckin, streak, dayOffset }` |
-| `inlababu.babu.health.v1` | Health snapshot |
+| `inlababoo.babu.v1` | `{ onboardedAt, lastCheckin, streak, dayOffset }` |
+| `inlababoo.babu.health.v1` | Health snapshot |
 
 ### Baboo artwork
 

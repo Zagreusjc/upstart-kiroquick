@@ -49,7 +49,7 @@ export function HealthInput({ mood, day, hint }: { mood: Mood; day: DayAssessmen
         </span>
       </div>
       <p className="mt-1 text-sm text-slate-600">
-        Demo input: move the sliders to enter today's numbers by hand. INLABABU does not read your
+        Demo input: move the sliders to enter today's numbers by hand. INLABABOO does not read your
         phone's sensors.
       </p>
 

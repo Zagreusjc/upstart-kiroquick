@@ -56,7 +56,7 @@ export default function ClinicMap({
             {clinic.partner && (
               <>
                 <br />
-                Accepts INLABABU vouchers (illustrative)
+                Accepts INLABABOO vouchers (illustrative)
               </>
             )}
             <MapContact clinic={clinic} />

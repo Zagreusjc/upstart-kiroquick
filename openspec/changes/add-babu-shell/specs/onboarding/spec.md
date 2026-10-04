@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: First-run onboarding
-The system SHALL show onboarding on first launch with a short explanation, consent to store data on the device, and the disclaimer "Screening awareness, not a diagnosis", and SHALL persist the accepted flag in `inlababu.babu.v1`.
+The system SHALL show onboarding on first launch with a short explanation, consent to store data on the device, and the disclaimer "Screening awareness, not a diagnosis", and SHALL persist the accepted flag in `inlababoo.babu.v1`.
 
 #### Scenario: First launch
 - **GIVEN** a fresh install
@@ -29,7 +29,7 @@ After onboarding, the Home tab (`/home`) SHALL open on a main menu with the "INL
 #### Scenario: No scrolling on a phone
 - **GIVEN** a portrait phone screen from 640 to 844px tall
 - **WHEN** the main menu is shown
-- **THEN** every button SHALL be visible above the bottom nav without scrolling The menu background SHALL fill the whole screen between the app header and bottom nav, with no card around it. Settings SHALL hold the demo controls and an "Erase all my data on this device" action that asks for confirmation and removes only INLABABU keys. The menu SHALL link by route path only and SHALL NOT import other features' code.
+- **THEN** every button SHALL be visible above the bottom nav without scrolling The menu background SHALL fill the whole screen between the app header and bottom nav, with no card around it. Settings SHALL hold the demo controls and an "Erase all my data on this device" action that asks for confirmation and removes only INLABABOO keys. The menu SHALL link by route path only and SHALL NOT import other features' code.
 
 #### Scenario: Menu after onboarding
 - **GIVEN** onboarding is complete

@@ -1,4 +1,4 @@
-# Deploying INLABABU (owner: Jolo)
+# Deploying INLABABOO (owner: Jolo)
 
 The app is a static PWA. `npm run build` writes it to `dist/`. `amplify.yml` in the repo root tells AWS Amplify Hosting how to build it.
 

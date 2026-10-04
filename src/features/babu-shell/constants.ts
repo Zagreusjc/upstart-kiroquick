@@ -64,8 +64,8 @@ export const STREAK_MILESTONES: readonly { days: number; bonus: number }[] = [
 ];
 
 export const STORAGE_KEYS = {
-  babu: 'inlababu.babu.v1',
-  health: 'inlababu.babu.health.v1',
+  babu: 'inlababoo.babu.v1',
+  health: 'inlababoo.babu.health.v1',
 } as const;
 
 export type Mood = 'happy' | 'ok' | 'tired' | 'rest';

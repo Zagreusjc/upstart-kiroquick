@@ -6,7 +6,7 @@ interface CoinState {
   keys: string[];
 }
 
-const STORAGE_KEY = 'inlababu.stub.coins.v1';
+const STORAGE_KEY = 'inlababoo.stub.coins.v1';
 const MAX_KEYS = 500;
 
 /**

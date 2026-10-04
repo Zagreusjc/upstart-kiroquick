@@ -14,7 +14,7 @@ export interface Clinic {
   lng: number;
   services: string[];
   hours: string;
-  /** Accepts INLABABU vouchers (illustrative). */
+  /** Accepts INLABABOO vouchers (illustrative). */
   partner: boolean;
   /** Appointment line in display format, for example `(02) 8000 0101`. */
   phone?: string;

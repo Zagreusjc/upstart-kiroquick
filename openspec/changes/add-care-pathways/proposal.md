@@ -1,6 +1,6 @@
 ## Why
 
-This is the "Redeem" step and the proof of real-world impact. Many people with cardiovascular risk never get screened. INLABABU connects engagement to action: a deterministic risk survey, nearby clinics and medical missions, and vouchers for discounted screenings. The clinic verify page shows judges a real front-desk workflow, and the partner dashboard shows why clinics and HMOs would take part.
+This is the "Redeem" step and the proof of real-world impact. Many people with cardiovascular risk never get screened. INLABABOO connects engagement to action: a deterministic risk survey, nearby clinics and medical missions, and vouchers for discounted screenings. The clinic verify page shows judges a real front-desk workflow, and the partner dashboard shows why clinics and HMOs would take part.
 
 ## What Changes
 

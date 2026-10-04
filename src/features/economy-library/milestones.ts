@@ -7,7 +7,7 @@ import { loadJSON, saveJSON } from '../../core';
  * coins exactly once; the unlock is permanent.
  */
 
-export const MILESTONES_STORAGE_KEY = 'inlababu.milestones.v1';
+export const MILESTONES_STORAGE_KEY = 'inlababoo.milestones.v1';
 
 export interface MilestoneTier {
   id: string;

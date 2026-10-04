@@ -78,7 +78,7 @@ export function drawBragCard(ctx: CanvasRenderingContext2D, score: number): void
   ctx.fillRect(centre - 190, 886, 380, 84);
   ctx.fillStyle = '#ffffff';
   ctx.font = `900 52px ${rounded}`;
-  ctx.fillText('INLABABU', centre, 930);
+  ctx.fillText('INLABABOO', centre, 930);
 }
 
 export function createBragCardBlob(

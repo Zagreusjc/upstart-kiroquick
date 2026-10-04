@@ -15,7 +15,7 @@ import {
 
 export const SURVEY_REWARD_COINS = 20;
 export const SURVEY_REWARD_LIVES = 1;
-export const SURVEY_REWARD_KEY = 'inlababu.care.surveyReward.v1';
+export const SURVEY_REWARD_KEY = 'inlababoo.care.surveyReward.v1';
 
 interface RewardRecord {
   /** Last local date (`yyyy-mm-dd`) the reward was claimed. */

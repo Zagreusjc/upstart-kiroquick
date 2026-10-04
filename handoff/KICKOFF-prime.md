@@ -4,7 +4,7 @@ Paste everything below the line into the Kiro chat on your machine.
 
 ---
 
-You are helping Prime build the **economy and library** feature of INLABABU, a mobile-first PWA health game for the Kiro x Quick Hackathon. There are about 11 build hours in total. Work in small, verified steps.
+You are helping Prime build the **economy and library** feature of INLABABOO, a mobile-first PWA health game for the Kiro x Quick Hackathon. There are about 11 build hours in total. Work in small, verified steps.
 
 ## 0. Setup (run in PowerShell, then open the folder in Kiro)
 

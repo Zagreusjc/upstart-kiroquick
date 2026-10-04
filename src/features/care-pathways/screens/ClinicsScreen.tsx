@@ -212,7 +212,7 @@ function ClinicCard({
         <p className="text-sm">{clinic.services.join(' · ')}</p>
         {clinic.partner && (
           <p className="text-sm font-semibold text-rose-800">
-            <span aria-hidden="true">🎟️ </span>Accepts INLABABU vouchers
+            <span aria-hidden="true">🎟️ </span>Accepts INLABABOO vouchers
           </p>
         )}
 

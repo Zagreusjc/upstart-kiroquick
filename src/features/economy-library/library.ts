@@ -13,7 +13,7 @@ import { getCard } from './cards';
  * global provider registry.
  */
 
-export const LIBRARY_STORAGE_KEY = 'inlababu.library.v1';
+export const LIBRARY_STORAGE_KEY = 'inlababoo.library.v1';
 
 /** Coins awarded on the first read of a card. */
 export const FIRST_READ_COINS = 5;

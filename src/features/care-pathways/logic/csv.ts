@@ -115,8 +115,8 @@ export function eventsToCsv(
 }
 
 export const CSV_FILENAME: Record<Dataset, string> = {
-  app: 'inlababu-events.csv',
-  synthetic: 'inlababu-events-synthetic.csv',
+  app: 'inlababoo-events.csv',
+  synthetic: 'inlababoo-events-synthetic.csv',
 };
 
 // ---------------------------------------------------------------------------

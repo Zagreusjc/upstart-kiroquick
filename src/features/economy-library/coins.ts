@@ -13,7 +13,7 @@ import { loadJSON, saveJSON } from '../../core';
  * pass `provider.subscribe` etc. around unbound.
  */
 
-export const COINS_STORAGE_KEY = 'inlababu.coins.v1';
+export const COINS_STORAGE_KEY = 'inlababoo.coins.v1';
 
 /** Most recent idempotency keys to remember (older keys are forgotten). */
 const MAX_KEYS = 500;

@@ -1,7 +1,7 @@
 import type { HealthProvider, HealthSnapshot } from '../contracts';
 import { loadJSON, saveJSON } from '../storage';
 
-const STORAGE_KEY = 'inlababu.stub.health.v1';
+const STORAGE_KEY = 'inlababoo.stub.health.v1';
 
 const EMPTY: HealthSnapshot = {
   steps: 0,

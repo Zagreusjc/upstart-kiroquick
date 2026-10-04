@@ -1,4 +1,4 @@
-# Contributing to INLABABU
+# Contributing to INLABABOO
 
 Four people, four branches, one app. These rules keep the branches mergeable without conflicts.
 

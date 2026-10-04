@@ -1,9 +1,9 @@
 {
-  "name": "inlababu",
+  "name": "inlababoo",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "INLABABU: a mobile-first health game. Track, Play, Redeem.",
+  "description": "INLABABOO: a mobile-first health game. Track, Play, Redeem.",
   "engines": {
     "node": ">=20.19.0"
   },

@@ -4,7 +4,7 @@ Paste everything below the line into the Kiro chat on your machine.
 
 ---
 
-You are helping Jolo build the **artery match-3 game** of INLABABU and maintain the shared scaffold, integration and deployment. INLABABU is a mobile-first PWA health game for the Kiro x Quick Hackathon. There are about 11 build hours in total. Jolo is the computer science lead, so the hardest work is here. Work in small, verified steps.
+You are helping Jolo build the **artery match-3 game** of INLABABOO and maintain the shared scaffold, integration and deployment. INLABABOO is a mobile-first PWA health game for the Kiro x Quick Hackathon. There are about 11 build hours in total. Jolo is the computer science lead, so the hardest work is here. Work in small, verified steps.
 
 ## 0. Setup (run in PowerShell, then open the folder in Kiro)
 

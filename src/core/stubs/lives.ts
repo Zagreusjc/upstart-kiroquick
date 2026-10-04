@@ -3,7 +3,7 @@ import { loadJSON, saveJSON } from '../storage';
 
 export const MAX_LIVES = 3;
 
-const STORAGE_KEY = 'inlababu.stub.lives.v1';
+const STORAGE_KEY = 'inlababoo.stub.lives.v1';
 
 interface LivesState {
   lives: number;

@@ -45,7 +45,7 @@ describe('brag card', () => {
     expect(texts).toContain('24,500');
     expect(texts).toContain('Arteria Match');
     expect(texts).toContain('Vascular Flow Score');
-    expect(texts).toContain('INLABABU');
+    expect(texts).toContain('INLABABOO');
     expect(canvas.toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/png');
     expect(blob.type).toBe('image/png');
   });

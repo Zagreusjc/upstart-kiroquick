@@ -13,7 +13,7 @@ import { getProvider, loadJSON, saveJSON, todayISO } from '../../core';
  */
 
 export const MAX_LIVES = 3;
-export const LIVES_STORAGE_KEY = 'inlababu.lives.v1';
+export const LIVES_STORAGE_KEY = 'inlababoo.lives.v1';
 
 /** Daily targets that each grant one life, once per local day. */
 export const STEPS_TARGET = 8000;

@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],
       manifest: {
-        name: 'INLABABU',
-        short_name: 'INLABABU',
+        name: 'INLABABOO',
+        short_name: 'INLABABOO',
         description:
           'Take care of your Babus, by taking care of yourself. Track, Play, Redeem.',
         theme_color: '#f0556a',

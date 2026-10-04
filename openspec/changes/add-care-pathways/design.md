@@ -53,7 +53,7 @@ Points use the same variables and bands as the WHO non-lab chart, plus diabetes:
 
 ## Survey reward
 
-- Finishing a valid Heart Risk Check awards 20 coins (`award('other', 20, 'risk_survey:heart-check:<yyyy-mm-dd>')`) and 1 life (`award(1, 'other')`), once per local day (`logic/surveyReward.ts`, record in `inlababu.care.surveyReward.v1`). Same reward for every band, so there is no reason to change answers. Uses `other` because `CoinSource` and `LifeSource` in core have no survey value; ask Jolo if a `risk_survey` source is wanted for the ledger.
+- Finishing a valid Heart Risk Check awards 20 coins (`award('other', 20, 'risk_survey:heart-check:<yyyy-mm-dd>')`) and 1 life (`award(1, 'other')`), once per local day (`logic/surveyReward.ts`, record in `inlababoo.care.surveyReward.v1`). Same reward for every band, so there is no reason to change answers. Uses `other` because `CoinSource` and `LifeSource` in core have no survey value; ask Jolo if a `risk_survey` source is wanted for the ledger.
 
 ## Vouchers
 
@@ -61,14 +61,14 @@ Points use the same variables and bands as the WHO non-lab chart, plus diabetes:
 - Code: `INB-XXXX-XXXX` from a 31-character alphabet without look-alikes (0/O, 1/I/L), drawn from an injected RNG (seedable in tests).
 - Issue: `useCoins().spend(cost, 'voucher:<offerId>')` first; only on success the voucher is stored and `voucher.issued { voucherId, partnerId, cost }` is emitted. If the balance is too low, nothing is spent and the screen shows how many coins are missing.
 - QR: `qrcode.toDataURL(code)` (lazy imported). The QR holds only the code.
-- Storage: `inlababu.care.vouchers.v1` via `saveJSON`. Because there is no backend, the clinic verify page works on the same device (demo). A real rollout needs a partner-side service.
+- Storage: `inlababoo.care.vouchers.v1` via `saveJSON`. Because there is no backend, the clinic verify page works on the same device (demo). A real rollout needs a partner-side service.
 - Verify (`/care/verify`): front desk types the code (case and spaces ignored). Results: `ok` (marks redeemed, emits `voucher.redeemed { voucherId, partnerId }`), `unknown`, `already_redeemed`, `expired`.
 - Cost: 30 to 80 coins per offer (`offers.json`; tune once Prime's earn rates are final). In dev builds only, a "Demo: add 50 coins" button awards coins with source `other` so the loop can be shown before Prime's provider merges.
 
 ## Partner export (Quick Sight)
 
 - CSV columns: `dataset, event_id, date, hour, event_type, risk_band, partner_id, partner_name, partner_city, voucher_id, coins, value, detail`.
-  - `dataset` is `app` for the real log and `synthetic` for generated data (filename `inlababu-events-synthetic.csv`).
+  - `dataset` is `app` for the real log and `synthetic` for generated data (filename `inlababoo-events-synthetic.csv`).
   - `value`: game score or check-in streak. `detail`: library card id or share channel.
   - No names, contact details or coordinates. Partner name and city are the illustrative clinic, not the user.
 - Cells are quoted when needed and prefixed with `'` if they start with `= + - @` (CSV injection guard).

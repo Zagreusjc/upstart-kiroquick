@@ -29,7 +29,7 @@ export interface LoggedEvent<T extends EventType = EventType> {
   payload: EventMap[T];
 }
 
-const LOG_KEY = 'inlababu.events.v1';
+const LOG_KEY = 'inlababoo.events.v1';
 const MAX_LOG = 1000;
 
 type Handler<T extends EventType> = (event: LoggedEvent<T>) => void;

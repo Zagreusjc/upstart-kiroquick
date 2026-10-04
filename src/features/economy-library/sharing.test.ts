@@ -5,7 +5,7 @@ import { createSharer, type ShareEnv } from './sharing';
 const PAYLOAD = {
   title: 'Inlababoo',
   text: 'Take care of your Baboos!',
-  url: 'https://inlababu.example',
+  url: 'https://inlababoo.example',
 };
 
 function setup(env: ShareEnv, storageKey: string) {

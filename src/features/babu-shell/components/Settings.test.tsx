@@ -22,17 +22,17 @@ describe('Settings', () => {
 
   it('erases data only after the player confirms', async () => {
     const user = userEvent.setup({ delay: null });
-    localStorage.setItem('inlababu.babu.v1', '{}');
+    localStorage.setItem('inlababoo.babu.v1', '{}');
     const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
     const reload = renderSettings();
     const erase = screen.getByRole('button', { name: 'Erase all my data on this device' });
 
     await user.click(erase);
-    expect(localStorage.getItem('inlababu.babu.v1')).toBe('{}');
+    expect(localStorage.getItem('inlababoo.babu.v1')).toBe('{}');
     expect(reload).not.toHaveBeenCalled();
 
     await user.click(erase);
-    expect(localStorage.getItem('inlababu.babu.v1')).toBeNull();
+    expect(localStorage.getItem('inlababoo.babu.v1')).toBeNull();
     expect(reload).toHaveBeenCalledTimes(1);
     expect(confirm).toHaveBeenCalledTimes(2);
   });

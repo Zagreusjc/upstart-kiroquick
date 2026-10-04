@@ -10,27 +10,27 @@ features only through providers and the typed event bus.
 
 ### Storage keys and shapes
 
-All keys use the `inlababu.` prefix and a `.v1` version suffix, persisted via
+All keys use the `inlababoo.` prefix and a `.v1` version suffix, persisted via
 `loadJSON` / `saveJSON` from `../../core`. The real providers use their own keys
-(distinct from the `inlababu.stub.*` keys the stubs use) so a device that ran on
+(distinct from the `inlababoo.stub.*` keys the stubs use) so a device that ran on
 stubs does not leak a stale balance into the real provider.
 
-- `inlababu.coins.v1` -> `{ balance: number; keys: string[]; entries: LedgerEntry[] }`
+- `inlababoo.coins.v1` -> `{ balance: number; keys: string[]; entries: LedgerEntry[] }`
   - `keys`: used idempotency keys, capped to the most recent 500.
   - `entries`: append-only ledger rows `{ source, amount, reason, at }`, capped
     to the most recent 200, kept for a transparent in-app history. The CSV
     export that Ralph builds reads the core event log, not this ledger, so the
     ledger is for the player's own view only.
-- `inlababu.lives.v1` -> `{ lives: number; refills: Record<string, true> }`
+- `inlababoo.lives.v1` -> `{ lives: number; refills: Record<string, true> }`
   - `refills`: set of consumed once-per-day refill keys (for example
     `steps::2026-10-04`, `sleep::2026-10-04`, `library_read:card-hpn:2026-10-04`,
     `share::<shareId>`). Keeps steps/sleep to once per local day and each card's
     read-life to once ever.
-- `inlababu.library.v1` -> `{ read: Record<string, number> }` (cardId -> epoch ms
+- `inlababoo.library.v1` -> `{ read: Record<string, number> }` (cardId -> epoch ms
   first read). Presence means "read"; used to gate first-read rewards.
-- `inlababu.milestones.v1` -> `{ unlocked: Record<string, true> }` (tierId ->
+- `inlababoo.milestones.v1` -> `{ unlocked: Record<string, true> }` (tierId ->
   unlocked). Presence means the tier's `milestone` coins were already awarded.
-- `inlababu.share.v1` -> `{ shares: string[] }` ids of completed shares, so a
+- `inlababoo.share.v1` -> `{ shares: string[] }` ids of completed shares, so a
   life is awarded at most once per completed share.
 
 ### Idempotency
@@ -78,7 +78,7 @@ progress. Tiers (by cards read):
 3. `heart-scholar` — read 6 cards — "Heart Scholar badge" — +50 coins.
 
 Progress is always visible (for example "2 of 3"). Unlock is permanent via
-`inlababu.milestones.v1`; re-reaching a tier never re-awards coins.
+`inlababoo.milestones.v1`; re-reaching a tier never re-awards coins.
 
 ### Share flow
 

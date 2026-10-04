@@ -9,7 +9,7 @@ import type { LivesController } from './lives';
  * The browser plumbing is injected so the flow is unit-testable without a DOM.
  */
 
-export const SHARE_STORAGE_KEY = 'inlababu.share.v1';
+export const SHARE_STORAGE_KEY = 'inlababoo.share.v1';
 
 export type ShareChannel = 'web_share' | 'clipboard';
 

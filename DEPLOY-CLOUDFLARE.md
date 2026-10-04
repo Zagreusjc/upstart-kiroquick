@@ -1,6 +1,6 @@
-# Deploying INLABABU to Cloudflare Pages
+# Deploying INLABABOO to Cloudflare Pages
 
-INLABABU is a static PWA with no backend. Cloudflare Pages serves the `dist/` folder. The AWS Amplify setup (`amplify.yml`, `DEPLOY.md`) still works; this is an alternative.
+INLABABOO is a static PWA with no backend. Cloudflare Pages serves the `dist/` folder. The AWS Amplify setup (`amplify.yml`, `DEPLOY.md`) still works; this is an alternative.
 
 ## What is already set up
 
@@ -28,7 +28,7 @@ Vite copies everything in `public/` into `dist/`, so the two files above ship wi
 npm ci
 npm run build
 npx wrangler login
-npx wrangler pages deploy dist --project-name inlababu
+npx wrangler pages deploy dist --project-name inlababoo
 ```
 
 The first deploy creates the project if it does not exist.
