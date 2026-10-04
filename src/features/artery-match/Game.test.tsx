@@ -207,12 +207,15 @@ describe('Arteria Match game', () => {
     expect(screen.getByText('Score: 0')).toBeInTheDocument();
   });
 
-  it('blocks the start at 0 lives and explains how to earn lives', async () => {
+  it('disables Play at 0 lives and explains how to earn lives', async () => {
     setLives(0);
     const user = renderGame();
 
-    await user.click(screen.getByRole('button', { name: 'Play' }));
+    const play = screen.getByRole('button', { name: 'Play' });
+    expect(play).toBeDisabled();
+    await user.click(play);
 
+    expect(lives.spend).not.toHaveBeenCalled();
     expect(screen.queryByRole('grid')).not.toBeInTheDocument();
     expect(screen.getByText("You're out of lives.")).toBeInTheDocument();
     const hint = screen.getByText(/^Earn lives by/);
@@ -248,7 +251,8 @@ describe('Arteria Match game', () => {
 
     expect(screen.getByText('Score: 0')).toBeInTheDocument();
     expect(screen.getByText('Moves: 0')).toBeInTheDocument();
-    expect(screen.getByText('No match there. Try another swap.')).toBeInTheDocument();
+    // No visible text for a non-match: the hint is kept for screen readers only.
+    expect(screen.getByText('No match there. Try another swap.')).toHaveClass('sr-only');
   });
 
   it('scores a legal tap-tap swap with the real engine', async () => {

@@ -9,7 +9,7 @@ interface BottomNavProps {
 export function BottomNav({ modules }: BottomNavProps) {
   return (
     <nav aria-label="Main" className="app-nav">
-      <ul className="m-0 flex list-none gap-1 p-0">
+      <ul className="app-nav-list m-0">
         {modules.map(({ id, navItem }) => (
           <li key={id} className="min-w-0 flex-1">
             <NavLink to={navItem.path} className="app-nav-link">

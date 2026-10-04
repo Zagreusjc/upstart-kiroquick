@@ -7,18 +7,20 @@ export function Header() {
 
   return (
     <header className="app-header">
-      <h1 className="app-title">INLABABOO</h1>
-      <div className="flex items-center gap-2 text-sm">
-        <span className="ui-pill" aria-label={`Lives: ${lives} of ${max}`}>
-          <LifeIcon />
-          <span aria-hidden="true">
-            {lives}/{max}
+      <div className="app-header-inner">
+        <h1 className="app-title">INLABABOO</h1>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="ui-pill" aria-label={`Lives: ${lives} of ${max}`}>
+            <LifeIcon />
+            <span aria-hidden="true">
+              {lives}/{max}
+            </span>
           </span>
-        </span>
-        <span className="ui-pill" aria-label={`Coins: ${balance}`}>
-          <CoinIcon />
-          <span aria-hidden="true">{balance}</span>
-        </span>
+          <span className="ui-pill" aria-label={`Coins: ${balance}`}>
+            <CoinIcon />
+            <span aria-hidden="true">{balance}</span>
+          </span>
+        </div>
       </div>
     </header>
   );
