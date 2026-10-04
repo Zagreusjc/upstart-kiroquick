@@ -1,7 +1,7 @@
-﻿@import 'tailwindcss';
+@import 'tailwindcss';
 
 /*
- * INLABABU design tokens, taken from the main menu (babu-shell/menu.css and
+ * INLABABOO design tokens, taken from the main menu (babu-shell/menu.css and
  * MainMenu.tsx): dotted pink backdrop, chunky raised buttons with a darker
  * "lip", frosted white cards, teal accents and rounded lettering.
  * Tailwind v4 turns these into utilities (bg-baboo-500, text-baboo-900,
@@ -91,6 +91,16 @@ body {
     outline: 3px solid var(--color-baboo-900);
     outline-offset: 2px;
   }
+}
+
+/*
+ * Fit-to-screen pages: the page wrapper is exactly as tall as <main>
+ * (--shell-main-h is set by App.tsx), so a child with h-full fills the
+ * space between the header and the bottom nav. If a very short screen
+ * cannot fit everything, <main> still scrolls as a fallback.
+ */
+.app-fit {
+  height: var(--shell-main-h, calc(100dvh - 7.5rem));
 }
 
 body {

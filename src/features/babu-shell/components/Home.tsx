@@ -10,20 +10,20 @@ import { DemoControls } from './DemoControls';
 import { HealthInput } from './HealthInput';
 
 /**
- * Fill the screen behind the app header and bottom nav with the (calmer)
- * menu backdrop. The shell (owned by Jolo) gives `main` 16px padding,
- * cancelled with `-m-4` and added back inside; 52px header + 55px nav = 107.
+ * Fill the screen between the header and bottom nav. The shell publishes the
+ * live height of <main> as `--shell-main-h` (see src/app/App.tsx), so no
+ * header or nav heights are hard-coded here. The shell wrapper has 12px of
+ * vertical padding, cancelled with `-my-3` and `-mx-4` so the backdrop
+ * reaches the screen edges.
  */
-const FILL_SCREEN = 'min-h-[calc(100dvh_-_107px_-_env(safe-area-inset-bottom))]';
+const FILL_SCREEN = 'min-h-[var(--shell-main-h,calc(100dvh_-_7.5rem))]';
 
 /**
- * Hero height so Baboo fills the first screen: 52px header, 16px top
- * padding, 55px bottom nav plus the safe area, a 16px gap, the 44px
- * "Main menu" button and its 16px gap: 52 + 16 + 55 + 16 + 44 + 16 = 199.
- * Update this if the shell changes.
+ * Hero height so Baboo fills the first screen: the screen minus the 16px top
+ * padding, the 44px "Main menu" button, its 16px gap and a 16px bottom gap.
+ * 16 + 44 + 16 + 16 = 92.
  */
-const HERO_HEIGHT = 'min-h-[calc(100dvh_-_199px_-_env(safe-area-inset-bottom))]';
-
+const HERO_HEIGHT = 'min-h-[max(20rem,calc(var(--shell-main-h,calc(100dvh_-_7.5rem))_-_92px))]';
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-800';
 
 function scrollToDetails() {
@@ -57,7 +57,7 @@ export function Home() {
   return (
     <div
       data-testid="baboo-screen"
-      className={`mm-root relative -m-4 space-y-4 overflow-x-hidden px-4 pt-4 pb-6 ${FILL_SCREEN}`}
+      className={`mm-root relative -mx-4 -my-3 space-y-4 overflow-x-hidden px-4 pt-4 pb-6 ${FILL_SCREEN}`}
       style={SOFT_BACKDROP}
     >
       <Sparkle className="top-20 right-4 text-base" delay="0s" />
