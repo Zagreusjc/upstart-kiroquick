@@ -1,4 +1,5 @@
 import './artery-match.css';
+import { MovesIcon, PlaqueIcon, ScoreIcon } from '../../core';
 import { EARN_LIVES_HINT } from './adapters';
 import { Board } from './Board';
 import { countCholesterol } from './engine';
@@ -12,8 +13,7 @@ const HINT_TEXT: Record<Exclude<MoveHint, null>, string> = {
 
 const PLAQUE_NOTICE = 'Plaque is spreading! Match next to it to clear it.';
 
-const primaryButton =
-  'min-h-11 rounded-lg bg-rose-700 px-4 py-2 font-semibold text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-700 focus-visible:ring-offset-2';
+const primaryButton = 'ui-btn text-lg uppercase';
 
 export function ArteriaMatchGame(props: GameDeps) {
   const session = useGameSession(props);
@@ -24,14 +24,14 @@ export function ArteriaMatchGame(props: GameDeps) {
   const plaquePct = board && cells > 0 ? Math.round((countCholesterol(board) * 100) / cells) : 0;
 
   return (
-    <section aria-labelledby="am-title" className="flex flex-col gap-3">
-      <div className="rounded-xl bg-white p-4 shadow">
-        <h2 id="am-title" className="text-lg font-bold">
+    <section aria-labelledby="am-title" className="flex min-w-0 flex-col gap-4">
+      <div className="ui-card p-4">
+        <h2 id="am-title" className="text-xl font-black tracking-wide">
           Arteria Match
         </h2>
         {phase === 'idle' && (
           <>
-            <p className="mt-1 text-sm text-slate-700">
+            <p className="mt-1 text-sm text-baboo-900/85">
               Match 3 or more blood cells to keep the artery flowing. Cholesterol plaque spreads if
               you leave it: match right next to a block to clear it.
             </p>
@@ -43,20 +43,29 @@ export function ArteriaMatchGame(props: GameDeps) {
         )}
         {phase === 'blocked' && (
           <>
-            <p role="alert" className="mt-2 font-semibold text-rose-800">
+            <p role="alert" className="mt-2 font-bold text-baboo-600">
               You're out of lives.
             </p>
-            <p className="mt-1 text-sm text-slate-700">{EARN_LIVES_HINT}</p>
+            <p className="mt-1 text-sm text-baboo-900/85">{EARN_LIVES_HINT}</p>
             <button type="button" onClick={session.start} className={`mt-3 w-full ${primaryButton}`}>
               Try again
             </button>
           </>
         )}
         {showBoard && (
-          <div className="mt-2 flex items-center justify-between text-sm font-semibold">
-            <p>Score: {session.score.toLocaleString('en-US')}</p>
-            <p>Plaque: {plaquePct}%</p>
-            <p>Moves: {session.moves}</p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+            <p className="ui-pill">
+              <ScoreIcon />
+              Score: {session.score.toLocaleString('en-US')}
+            </p>
+            <p className="ui-pill">
+              <PlaqueIcon />
+              Plaque: {plaquePct}%
+            </p>
+            <p className="ui-pill">
+              <MovesIcon />
+              Moves: {session.moves}
+            </p>
           </div>
         )}
         {/* Kept mounted so screen readers announce the notice when its text appears. */}
@@ -86,7 +95,7 @@ export function ArteriaMatchGame(props: GameDeps) {
 
       {showBoard && (
         <>
-          <p role="status" className="min-h-8 text-center text-xl font-extrabold text-rose-800">
+          <p role="status" className="min-h-8 text-center text-xl font-black text-baboo-600">
             {message}
           </p>
           <Board

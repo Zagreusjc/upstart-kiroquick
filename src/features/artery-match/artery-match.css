@@ -24,6 +24,39 @@
   }
 }
 
+/* Main menu look: a raised pink frame with frosted white cells. */
+.am-board {
+  border-radius: 1.5rem;
+  background: linear-gradient(180deg, #f0556a 0%, #c23a4f 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.1),
+    0 6px 0 #881337,
+    0 14px 22px -8px rgba(136, 19, 55, 0.5);
+  /* Dragging tiles must not scroll or zoom the page. */
+  touch-action: none;
+}
+
+.am-cell {
+  border: 0;
+  border-radius: 0.875rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    inset 0 -3px 0 rgba(194, 58, 79, 0.16),
+    inset 0 1px 0 #ffffff;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
+.am-cell--selected {
+  background: #ffe9a8;
+}
+
+/* Soft lip under every tile, like the menu buttons. */
+.am-art {
+  filter: drop-shadow(0 2px 0 rgba(136, 19, 55, 0.28));
+}
+
 .am-tile {
   display: block;
   width: 100%;

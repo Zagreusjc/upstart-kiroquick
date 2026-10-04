@@ -15,8 +15,8 @@ export default defineConfig({
         short_name: 'INLABABU',
         description:
           'Take care of your Babus, by taking care of yourself. Track, Play, Redeem.',
-        theme_color: '#e11d48',
-        background_color: '#fff1f2',
+        theme_color: '#f0556a',
+        background_color: '#ffdde3',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',

@@ -24,6 +24,7 @@ export {
   type EventType,
   type LoggedEvent,
 } from './events';
+export { CoinIcon, LifeIcon, MovesIcon, PlaqueIcon, ScoreIcon } from './icons';
 export { getProvider, registerProvider, useCoins, useHealth, useLives } from './providers';
 export { loadJSON, removeKey, saveJSON } from './storage';
 export { MAX_LIVES } from './stubs/lives';

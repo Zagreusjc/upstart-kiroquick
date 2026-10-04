@@ -14,9 +14,9 @@ export function App() {
   const home = modules[0]?.navItem.path ?? '/';
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-rose-50 text-slate-900">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col overflow-x-clip text-baboo-900">
       <Header />
-      <main className="flex-1 p-4">
+      <main className="min-w-0 flex-1 py-4 pr-[max(1rem,env(safe-area-inset-right))] pl-[max(1rem,env(safe-area-inset-left))]">
         <Routes>
           <Route path="/" element={<Navigate to={home} replace />} />
           {modules.map(({ id, navItem, Component }) => (

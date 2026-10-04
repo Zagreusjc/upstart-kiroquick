@@ -1,4 +1,4 @@
-import { useCoins, useLives } from '../core';
+import { CoinIcon, LifeIcon, useCoins, useLives } from '../core';
 
 /** Top bar: app name, lives and coins. Values come from the active providers. */
 export function Header() {
@@ -6,14 +6,18 @@ export function Header() {
   const { balance } = useCoins();
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between bg-rose-600 px-4 py-3 text-white shadow">
-      <h1 className="text-lg font-bold tracking-wide">INLABABOO</h1>
-      <div className="flex items-center gap-4 text-sm font-semibold">
-        <span aria-label={`Lives: ${lives} of ${max}`}>
-          <span aria-hidden="true">🩸</span> {lives}/{max}
+    <header className="app-header">
+      <h1 className="app-title">INLABABOO</h1>
+      <div className="flex items-center gap-2 text-sm">
+        <span className="ui-pill" aria-label={`Lives: ${lives} of ${max}`}>
+          <LifeIcon />
+          <span aria-hidden="true">
+            {lives}/{max}
+          </span>
         </span>
-        <span aria-label={`Coins: ${balance}`}>
-          <span aria-hidden="true">🪙</span> {balance}
+        <span className="ui-pill" aria-label={`Coins: ${balance}`}>
+          <CoinIcon />
+          <span aria-hidden="true">{balance}</span>
         </span>
       </div>
     </header>

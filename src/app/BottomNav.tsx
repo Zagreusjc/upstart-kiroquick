@@ -5,24 +5,14 @@ interface BottomNavProps {
   modules: FeatureModule[];
 }
 
-/** Bottom tab bar generated from each feature's `navItem`. */
+/** Bottom tab bar generated from each feature's `navItem`. Styles live in index.css (.app-nav). */
 export function BottomNav({ modules }: BottomNavProps) {
   return (
-    <nav
-      aria-label="Main"
-      className="sticky bottom-0 z-10 border-t border-rose-200 bg-white pb-[env(safe-area-inset-bottom)]"
-    >
-      <ul className="flex">
+    <nav aria-label="Main" className="app-nav">
+      <ul className="m-0 flex list-none gap-1 p-0">
         {modules.map(({ id, navItem }) => (
-          <li key={id} className="flex-1">
-            <NavLink
-              to={navItem.path}
-              className={({ isActive }) =>
-                `flex flex-col items-center gap-0.5 py-2 text-xs font-medium ${
-                  isActive ? 'text-rose-600' : 'text-slate-500'
-                }`
-              }
-            >
+          <li key={id} className="min-w-0 flex-1">
+            <NavLink to={navItem.path} className="app-nav-link">
               <span aria-hidden="true" className="text-xl leading-none">
                 {navItem.icon}
               </span>

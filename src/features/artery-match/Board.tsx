@@ -134,7 +134,7 @@ export function Board({ board, selected, clearing, locked, invalid, bounce, onCe
       aria-label="Arteria Match board"
       aria-rowcount={rows}
       aria-colcount={cols}
-      className={`flex w-full select-none flex-col gap-1 rounded-xl bg-rose-900 p-1 ${invalid ? 'am-shake' : ''}`}
+      className={`am-board flex w-full max-w-full select-none flex-col gap-1 p-1.5 ${invalid ? 'am-shake' : ''}`}
       style={{ touchAction: 'none' }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -167,8 +167,8 @@ export function Board({ board, selected, clearing, locked, invalid, bounce, onCe
                   onClick={() => handleClick({ row, col })}
                   data-bounce={bounceVars ? 'true' : undefined}
                   style={bounceVars}
-                  className={`block h-full w-full rounded-lg p-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-700 focus-visible:ring-inset ${
-                    isSelected ? 'scale-95 bg-amber-200 ring-4 ring-amber-700 ring-inset' : 'bg-rose-50'
+                  className={`am-cell block h-full w-full p-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-700 focus-visible:ring-inset ${
+                    isSelected ? 'am-cell--selected scale-95 ring-4 ring-amber-700 ring-inset' : ''
                   } ${bounceVars ? 'am-swap-back' : ''}`}
                 >
                   <span key={tile.id} className={`am-tile am-drop ${isClearing ? 'am-clearing' : ''}`}>
