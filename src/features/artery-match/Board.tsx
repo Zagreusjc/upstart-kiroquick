@@ -1,4 +1,4 @@
-﻿import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
+import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
 import type { Board as BoardGrid, Cell } from './engine';
 import { dragTarget } from './swapInput';
 import { TileIcon } from './TileIcon';
@@ -168,11 +168,11 @@ export function Board({ board, selected, clearing, locked, invalid, bounce, onCe
                   onClick={() => handleClick({ row, col })}
                   data-bounce={bounceVars ? 'true' : undefined}
                   style={bounceVars}
-                  className={`am-cell block h-full w-full p-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-700 focus-visible:ring-inset ${
+                  className={`am-cell block h-full w-full ${tile.type === 'cholesterol' ? 'p-0' : 'p-0.5'} focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-700 focus-visible:ring-inset ${
                     isSelected ? 'am-cell--selected scale-95 ring-4 ring-amber-700 ring-inset' : ''
                   } ${bounceVars ? 'am-swap-back' : ''}`}
                 >
-                  <span key={tile.id} className={`am-tile am-drop ${isClearing ? 'am-clearing' : ''}`}>
+                  <span key={tile.id} className={`am-tile ${tile.type === 'cholesterol' ? 'am-pop' : 'am-drop'} ${isClearing ? 'am-clearing' : ''}`}>
                     <TileIcon type={tile.type} />
                   </span>
                 </button>

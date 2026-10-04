@@ -1,4 +1,4 @@
-﻿import './artery-match.css';
+import './artery-match.css';
 import { MovesIcon, PlaqueIcon, ScoreIcon, useCoins } from '../../core';
 import { Board } from './Board';
 import { countCholesterol } from './engine';
@@ -28,7 +28,7 @@ export function ArteriaMatchGame(props: GameDeps) {
   const plaquePct = board && cells > 0 ? Math.round((countCholesterol(board) * 100) / cells) : 0;
 
   return (
-    <section aria-labelledby="am-title" className="flex min-w-0 flex-col gap-4">
+    <section aria-labelledby="am-title" className="flex h-full min-h-0 min-w-0 flex-col gap-3">
       {inMenu && (
         <PreGameMenu
           lives={session.lives}
@@ -40,22 +40,22 @@ export function ArteriaMatchGame(props: GameDeps) {
       )}
 
       {!inMenu && (
-        <div className="ui-card p-4">
-          <h2 id="am-title" className="text-xl font-black tracking-wide">
+        <div className="ui-card flex-none p-3">
+          <h2 id="am-title" className="sr-only">
             Arteria Match
           </h2>
           {showBoard && (
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+            <div className="am-hud">
               <p className="ui-pill">
-                <ScoreIcon />
+                <ScoreIcon className="h-4 w-4" />
                 Score: {session.score.toLocaleString('en-US')}
               </p>
               <p className="ui-pill">
-                <PlaqueIcon />
+                <PlaqueIcon className="h-4 w-4" />
                 Plaque: {plaquePct}%
               </p>
               <p className="ui-pill">
-                <MovesIcon />
+                <MovesIcon className="h-4 w-4" />
                 Moves: {session.moves}
               </p>
             </div>
@@ -89,21 +89,26 @@ export function ArteriaMatchGame(props: GameDeps) {
       {showBoard && (
         <>
           {/* Visible only for match callouts; hints stay screen-reader only. */}
-          <div className="min-h-8">
-            <p role="status" className={session.callout ? 'text-center text-xl font-black text-baboo-600' : 'sr-only'}>
+          <div className="min-h-7 flex-none">
+            <p role="status" className={session.callout ? 'text-center text-lg font-black text-baboo-600' : 'sr-only'}>
               {message}
             </p>
           </div>
-          <Board
-            board={board}
-            selected={session.selected}
-            clearing={session.clearing}
-            locked={session.locked}
-            invalid={session.invalid}
-            bounce={session.bounce}
-            onCellTap={session.tapCell}
-            onDragSwap={session.dragSwap}
-          />
+          {/* The board is a square sized to the space left: the smaller of the free width and free height. */}
+          <div className="am-board-area">
+            <div className="am-board-fit">
+              <Board
+                board={board}
+                selected={session.selected}
+                clearing={session.clearing}
+                locked={session.locked}
+                invalid={session.invalid}
+                bounce={session.bounce}
+                onCellTap={session.tapCell}
+                onDragSwap={session.dragSwap}
+              />
+            </div>
+          </div>
         </>
       )}
     </section>
